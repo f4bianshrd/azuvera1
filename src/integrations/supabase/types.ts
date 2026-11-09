@@ -425,7 +425,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_review_for: {
+        Args: { _azubi: string; _reviewer: string }
+        Returns: boolean
+      }
+      can_view_azubi: {
+        Args: { _azubi: string; _viewer: string }
+        Returns: boolean
+      }
+      display_names: {
+        Args: { _ids: string[] }
+        Returns: {
+          full_name: string
+          id: string
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_leitung: { Args: { _user_id: string }; Returns: boolean }
+      is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role:
