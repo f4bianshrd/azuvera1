@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Client-only SPA (TanStack Start `spa.enabled`); no SSR so the app can be wrapped with Capacitor and run offline.
+- Features live in `src/features/<module>`; shared UI (PageHeader, StatusBadge, dialogs…) in `src/components` for reuse across modules.
+- Privacy policy sections are a data list (`privacySections`) so later modules append sections instead of editing markup.
+- No web fonts (offline + privacy); colors only via oklch tokens in `src/styles.css`.
