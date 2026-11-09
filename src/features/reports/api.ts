@@ -201,12 +201,16 @@ export async function insertAttachmentRow(row: {
   sha256?: string | undefined;
   sortOrder: number;
 }): Promise<ReportAttachment> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Nicht angemeldet.");
   const { data, error } = await supabase
     .from("report_attachments")
     .insert({
       id: row.id,
       report_id: row.reportId,
-      azubi_id: "", // wird per Trigger aus dem Bericht gesetzt
+      azubi_id: user.id, // Trigger prüft gegen den Bericht
       storage_path: row.storagePath,
       thumb_path: row.thumbPath ?? null,
       file_name: row.fileName,
