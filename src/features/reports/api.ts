@@ -151,7 +151,7 @@ export async function saveReportDraft(id: string, expectedVersion: number, patch
     .select();
   if (error) throw error;
   if (!data || data.length === 0) throw new ReportConflictError();
-  return data[0];
+  return data[0]!;
 }
 
 export async function deleteReport(id: string): Promise<void> {
@@ -185,13 +185,13 @@ export async function insertAttachmentRow(row: {
   id: string;
   reportId: string;
   storagePath: string;
-  thumbPath?: string;
+  thumbPath?: string | undefined;
   fileName: string;
   mimeType: string;
   sizeBytes: number;
-  width?: number;
-  height?: number;
-  sha256?: string;
+  width?: number | undefined;
+  height?: number | undefined;
+  sha256?: string | undefined;
   sortOrder: number;
 }): Promise<ReportAttachment> {
   const { data, error } = await supabase

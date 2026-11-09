@@ -27,7 +27,7 @@ export async function sniffType(file: Blob): Promise<SniffedType> {
   if (buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46) return "application/pdf";
   // HEIC/HEIF: ftyp-Box mit Marke heic/heix/hevc/hevx/mif1/msf1
   if (buf.length >= 12 && buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70) {
-    const brand = String.fromCharCode(buf[8], buf[9], buf[10], buf[11]);
+    const brand = String.fromCharCode(buf[8]!, buf[9]!, buf[10]!, buf[11]!);
     if (["heic", "heix", "hevc", "hevx", "mif1", "msf1"].includes(brand)) return "heic";
   }
   return null;
@@ -93,7 +93,7 @@ export async function processFile(file: File): Promise<ProcessedFile> {
     try {
       const heic2any = (await import("heic2any")).default;
       const converted = await heic2any({ blob: file, toType: "image/jpeg", quality: JPEG_QUALITY });
-      source = Array.isArray(converted) ? converted[0] : converted;
+      source = Array.isArray(converted) ? converted[0]! : converted;
     } catch {
       throw new Error(HEIC_ERROR);
     }
