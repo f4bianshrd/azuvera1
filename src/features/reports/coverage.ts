@@ -25,7 +25,7 @@ const RANK: Record<CoverageKind, number> = {
 export interface CoverageDay {
   date: string; // yyyy-MM-dd
   kind: CoverageKind;
-  report?: Report;
+  report?: Report | undefined;
 }
 
 export interface CoverageResult {
