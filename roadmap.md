@@ -1,36 +1,27 @@
-# Azuvera – Baustein 1B Roadmap
+# Azuvera – Baustein 2A Roadmap (Berichte, Anhänge, Einreichen, Dashboard)
 
-## Backend (Lovable Cloud)
-- [x] E-Mail-Auth aktivieren (enable_email_auth)
-- [x] Auth-Einstellungen: HIBP-Passwortschutz, current_password für Passwortänderung
-- [x] Migration: app_role-Enum, Tabellen, Grants, RLS
-- [x] Migration: Funktionen, Trigger (Signup, Hash-Kette, updated_at, audit-Schutz)
-- [x] Storage-Bucket company-logos (privat) + Policies
-- [x] Realtime für notifications
-- [x] app_settings-Startwert hosting_location_text (öffentlich)
-- [x] Grants auf Mindestrechte eingeschränkt + per SQL verifiziert
+## Datenbank
+- [ ] Enums report_type/report_status; Tabelle reports (Teil-Indizes, Trigger: KW/Jahr, version, updated_at, kein Zukunftsdatum, Statusübergänge, approved unveränderlich, Schreibschutz systemseitiger Spalten)
+- [ ] report_attachments (Trigger: max 10, 10 MB, MIME-Whitelist, azubi_id aus Bericht)
+- [ ] report_versions (unveränderlich, Schnappschuss bei Statuswechsel)
+- [ ] report_signatures (unveränderlich, kein Client-Schreiben)
+- [ ] Funktionen: report_canonical, report_hash, team_week_status, submit_report
+- [ ] RLS + Grants für alle neuen Tabellen
+- [ ] Storage-Buckets report-files + signatures (privat) mit Policies
 
 ## Frontend
-- [x] /auth (Anmelden/Registrieren, ?mode=signup, Passwort-vergessen-Dialog, „Fast geschafft“)
-- [x] /reset-password
-- [x] App-Gerüst (_authenticated): Handy-Tab-Leiste, Tablet/PC-Sidebar, Glocke mit Realtime, Mehr-Sheet, ?-Kürzelübersicht
-- [x] /dashboard (Begrüßung mit Vorname)
-- [x] /profil (alle Karten + Erste Schritte für Azubis)
-- [x] /admin (Benutzer & Rollen, Einladungs-Codes)
-- [x] /stammdaten/betriebe, /stammdaten/berufe
-- [x] /admin/einstellungen (hosting_location_text)
-- [x] /benachrichtigungen, /aenderungsprotokoll
-- [x] Datenschutzseite liest hosting_location_text aus app_settings
+- [ ] src/features/reports/api.ts (Datenzugriffs-Schicht, Geräte-UUIDs, expected_version)
+- [ ] /reports (Liste, Filter, Abdeckungs-Donut mit Drill-Down, „Als Tabelle anzeigen“)
+- [ ] /reports/new (Art, Woche/Tag, Berichtsform, 4 Abschnitte, Fortschritt, Autosave, Duplikat-Abfrage)
+- [ ] /reports/$id (Detail, Bearbeiten, Löschen, Einreichen, Korrekturnotiz, Zeitleiste)
+- [ ] Anhänge: Upload (Kamera/Galerie/PDF/Drag&Drop), HEIC→JPEG, Resize 2048 + Thumb 320, sha256, Magic-Bytes-Prüfung, Bildunterschrift, Reihenfolge, Vollbildansicht
+- [ ] Einreichen-Blatt: Kurzübersicht, Zeichnen (Pointer Events) oder Klick-Bestätigung, Signatur-Upload, submit_report
+- [ ] /dashboard für Azubis (Hero, 5 Kennzahlen, Offene Aufgaben, Letzte Berichte, Schnellzugriff, Abdeckung)
 
-## Abnahme (geprüft)
-- [x] Registrierung als Azubi klappt, Bestätigungs-E-Mail wird gesendet; ungültiger Code bricht mit der vorgegebenen Meldung ab
-- [x] Zweites Konto kann user_roles und geschützte Profil-Felder nicht ändern (per API getestet)
-- [x] Azubi sieht keine fremden Profile/Rollen (per API getestet)
-- [x] audit_log unveränderlich (UPDATE blockiert), Hash-Kette verifiziert
-- [x] Layout 390/820/1440 px ohne horizontales Scrollen; 1180 px nicht separat geprüft
-- [x] Kein Standard-Admin, keine feste E-Mail im Code
-- [x] Datenschutzseite zeigt Speicherort aus app_settings
-
-## Offen / spätere Bausteine
-- [ ] Tastenkürzel N und / werden aktiv, sobald die Berichte-Seiten existieren (Baustein 2)
-- [ ] Baustein 2: Berichte; Baustein 3+: Team, Plan, Unterweisungen, Abwesenheiten, Schulnoten, Erinnerungen
+## Abnahme (selbst prüfen)
+- [ ] Anlegen/Autosave/Bearbeiten/Einreichen; Duplikate unmöglich
+- [ ] Anhänge: Limits, Typen, EXIF entfernt
+- [ ] Client kann status/version/content_hash nicht ändern; eingereicht = schreibgeschützt
+- [ ] submit_report: Signatur, Hash, Version, audit_log, Benachrichtigung
+- [ ] Abdeckung: 7 Tage/Woche, Doppelzählung vermieden, Drill-Down/Nachtragen
+- [ ] Layout 390/820/1180/1440 px; supabase nur in api.ts
