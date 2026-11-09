@@ -30,7 +30,7 @@ export function SignaturePad({ onChange }: { onChange: (valid: boolean, png: Blo
     for (const stroke of strokesRef.current) {
       if (stroke.points.length === 0) continue;
       ctx.beginPath();
-      ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+      ctx.moveTo(stroke.points[0]!.x, stroke.points[0]!.y);
       for (let i = 1; i < stroke.points.length; i++) {
         const prev = stroke.points[i - 1]!;
         const p = stroke.points[i]!;

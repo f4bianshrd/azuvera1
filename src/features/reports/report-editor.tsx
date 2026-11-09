@@ -121,18 +121,19 @@ export function ReportEditor({
     const current = reportRef.current;
     setStatus("saving");
     try {
-      if (!current) {
-        const created = await createDraft({
+      let base = current;
+      if (!base) {
+        base = await createDraft({
           id: crypto.randomUUID(),
           azubiId,
           reportType: stateRef.current.reportType,
           weeklyMode: stateRef.current.weeklyMode,
           reportDate: stateRef.current.reportDate,
         });
-        reportRef.current = created;
-        onCreated(created);
+        reportRef.current = base;
+        onCreated(base);
       }
-      const saved = await saveReportDraft(reportRef.current.id, reportRef.current.version, patchRef.current);
+      const saved = await saveReportDraft(base.id, base.version, patchRef.current);
       reportRef.current = saved;
       onSaved(saved);
       setStatus("saved");
@@ -311,7 +312,7 @@ function AutoTextarea({
 }: {
   value: string;
   onChange: (v: string) => void;
-} & React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange">) {
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     const el = ref.current;
