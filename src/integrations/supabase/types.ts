@@ -425,6 +425,46 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_users: {
+        Args: never
+        Returns: {
+          ausbilder_id: string
+          company_id: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          profession_id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
+      admin_set_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      admin_set_viewers: {
+        Args: { _azubi_id: string; _viewer_ids: string[] }
+        Returns: undefined
+      }
+      admin_update_azubi: {
+        Args: { _azubi_id: string; _patch: Json }
+        Returns: undefined
+      }
+      audit_hash: {
+        Args: {
+          _action: string
+          _actor_id: string
+          _created_at: string
+          _details: Json
+          _entity_id: string
+          _entity_type: string
+          _prev_hash: string
+        }
+        Returns: string
+      }
       can_review_for: {
         Args: { _azubi: string; _reviewer: string }
         Returns: boolean
@@ -432,6 +472,14 @@ export type Database = {
       can_view_azubi: {
         Args: { _azubi: string; _viewer: string }
         Returns: boolean
+      }
+      create_invite_code: {
+        Args: {
+          _note?: string
+          _role: Database["public"]["Enums"]["app_role"]
+          _valid_days?: number
+        }
+        Returns: string
       }
       display_names: {
         Args: { _ids: string[] }
@@ -449,6 +497,25 @@ export type Database = {
       }
       is_leitung: { Args: { _user_id: string }; Returns: boolean }
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
+      redeem_invite_code: {
+        Args: { _code: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      revoke_invite_code: { Args: { _code: string }; Returns: undefined }
+      set_my_profession: {
+        Args: { _profession_id: string }
+        Returns: undefined
+      }
+      write_audit: {
+        Args: {
+          _action: string
+          _azubi_id?: string
+          _details?: Json
+          _entity_id: string
+          _entity_type: string
+        }
+        Returns: number
+      }
     }
     Enums: {
       app_role:
