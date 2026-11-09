@@ -166,13 +166,20 @@ export async function submitReport(input: {
   imagePath?: string | undefined;
   clientSignedAt?: string | undefined;
 }): Promise<void> {
-  const { error } = await supabase.rpc("submit_report", {
+  const args: {
+    _report_id: string;
+    _expected_version: number;
+    _method: string;
+    _image_path?: string;
+    _client_signed_at?: string;
+  } = {
     _report_id: input.reportId,
     _expected_version: input.expectedVersion,
     _method: input.method,
-    _image_path: input.imagePath ?? undefined,
-    _client_signed_at: input.clientSignedAt ?? undefined,
-  });
+  };
+  if (input.imagePath) args._image_path = input.imagePath;
+  if (input.clientSignedAt) args._client_signed_at = input.clientSignedAt;
+  const { error } = await supabase.rpc("submit_report", args);
   if (error) {
     if (error.message.includes("inzwischen geändert")) throw new ReportConflictError();
     throw error;
