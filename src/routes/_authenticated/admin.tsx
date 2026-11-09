@@ -461,7 +461,7 @@ function InviteCodesCard() {
     const { data, error } = await supabase.rpc("create_invite_code", {
       _role: role,
       _valid_days: Number(days),
-      _note: note || null,
+      _note: note.trim() ? note.trim() : undefined,
     });
     setBusy(false);
     if (error) {

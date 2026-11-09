@@ -61,7 +61,7 @@ function EinstellungenPage() {
     setBusy(true);
     const { error } = await supabase
       .from("app_settings")
-      .upsert({ key: "hosting_location_text", value, is_public: true, updated_by: me?.id });
+      .upsert({ key: "hosting_location_text", value, is_public: true, updated_by: me?.id ?? null });
     setBusy(false);
     if (error) {
       toast.error("Einstellung konnte nicht gespeichert werden.");
