@@ -3,13 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, isAfter } from "date-fns";
 import { toast } from "sonner";
-import {
-  ArrowRight,
-  CalendarDays,
-  ClipboardList,
-  FilePlus2,
-  GraduationCap,
-} from "lucide-react";
+import { ArrowRight, CalendarDays, FilePlus2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

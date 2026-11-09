@@ -93,14 +93,7 @@ function NewReportPage() {
         onDirtyChange={setDirty}
       />
 
-      {report && (
-        <div className="mt-6">
-          <AttachmentSection report={report} attachments={[]} editable={false} />
-          <p className="mt-2 text-xs text-muted-foreground">
-            Anhänge kannst du nach dem ersten Speichern in der Detailansicht hinzufügen.
-          </p>
-        </div>
-      )}
+      {report && <NewReportAttachments report={report} />}
 
       <div className="fixed inset-x-0 bottom-16 z-20 border-t bg-background/95 p-3 backdrop-blur sm:bottom-0">
         <div className="mx-auto flex max-w-3xl justify-between gap-2">
