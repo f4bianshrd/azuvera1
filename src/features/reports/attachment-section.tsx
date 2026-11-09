@@ -1,0 +1,362 @@
+import { useCallback, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { ArrowLeft, ArrowRight, Camera, FileText, Image as ImageIcon, Loader2, Trash2, Upload } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  deleteAttachmentRow,
+  insertAttachmentRow,
+  removeFile,
+  signedUrl,
+  updateAttachment,
+  uploadFile,
+  type Report,
+  type ReportAttachment,
+} from "./api";
+import { MAX_ATTACHMENTS, processFile, sanitizeFileName } from "./attachments";
+
+interface PendingUpload {
+  key: string;
+  name: string;
+  progress: "uploading" | "error";
+}
+
+export function AttachmentSection({
+  report,
+  attachments,
+  editable,
+}: {
+  report: Report;
+  attachments: ReportAttachment[];
+  editable: boolean;
+}) {
+  const queryClient = useQueryClient();
+  const [pending, setPending] = useState<PendingUpload[]>([]);
+  const [viewer, setViewer] = useState<{ index: number; url: string } | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["reports", report.id] });
+
+  const handleFiles = useCallback(
+    async (files: FileList | File[]) => {
+      const list = [...files];
+      if (list.length === 0) return;
+      if (attachments.length + pending.length + list.length > MAX_ATTACHMENTS) {
+        toast.error("Höchstens 10 Anhänge je Bericht.");
+        return;
+      }
+      for (const file of list) {
+        const key = crypto.randomUUID();
+        setPending((p) => [...p, { key, name: file.name, progress: "uploading" }]);
+        try {
+          const processed = await processFile(file);
+          const attachmentId = crypto.randomUUID();
+          const isPdf = processed.mimeType === "application/pdf";
+          const ext = isPdf ? "pdf" : "jpg";
+          const storagePath = `${report.azubi_id}/${report.id}/${attachmentId}.${ext}`;
+          const thumbPath = isPdf ? undefined : `${report.azubi_id}/${report.id}/${attachmentId}_thumb.jpg`;
+
+          await uploadFile("report-files", storagePath, processed.blob, processed.mimeType);
+          if (processed.thumb && thumbPath) {
+            await uploadFile("report-files", thumbPath, processed.thumb, "image/jpeg");
+          }
+          await insertAttachmentRow({
+            id: attachmentId,
+            reportId: report.id,
+            storagePath,
+            thumbPath,
+            fileName: sanitizeFileName(file.name),
+            mimeType: processed.mimeType,
+            sizeBytes: processed.blob.size,
+            width: processed.width,
+            height: processed.height,
+            sha256: processed.sha256,
+            sortOrder: attachments.length,
+          });
+          setPending((p) => p.filter((x) => x.key !== key));
+          await invalidate();
+        } catch (e) {
+          console.error(e);
+          setPending((p) => p.map((x) => (x.key === key ? { ...x, progress: "error" as const } : x)));
+          toast.error(e instanceof Error ? e.message : "Upload fehlgeschlagen.");
+        }
+      }
+    },
+    [attachments.length, pending.length, report.azubi_id, report.id],
+  );
+
+  const retry = (item: PendingUpload) => {
+    setPending((p) => p.filter((x) => x.key !== item.key));
+    fileRef.current?.click();
+  };
+
+  const remove = async (a: ReportAttachment) => {
+    try {
+      await deleteAttachmentRow(a.id);
+      await removeFile("report-files", a.storage_path);
+      if (a.thumb_path) await removeFile("report-files", a.thumb_path);
+      await invalidate();
+      toast.success("Anhang gelöscht");
+    } catch {
+      toast.error("Löschen fehlgeschlagen.");
+    }
+  };
+
+  const move = async (a: ReportAttachment, dir: -1 | 1) => {
+    const idx = attachments.findIndex((x) => x.id === a.id);
+    const swap = attachments[idx + dir];
+    if (!swap) return;
+    try {
+      await updateAttachment(a.id, { sort_order: swap.sort_order });
+      await updateAttachment(swap.id, { sort_order: a.sort_order });
+      await invalidate();
+    } catch {
+      toast.error("Reihenfolge konnte nicht geändert werden.");
+    }
+  };
+
+  const openViewer = async (a: ReportAttachment, index: number) => {
+    try {
+      const url = await signedUrl("report-files", a.storage_path);
+      if (a.mime_type === "application/pdf") {
+        window.open(url, "_blank", "noopener");
+      } else {
+        setViewer({ index, url });
+      }
+    } catch {
+      toast.error("Datei konnte nicht geöffnet werden.");
+    }
+  };
+
+  const thumbUrl = async (a: ReportAttachment): Promise<string> =>
+    signedUrl("report-files", a.thumb_path ?? a.storage_path);
+
+  return (
+    <section className="space-y-3">
+      <h2 className="font-semibold">Anhänge</h2>
+
+      {editable && (
+        <>
+          <div
+            className={cn(
+              "hidden rounded-2xl border border-dashed p-6 text-center text-sm text-muted-foreground sm:block",
+              dragOver && "border-primary bg-primary/5",
+            )}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragOver(false);
+              void handleFiles(e.dataTransfer.files);
+            }}
+          >
+            Dateien hierher ziehen oder
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={() => cameraRef.current?.click()}>
+              <Camera className="size-4" aria-hidden /> Foto aufnehmen
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={() => galleryRef.current?.click()}>
+              <ImageIcon className="size-4" aria-hidden /> Aus Galerie wählen
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
+              <Upload className="size-4" aria-hidden /> Datei wählen (PDF)
+            </Button>
+          </div>
+          <input
+            ref={cameraRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files) void handleFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+          <input
+            ref={galleryRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files) void handleFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/pdf,image/jpeg,image/png,image/webp"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files) void handleFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+          <p className="text-xs text-muted-foreground">
+            Lade nur Material hoch, das du zeigen darfst – keine Gesichter ohne Einverständnis, keine Kundendaten.
+          </p>
+        </>
+      )}
+
+      {pending.map((p) => (
+        <div key={p.key} className="flex items-center gap-2 rounded-xl border p-3 text-sm">
+          {p.progress === "uploading" ? (
+            <>
+              <Loader2 className="size-4 animate-spin text-primary" aria-hidden />
+              <span className="flex-1 truncate">{p.name}</span>
+              <span className="text-muted-foreground">Lädt…</span>
+            </>
+          ) : (
+            <>
+              <span className="flex-1 truncate text-destructive">{p.name} – fehlgeschlagen</span>
+              <Button type="button" variant="outline" size="sm" onClick={() => retry(p)}>
+                Erneut versuchen
+              </Button>
+            </>
+          )}
+        </div>
+      ))}
+
+      {attachments.length > 0 && (
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {attachments.map((a, i) => (
+            <li key={a.id} className="group relative overflow-hidden rounded-xl border bg-muted/30">
+              <button
+                type="button"
+                className="block aspect-square w-full"
+                onClick={() => void openViewer(a, i)}
+                aria-label={a.file_name}
+              >
+                {a.mime_type === "application/pdf" ? (
+                  <span className="flex h-full flex-col items-center justify-center gap-1 text-muted-foreground">
+                    <FileText className="size-8" aria-hidden />
+                    <span className="px-2 text-center text-xs break-all">{a.file_name}</span>
+                  </span>
+                ) : (
+                  <AttachmentThumb attachment={a} loadUrl={thumbUrl} />
+                )}
+              </button>
+              {editable && (
+                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-background/90 p-1">
+                  <Button type="button" variant="ghost" size="icon" className="size-7" disabled={i === 0} onClick={() => void move(a, -1)} aria-label="Nach vorne">
+                    <ArrowLeft className="size-4" />
+                  </Button>
+                  <Button type="button" variant="ghost" size="icon" className="size-7 text-destructive" onClick={() => void remove(a)} aria-label="Löschen">
+                    <Trash2 className="size-4" />
+                  </Button>
+                  <Button type="button" variant="ghost" size="icon" className="size-7" disabled={i === attachments.length - 1} onClick={() => void move(a, 1)} aria-label="Nach hinten">
+                    <ArrowRight className="size-4" />
+                  </Button>
+                </div>
+              )}
+              {editable && (
+                <div className="p-1.5">
+                  <Input
+                    defaultValue={a.caption ?? ""}
+                    placeholder="Bildunterschrift (optional)"
+                    maxLength={200}
+                    className="h-8 text-xs"
+                    onBlur={(e) => {
+                      const v = e.target.value.trim();
+                      if (v !== (a.caption ?? "")) void updateAttachment(a.id, { caption: v }).then(invalidate);
+                    }}
+                  />
+                </div>
+              )}
+              {!editable && a.caption && <p className="p-1.5 text-xs text-muted-foreground">{a.caption}</p>}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <Dialog open={viewer !== null} onOpenChange={(o) => !o && setViewer(null)}>
+        <DialogContent className="max-w-4xl p-2">
+          {viewer && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={viewer.index === 0}
+                onClick={() => {
+                  const prev = attachments[viewer.index - 1];
+                  if (prev) void openViewer(prev, viewer.index - 1);
+                }}
+                aria-label="Vorheriges Bild"
+              >
+                <ArrowLeft className="size-5" />
+              </Button>
+              <img src={viewer.url} alt="" className="max-h-[80vh] flex-1 object-contain" />
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={viewer.index >= attachments.length - 1}
+                onClick={() => {
+                  const next = attachments[viewer.index + 1];
+                  if (next) void openViewer(next, viewer.index + 1);
+                }}
+                aria-label="Nächstes Bild"
+              >
+                <ArrowRight className="size-5" />
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </section>
+  );
+}
+
+function AttachmentThumb({
+  attachment,
+  loadUrl,
+}: {
+  attachment: ReportAttachment;
+  loadUrl: (a: ReportAttachment) => Promise<string>;
+}) {
+  const [url, setUrl] = useState<string | null>(null);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  const load = useCallback(() => {
+    if (url) return;
+    void loadUrl(attachment).then(setUrl).catch(() => undefined);
+  }, [attachment, loadUrl, url]);
+
+  return (
+    <span
+      ref={(el) => {
+        ref.current = el;
+        if (el && !url) {
+          const obs = new IntersectionObserver((entries) => {
+            if (entries.some((e) => e.isIntersecting)) {
+              load();
+              obs.disconnect();
+            }
+          });
+          obs.observe(el);
+        }
+      }}
+      className="block h-full w-full"
+    >
+      {url ? (
+        <img src={url} alt={attachment.caption ?? attachment.file_name} className="h-full w-full object-cover" loading="lazy" />
+      ) : (
+        <span className="flex h-full items-center justify-center">
+          <Loader2 className="size-5 animate-spin text-muted-foreground" aria-hidden />
+        </span>
+      )}
+    </span>
+  );
+}

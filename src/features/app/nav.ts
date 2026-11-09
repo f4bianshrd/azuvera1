@@ -39,7 +39,7 @@ const TEAM_ROLES: AppRole[] = [...REVIEWER_ROLES, ...VIEWER_ROLES];
  */
 export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: Home, section: "arbeit", to: "/dashboard" },
-  { label: "Berichte", icon: FileText, section: "arbeit" },
+  { label: "Berichte", icon: FileText, section: "arbeit", to: "/reports" },
   { label: "Team", icon: Users, section: "arbeit", roles: TEAM_ROLES },
   { label: "Ausbildungsplan", icon: CalendarDays, section: "arbeit" },
   { label: "Unterweisungen", icon: ShieldCheck, section: "arbeit" },
@@ -78,8 +78,8 @@ export function mobileTabs(role: AppRole): (TabItem | null)[] {
   if (role === "azubi") {
     return [
       { label: "Start", icon: Home, to: "/dashboard" },
-      { label: "Berichte", icon: FileText },
-      { label: "Neuer Bericht", icon: ClipboardCheck, accent: true },
+      { label: "Berichte", icon: FileText, to: "/reports" },
+      { label: "Neuer Bericht", icon: ClipboardCheck, accent: true, to: "/reports/new" },
       { label: "Plan", icon: CalendarDays },
       null, // „Mehr“ wird vom Shell angehängt
     ];
