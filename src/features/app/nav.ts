@@ -9,7 +9,6 @@ import {
   GraduationCap,
   History,
   Home,
-  ScrollText,
   Settings,
   Settings2,
   ShieldCheck,
@@ -102,5 +101,3 @@ export function titleForPath(pathname: string): string {
   if (pathname.startsWith("/stammdaten/berufe")) return "Berufe";
   return "Azuvera";
 }
-
-export { ScrollText };
