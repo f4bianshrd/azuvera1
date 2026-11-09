@@ -18,7 +18,7 @@ interface RDProps {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   title: string;
-  description?: string;
+  description?: string | undefined;
   children: ReactNode;
 }
 
@@ -64,7 +64,7 @@ export function ConfirmDialog({
   open: boolean;
   onOpenChange: (o: boolean) => void;
   title: string;
-  description?: string;
+  description?: string | undefined;
   confirmLabel?: string;
   cancelLabel?: string;
   destructive?: boolean;

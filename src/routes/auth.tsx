@@ -17,14 +17,14 @@ const TITLE = "Anmelden – Azuvera";
 const DESC = "Bei Azuvera anmelden oder ein Konto erstellen – das digitale Berichtsheft für die Ausbildung.";
 
 interface AuthSearch {
-  mode?: string;
-  redirect?: string;
+  mode?: string | undefined;
+  redirect?: string | undefined;
 }
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): AuthSearch => ({
-    mode: typeof search.mode === "string" ? search.mode : undefined,
-    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+    mode: typeof search["mode"] === "string" ? search["mode"] : undefined,
+    redirect: typeof search["redirect"] === "string" ? search["redirect"] : undefined,
   }),
   head: () => ({
     meta: [

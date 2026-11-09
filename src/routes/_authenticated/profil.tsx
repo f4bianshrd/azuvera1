@@ -71,6 +71,38 @@ function Field({
   );
 }
 
+interface ProfileForm {
+  vorname: string;
+  nachname: string;
+  geburtsdatum: string;
+  telefon: string;
+  personalnummer: string;
+  strasse: string;
+  plz: string;
+  ort: string;
+  land: string;
+  notfallkontakt_name: string;
+  notfallkontakt_telefon: string;
+  ausbildungsbeginn: string;
+  ausbildungsende: string;
+}
+
+const emptyProfileForm: ProfileForm = {
+  vorname: "",
+  nachname: "",
+  geburtsdatum: "",
+  telefon: "",
+  personalnummer: "",
+  strasse: "",
+  plz: "",
+  ort: "",
+  land: "Deutschland",
+  notfallkontakt_name: "",
+  notfallkontakt_telefon: "",
+  ausbildungsbeginn: "",
+  ausbildungsende: "",
+};
+
 function ProfilPage() {
   const { data: profile, isLoading } = useMyProfile();
   const queryClient = useQueryClient();
@@ -78,7 +110,7 @@ function ProfilPage() {
   const { data: companies } = useCompanies();
   const { data: professions } = useProfessions();
 
-  const [form, setForm] = useState<Record<string, string>>({});
+  const [form, setForm] = useState<ProfileForm>(emptyProfileForm);
   const [code, setCode] = useState("");
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
@@ -113,7 +145,7 @@ function ProfilPage() {
     );
   }
 
-  const set = (key: string) => (v: string) => setForm((f) => ({ ...f, [key]: v }));
+  const set = (key: keyof ProfileForm) => (v: string) => setForm((f) => ({ ...f, [key]: v }));
   const company = companies?.find((c) => c.id === profile.company_id);
   const profession = professions?.find((p) => p.id === profile.profession_id);
 
