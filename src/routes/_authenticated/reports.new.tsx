@@ -14,8 +14,8 @@ const TITLE = "Neuer Bericht – Azuvera";
 
 export const Route = createFileRoute("/_authenticated/reports/new")({
   validateSearch: (search: Record<string, unknown>): { type?: "daily" | "weekly" | undefined; date?: string | undefined } => ({
-    type: search.type === "daily" || search.type === "weekly" ? search.type : undefined,
-    date: typeof search.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(search.date) ? search.date : undefined,
+    type: search["type"] === "daily" || search["type"] === "weekly" ? (search["type"] as "daily" | "weekly") : undefined,
+    date: typeof search["date"] === "string" && /^\d{4}-\d{2}-\d{2}$/.test(search["date"]) ? search["date"] : undefined,
   }),
   head: () => ({
     meta: [

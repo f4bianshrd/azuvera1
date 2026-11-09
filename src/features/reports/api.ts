@@ -44,7 +44,7 @@ export interface ReportDraftPatch {
 }
 
 export interface ReportFilters {
-  azubiId?: string;
+  azubiId?: string | undefined;
   status?: ReportStatus | "all";
   type?: ReportType | "all";
   search?: string;

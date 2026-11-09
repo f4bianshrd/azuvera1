@@ -20,7 +20,7 @@ const PAGE_SIZE = 50;
 
 export const Route = createFileRoute("/_authenticated/reports")({
   validateSearch: (search: Record<string, unknown>): { azubi?: string | undefined } => ({
-    azubi: typeof search.azubi === "string" ? search.azubi : undefined,
+    azubi: typeof search["azubi"] === "string" ? (search["azubi"] as string) : undefined,
   }),
   head: () => ({
     meta: [

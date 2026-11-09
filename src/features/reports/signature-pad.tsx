@@ -32,8 +32,8 @@ export function SignaturePad({ onChange }: { onChange: (valid: boolean, png: Blo
       ctx.beginPath();
       ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
       for (let i = 1; i < stroke.points.length; i++) {
-        const prev = stroke.points[i - 1];
-        const p = stroke.points[i];
+        const prev = stroke.points[i - 1]!;
+        const p = stroke.points[i]!;
         ctx.quadraticCurveTo(prev.x, prev.y, (prev.x + p.x) / 2, (prev.y + p.y) / 2);
       }
       ctx.stroke();
@@ -93,7 +93,7 @@ export function SignaturePad({ onChange }: { onChange: (valid: boolean, png: Blo
           onPointerMove={(e) => {
             if (!drawingRef.current) return;
             const stroke = strokesRef.current[strokesRef.current.length - 1];
-            stroke.points.push(pointFromEvent(e));
+            stroke?.points.push(pointFromEvent(e));
             redraw();
           }}
           onPointerUp={() => {
