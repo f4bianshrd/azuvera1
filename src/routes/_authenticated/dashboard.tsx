@@ -90,7 +90,7 @@ function OnboardingDialog({
   const [year, setYear] = useState("1");
   const [busy, setBusy] = useState(false);
 
-  const { data: professions } = useQueryProfessions();
+  const { data: professions } = useProfessions();
 
   const finish = async () => {
     setBusy(true);
@@ -195,15 +195,4 @@ function OnboardingDialog({
       </div>
     </ResponsiveDialog>
   );
-}
-
-export function useQueryProfessions() {
-  const { useQuery } = require("@tanstack/react-query") as typeof import("@tanstack/react-query");
-  return useQuery({
-    queryKey: ["professions"],
-    queryFn: async () => {
-      const { data } = await supabase.from("professions").select("id, name").order("name");
-      return data ?? [];
-    },
-  });
 }
