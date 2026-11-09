@@ -63,7 +63,7 @@ export function SignaturePad({ onChange }: { onChange: (valid: boolean, png: Blo
         sum +
         s.points.reduce((acc, p, i) => {
           if (i === 0) return 0;
-          const prev = s.points[i - 1];
+          const prev = s.points[i - 1]!;
           return acc + Math.hypot(p.x - prev.x, p.y - prev.y);
         }, 0),
       0,
