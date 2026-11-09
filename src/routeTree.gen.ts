@@ -22,6 +22,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin.einstellungen'
+import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
 import { Route as AuthenticatedReportsNewRouteImport } from './routes/_authenticated/reports.new'
 import { Route as AuthenticatedStammdatenBerufeRouteImport } from './routes/_authenticated/stammdaten.berufe'
@@ -94,6 +95,12 @@ const AuthenticatedAdminEinstellungenRoute =
     path: '/einstellungen',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedReportsIndexRoute =
+  AuthenticatedReportsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedReportsRoute,
+  } as any)
 const AuthenticatedReportsIdRoute = AuthenticatedReportsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -134,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/reports/': typeof AuthenticatedReportsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -146,12 +154,12 @@ export interface FileRoutesByTo {
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profil': typeof AuthenticatedProfilRoute
-  '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/reports': typeof AuthenticatedReportsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/_authenticated/reports/new': typeof AuthenticatedReportsNewRoute
   '/_authenticated/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/_authenticated/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
+    | '/reports/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -204,12 +214,12 @@ export interface FileRouteTypes {
     | '/benachrichtigungen'
     | '/dashboard'
     | '/profil'
-    | '/reports'
     | '/admin/einstellungen'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
+    | '/reports'
   id:
     | '__root__'
     | '/'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports/new'
     | '/_authenticated/stammdaten/berufe'
     | '/_authenticated/stammdaten/betriebe'
+    | '/_authenticated/reports/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -333,6 +344,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEinstellungenRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/reports/': {
+      id: '/_authenticated/reports/'
+      path: '/'
+      fullPath: '/reports/'
+      preLoaderRoute: typeof AuthenticatedReportsIndexRouteImport
+      parentRoute: typeof AuthenticatedReportsRoute
+    }
     '/_authenticated/reports/$id': {
       id: '/_authenticated/reports/$id'
       path: '/$id'
@@ -378,11 +396,13 @@ const AuthenticatedAdminRouteWithChildren =
 interface AuthenticatedReportsRouteChildren {
   AuthenticatedReportsIdRoute: typeof AuthenticatedReportsIdRoute
   AuthenticatedReportsNewRoute: typeof AuthenticatedReportsNewRoute
+  AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
 }
 
 const AuthenticatedReportsRouteChildren: AuthenticatedReportsRouteChildren = {
   AuthenticatedReportsIdRoute: AuthenticatedReportsIdRoute,
   AuthenticatedReportsNewRoute: AuthenticatedReportsNewRoute,
+  AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
 }
 
 const AuthenticatedReportsRouteWithChildren =
