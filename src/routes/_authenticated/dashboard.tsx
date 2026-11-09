@@ -162,12 +162,12 @@ function Dashboard() {
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button asChild variant="secondary">
-            <Link to="/reports/new" search={{ type: undefined, date: undefined }}>
+            <Link to="/reports/new">
               Neuer Bericht
             </Link>
           </Button>
           <Button asChild variant="ghost" className="text-primary-foreground hover:bg-white/10 hover:text-primary-foreground">
-            <Link to="/reports" search={{ azubi: undefined }}>
+            <Link to="/reports">
               Alle ansehen
             </Link>
           </Button>
@@ -211,7 +211,7 @@ function Dashboard() {
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Letzte Berichte</h2>
           <Button variant="link" size="sm" asChild className="h-auto px-0">
-            <Link to="/reports" search={{ azubi: undefined }}>
+            <Link to="/reports">
               Alle
             </Link>
           </Button>
@@ -220,7 +220,7 @@ function Dashboard() {
           <div className="mt-3 text-sm text-muted-foreground">
             <p>Noch keine Berichte – leg gleich los.</p>
             <Button asChild size="sm" className="mt-2">
-              <Link to="/reports/new" search={{ type: undefined, date: undefined }}>
+              <Link to="/reports/new">
                 Ersten Bericht erstellen
               </Link>
             </Button>
@@ -248,7 +248,7 @@ function Dashboard() {
         <div>
           <CoverageDonut coverage={coverage} title={`Abdeckung · ${coveragePeriod!.year}. Lehrjahr`} size={140} />
           <Button variant="link" size="sm" asChild className="mt-1 h-auto px-0">
-            <Link to="/reports" search={{ azubi: undefined }}>
+            <Link to="/reports">
               Zur Berichte-Übersicht <ArrowRight className="size-3.5" aria-hidden />
             </Link>
           </Button>

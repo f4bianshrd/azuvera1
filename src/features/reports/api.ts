@@ -163,8 +163,8 @@ export async function submitReport(input: {
   reportId: string;
   expectedVersion: number;
   method: "draw" | "click";
-  imagePath?: string;
-  clientSignedAt?: string;
+  imagePath?: string | undefined;
+  clientSignedAt?: string | undefined;
 }): Promise<void> {
   const { error } = await supabase.rpc("submit_report", {
     _report_id: input.reportId,

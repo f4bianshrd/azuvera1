@@ -19,7 +19,7 @@ const TITLE = "Berichte – Azuvera";
 const PAGE_SIZE = 50;
 
 export const Route = createFileRoute("/_authenticated/reports")({
-  validateSearch: (search: Record<string, unknown>): { azubi?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { azubi?: string | undefined } => ({
     azubi: typeof search.azubi === "string" ? search.azubi : undefined,
   }),
   head: () => ({
