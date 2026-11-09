@@ -399,6 +399,267 @@ export type Database = {
           },
         ]
       }
+      report_attachments: {
+        Row: {
+          azubi_id: string
+          caption: string | null
+          created_at: string
+          file_name: string
+          height: number | null
+          id: string
+          mime_type: string
+          report_id: string
+          sha256: string | null
+          size_bytes: number
+          sort_order: number
+          storage_path: string
+          thumb_path: string | null
+          width: number | null
+        }
+        Insert: {
+          azubi_id: string
+          caption?: string | null
+          created_at?: string
+          file_name: string
+          height?: number | null
+          id?: string
+          mime_type: string
+          report_id: string
+          sha256?: string | null
+          size_bytes: number
+          sort_order?: number
+          storage_path: string
+          thumb_path?: string | null
+          width?: number | null
+        }
+        Update: {
+          azubi_id?: string
+          caption?: string | null
+          created_at?: string
+          file_name?: string
+          height?: number | null
+          id?: string
+          mime_type?: string
+          report_id?: string
+          sha256?: string | null
+          size_bytes?: number
+          sort_order?: number
+          storage_path?: string
+          thumb_path?: string | null
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_attachments_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_attachments_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_signatures: {
+        Row: {
+          client_signed_at: string | null
+          content_hash: string | null
+          id: string
+          image_path: string | null
+          method: string
+          on_behalf_of: string | null
+          report_id: string
+          report_version: number
+          role: string
+          signed_at: string
+          signer_id: string
+          signer_name: string
+          signer_role_label: string | null
+        }
+        Insert: {
+          client_signed_at?: string | null
+          content_hash?: string | null
+          id?: string
+          image_path?: string | null
+          method: string
+          on_behalf_of?: string | null
+          report_id: string
+          report_version: number
+          role: string
+          signed_at?: string
+          signer_id: string
+          signer_name: string
+          signer_role_label?: string | null
+        }
+        Update: {
+          client_signed_at?: string | null
+          content_hash?: string | null
+          id?: string
+          image_path?: string | null
+          method?: string
+          on_behalf_of?: string | null
+          report_id?: string
+          report_version?: number
+          role?: string
+          signed_at?: string
+          signer_id?: string
+          signer_name?: string
+          signer_role_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_signatures_on_behalf_of_fkey"
+            columns: ["on_behalf_of"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_signatures_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_signatures_signer_id_fkey"
+            columns: ["signer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_versions: {
+        Row: {
+          changed_by: string | null
+          content_hash: string | null
+          created_at: string
+          id: string
+          report_id: string
+          snapshot: Json
+          status: Database["public"]["Enums"]["report_status"]
+          version: number
+        }
+        Insert: {
+          changed_by?: string | null
+          content_hash?: string | null
+          created_at?: string
+          id?: string
+          report_id: string
+          snapshot: Json
+          status: Database["public"]["Enums"]["report_status"]
+          version: number
+        }
+        Update: {
+          changed_by?: string | null
+          content_hash?: string | null
+          created_at?: string
+          id?: string
+          report_id?: string
+          snapshot?: Json
+          status?: Database["public"]["Enums"]["report_status"]
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_versions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          activities: string | null
+          azubi_id: string
+          content_hash: string | null
+          created_at: string
+          id: string
+          instructions: string | null
+          report_date: string
+          report_type: Database["public"]["Enums"]["report_type"]
+          review_note: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          school_content: string | null
+          status: Database["public"]["Enums"]["report_status"]
+          submitted_at: string | null
+          summary: string | null
+          updated_at: string
+          version: number
+          week_number: number | null
+          weekly_mode: string
+          year: number | null
+        }
+        Insert: {
+          activities?: string | null
+          azubi_id: string
+          content_hash?: string | null
+          created_at?: string
+          id?: string
+          instructions?: string | null
+          report_date: string
+          report_type: Database["public"]["Enums"]["report_type"]
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          school_content?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          submitted_at?: string | null
+          summary?: string | null
+          updated_at?: string
+          version?: number
+          week_number?: number | null
+          weekly_mode?: string
+          year?: number | null
+        }
+        Update: {
+          activities?: string | null
+          azubi_id?: string
+          content_hash?: string | null
+          created_at?: string
+          id?: string
+          instructions?: string | null
+          report_date?: string
+          report_type?: Database["public"]["Enums"]["report_type"]
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          school_content?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          submitted_at?: string | null
+          summary?: string | null
+          updated_at?: string
+          version?: number
+          week_number?: number | null
+          weekly_mode?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -501,10 +762,29 @@ export type Database = {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      report_canonical: { Args: { _report_id: string }; Returns: string }
+      report_hash: { Args: { _report_id: string }; Returns: string }
       revoke_invite_code: { Args: { _code: string }; Returns: undefined }
       set_my_profession: {
         Args: { _profession_id: string }
         Returns: undefined
+      }
+      submit_report: {
+        Args: {
+          _client_signed_at?: string
+          _expected_version: number
+          _image_path?: string
+          _method: string
+          _report_id: string
+        }
+        Returns: undefined
+      }
+      team_week_status: {
+        Args: { _week_start: string }
+        Returns: {
+          azubi_id: string
+          status: Database["public"]["Enums"]["report_status"]
+        }[]
       }
       write_audit: {
         Args: {
@@ -525,6 +805,8 @@ export type Database = {
         | "ausbildungsberater"
         | "lehrer"
         | "ausbildungsleitung"
+      report_status: "draft" | "submitted" | "approved" | "rejected"
+      report_type: "daily" | "weekly"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -660,6 +942,8 @@ export const Constants = {
         "lehrer",
         "ausbildungsleitung",
       ],
+      report_status: ["draft", "submitted", "approved", "rejected"],
+      report_type: ["daily", "weekly"],
     },
   },
 } as const
