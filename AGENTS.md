@@ -34,3 +34,6 @@ use the editor.
 - Features live in `src/features/<module>`; shared UI (PageHeader, StatusBadge, dialogs…) in `src/components` for reuse across modules.
 - Privacy policy sections are a data list (`privacySections`) so later modules append sections instead of editing markup.
 - No web fonts (offline + privacy); colors only via oklch tokens in `src/styles.css`.
+- Lovable Cloud backend: schema changes only via the migration tool (drizzle/migrations is managed); RLS + tight GRANTs on every public table, privileged writes only through SECURITY DEFINER functions in `public`.
+- Signed-in pages live under `src/routes/_authenticated/` behind the client-side auth gate and the shared `AppShell` (mobile tab bar / collapsible sidebar); nav items in `src/features/app/nav.ts` appear only when their route exists, so later Bausteine append entries there.
+- Roles come from `user_roles` via `useMyProfile()` (`src/features/app/session.ts`); never from user-editable metadata. `audit_log` is append-only with a hash chain — never update or delete rows.

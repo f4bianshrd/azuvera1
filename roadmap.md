@@ -1,25 +1,36 @@
 # Azuvera – Baustein 1B Roadmap
 
 ## Backend (Lovable Cloud)
-- [ ] E-Mail-Auth aktivieren (enable_email_auth)
-- [ ] Auth-Einstellungen: HIBP-Passwortschutz, current_password für Passwortänderung
-- [ ] Migration: app_role-Enum, Tabellen (profiles, user_roles, companies, professions, company_professions, azubi_viewers, invite_codes, app_settings, notifications, audit_log), Grants, RLS
-- [ ] Migration: Funktionen (has_role, is_leitung, is_reviewer_role, can_review_for, can_view_azubi, display_names, admin_*, invite-Code-Funktionen, set_my_profession, write_audit, audit_hash), Trigger (Signup, Hash-Kette, updated_at, audit-Schutz)
-- [ ] Storage-Bucket company-logos (privat) + Policies
-- [ ] Realtime für notifications
-- [ ] app_settings-Startwert hosting_location_text (öffentlich)
+- [x] E-Mail-Auth aktivieren (enable_email_auth)
+- [x] Auth-Einstellungen: HIBP-Passwortschutz, current_password für Passwortänderung
+- [x] Migration: app_role-Enum, Tabellen, Grants, RLS
+- [x] Migration: Funktionen, Trigger (Signup, Hash-Kette, updated_at, audit-Schutz)
+- [x] Storage-Bucket company-logos (privat) + Policies
+- [x] Realtime für notifications
+- [x] app_settings-Startwert hosting_location_text (öffentlich)
+- [x] Grants auf Mindestrechte eingeschränkt + per SQL verifiziert
 
 ## Frontend
-- [ ] /auth (Anmelden/Registrieren, ?mode=signup, Passwort-vergessen-Dialog, „Fast geschafft“)
-- [ ] /reset-password
-- [ ] App-Gerüst (_authenticated): Handy-Tab-Leiste, Tablet-Sidebar, PC-Sidebar, Glocke mit Realtime-Zähler, Mehr-Sheet, Tastenkürzel
-- [ ] /dashboard (Begrüßung mit Vorname)
-- [ ] /profil (Rolle, Code einlösen, persönliche Daten, Anschrift, Notfallkontakt, Ausbildung, Sicherheit, Darstellung, Erste Schritte für Azubis)
-- [ ] /admin (Benutzer & Rollen, Einladungs-Codes)
-- [ ] /stammdaten/betriebe, /stammdaten/berufe
-- [ ] /admin/einstellungen (hosting_location_text)
-- [ ] Datenschutzseite liest hosting_location_text aus app_settings
+- [x] /auth (Anmelden/Registrieren, ?mode=signup, Passwort-vergessen-Dialog, „Fast geschafft“)
+- [x] /reset-password
+- [x] App-Gerüst (_authenticated): Handy-Tab-Leiste, Tablet/PC-Sidebar, Glocke mit Realtime, Mehr-Sheet, ?-Kürzelübersicht
+- [x] /dashboard (Begrüßung mit Vorname)
+- [x] /profil (alle Karten + Erste Schritte für Azubis)
+- [x] /admin (Benutzer & Rollen, Einladungs-Codes)
+- [x] /stammdaten/betriebe, /stammdaten/berufe
+- [x] /admin/einstellungen (hosting_location_text)
+- [x] /benachrichtigungen, /aenderungsprotokoll
+- [x] Datenschutzseite liest hosting_location_text aus app_settings
 
-## Abnahme
-- [ ] Tests + SQL-Prüfung der Abnahmepunkte (Grants/Policies, Hash-Kette, kein Standard-Admin)
-- [ ] Layout-Check 390/820/1180/1440 px
+## Abnahme (geprüft)
+- [x] Registrierung als Azubi klappt, Bestätigungs-E-Mail wird gesendet; ungültiger Code bricht mit der vorgegebenen Meldung ab
+- [x] Zweites Konto kann user_roles und geschützte Profil-Felder nicht ändern (per API getestet)
+- [x] Azubi sieht keine fremden Profile/Rollen (per API getestet)
+- [x] audit_log unveränderlich (UPDATE blockiert), Hash-Kette verifiziert
+- [x] Layout 390/820/1440 px ohne horizontales Scrollen; 1180 px nicht separat geprüft
+- [x] Kein Standard-Admin, keine feste E-Mail im Code
+- [x] Datenschutzseite zeigt Speicherort aus app_settings
+
+## Offen / spätere Bausteine
+- [ ] Tastenkürzel N und / werden aktiv, sobald die Berichte-Seiten existieren (Baustein 2)
+- [ ] Baustein 2: Berichte; Baustein 3+: Team, Plan, Unterweisungen, Abwesenheiten, Schulnoten, Erinnerungen
