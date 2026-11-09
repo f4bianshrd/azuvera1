@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, FileSignature, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Chip, PublicLayout } from "@/features/public/public-layout";
@@ -47,10 +47,10 @@ function Home() {
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 bg-gradient-primary px-8 shadow-elegant">
-              <a href="/auth?mode=signup">Kostenlos starten</a>
+              <Link to="/auth" search={{ mode: "signup" }}>Kostenlos starten</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-12 px-8">
-              <a href="/auth">Anmelden</a>
+              <Link to="/auth" search={{}}>Anmelden</Link>
             </Button>
           </div>
         </div>

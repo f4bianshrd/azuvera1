@@ -15,10 +15,10 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           </Link>
           <nav className="flex items-center gap-1 sm:gap-2">
             <Button asChild variant="ghost" className="h-11">
-              <a href="/auth">Anmelden</a>
+              <Link to="/auth" search={{}}>Anmelden</Link>
             </Button>
             <Button asChild className="h-11">
-              <a href="/auth?mode=signup">Registrieren</a>
+              <Link to="/auth" search={{ mode: "signup" }}>Registrieren</Link>
             </Button>
           </nav>
         </div>
