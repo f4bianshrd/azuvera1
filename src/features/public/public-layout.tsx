@@ -14,7 +14,6 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             <Logo />
           </Link>
           <nav className="flex items-center gap-1 sm:gap-2">
-            <ThemeToggle />
             <Button asChild variant="ghost" className="h-11">
               <a href="/auth">Anmelden</a>
             </Button>
@@ -28,7 +27,8 @@ export function PublicLayout({ children }: { children: ReactNode }) {
       <footer className="border-t">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Azuvera.</span>
-          <div className="flex gap-4">
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Link to="/impressum" className="inline-flex min-h-11 items-center hover:text-foreground">
               Impressum
             </Link>
