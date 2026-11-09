@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared";
 import { useMyProfile } from "@/features/app/session";
-import { findExistingReport, type Report } from "@/features/reports/api";
+import { findExistingReport, getReport, type Report } from "@/features/reports/api";
 import { AttachmentSection } from "@/features/reports/attachment-section";
 import { ReportEditor, isoWeekOf, type EditorState } from "@/features/reports/report-editor";
 import { SubmitSheet } from "@/features/reports/submit-sheet";
@@ -126,6 +126,23 @@ function NewReportPage() {
           onSubmitted={() => void navigate({ to: "/reports/$id", params: { id: report.id } })}
         />
       )}
+    </div>
+  );
+}
+
+/** Anhänge, sobald der Entwurf per Autosave angelegt wurde. */
+function NewReportAttachments({ report }: { report: Report }) {
+  const { data } = useQuery({
+    queryKey: ["reports", report.id],
+    queryFn: () => getReport(report.id),
+  });
+  return (
+    <div className="mt-6">
+      <AttachmentSection
+        report={report}
+        attachments={data?.attachments ?? []}
+        editable={report.status === "draft" || report.status === "rejected"}
+      />
     </div>
   );
 }
