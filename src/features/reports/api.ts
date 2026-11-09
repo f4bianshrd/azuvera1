@@ -170,8 +170,8 @@ export async function submitReport(input: {
     _report_id: input.reportId,
     _expected_version: input.expectedVersion,
     _method: input.method,
-    _image_path: input.imagePath ?? null,
-    _client_signed_at: input.clientSignedAt ?? null,
+    _image_path: input.imagePath ?? undefined,
+    _client_signed_at: input.clientSignedAt ?? undefined,
   });
   if (error) {
     if (error.message.includes("inzwischen geändert")) throw new ReportConflictError();
