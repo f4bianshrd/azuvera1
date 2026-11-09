@@ -14,7 +14,412 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          is_public: boolean
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          is_public?: boolean
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          is_public?: boolean
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_role: Database["public"]["Enums"]["app_role"] | null
+          azubi_id: string | null
+          chain_key: string
+          created_at: string
+          details: Json
+          entity_id: string | null
+          entity_type: string
+          id: number
+          prev_hash: string | null
+          row_hash: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_role?: Database["public"]["Enums"]["app_role"] | null
+          azubi_id?: string | null
+          chain_key?: string
+          created_at?: string
+          details?: Json
+          entity_id?: string | null
+          entity_type: string
+          id?: never
+          prev_hash?: string | null
+          row_hash?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_role?: Database["public"]["Enums"]["app_role"] | null
+          azubi_id?: string | null
+          chain_key?: string
+          created_at?: string
+          details?: Json
+          entity_id?: string | null
+          entity_type?: string
+          id?: never
+          prev_hash?: string | null
+          row_hash?: string | null
+        }
+        Relationships: []
+      }
+      azubi_viewers: {
+        Row: {
+          azubi_id: string
+          created_at: string
+          created_by: string | null
+          viewer_id: string
+        }
+        Insert: {
+          azubi_id: string
+          created_at?: string
+          created_by?: string | null
+          viewer_id: string
+        }
+        Update: {
+          azubi_id?: string
+          created_at?: string
+          created_by?: string | null
+          viewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "azubi_viewers_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "azubi_viewers_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      companies: {
+        Row: {
+          address: string | null
+          chamber: string | null
+          contact_email: string | null
+          contact_person: string | null
+          contact_phone: string | null
+          created_at: string
+          id: string
+          legal_form: string | null
+          logo_url: string | null
+          name: string
+          training_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          chamber?: string | null
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          legal_form?: string | null
+          logo_url?: string | null
+          name: string
+          training_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          chamber?: string | null
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          legal_form?: string | null
+          logo_url?: string | null
+          name?: string
+          training_number?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      company_professions: {
+        Row: {
+          company_id: string
+          created_at: string
+          profession_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          profession_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          profession_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_professions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_professions_profession_id_fkey"
+            columns: ["profession_id"]
+            isOneToOne: false
+            referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invite_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          note: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          expires_at: string
+          id?: string
+          note?: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          note?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          link: string | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      professions: {
+        Row: {
+          chamber: string | null
+          code: string | null
+          created_at: string
+          description: string | null
+          duration_months: number
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          chamber?: string | null
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          duration_months?: number
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          chamber?: string | null
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          duration_months?: number
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          ausbilder_id: string | null
+          ausbildungsbeginn: string | null
+          ausbildungsende: string | null
+          company_id: string | null
+          created_at: string
+          email: string
+          full_name: string
+          geburtsdatum: string | null
+          id: string
+          land: string
+          nachname: string
+          notfallkontakt_name: string | null
+          notfallkontakt_telefon: string | null
+          ort: string | null
+          personalnummer: string | null
+          plz: string | null
+          profession_id: string | null
+          strasse: string | null
+          telefon: string | null
+          updated_at: string
+          vorname: string
+        }
+        Insert: {
+          ausbilder_id?: string | null
+          ausbildungsbeginn?: string | null
+          ausbildungsende?: string | null
+          company_id?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          geburtsdatum?: string | null
+          id: string
+          land?: string
+          nachname?: string
+          notfallkontakt_name?: string | null
+          notfallkontakt_telefon?: string | null
+          ort?: string | null
+          personalnummer?: string | null
+          plz?: string | null
+          profession_id?: string | null
+          strasse?: string | null
+          telefon?: string | null
+          updated_at?: string
+          vorname?: string
+        }
+        Update: {
+          ausbilder_id?: string | null
+          ausbildungsbeginn?: string | null
+          ausbildungsende?: string | null
+          company_id?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          geburtsdatum?: string | null
+          id?: string
+          land?: string
+          nachname?: string
+          notfallkontakt_name?: string | null
+          notfallkontakt_telefon?: string | null
+          ort?: string | null
+          personalnummer?: string | null
+          plz?: string | null
+          profession_id?: string | null
+          strasse?: string | null
+          telefon?: string | null
+          updated_at?: string
+          vorname?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_ausbilder_fk"
+            columns: ["ausbilder_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_company_fk"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_profession_fk"
+            columns: ["profession_id"]
+            isOneToOne: false
+            referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +428,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "azubi"
+        | "ausbilder"
+        | "betriebsleiter"
+        | "ausbildungsberater"
+        | "lehrer"
+        | "ausbildungsleitung"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +561,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "azubi",
+        "ausbilder",
+        "betriebsleiter",
+        "ausbildungsberater",
+        "lehrer",
+        "ausbildungsleitung",
+      ],
+    },
   },
 } as const
