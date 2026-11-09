@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { supabase } from "@/integrations/supabase/client";
 import { InfoCard, LegalHeader, PublicLayout } from "@/features/public/public-layout";
-import { privacySections } from "@/features/public/privacy-sections";
+import { HOSTING_LOCATION_DEFAULT, privacySections } from "@/features/public/privacy-sections";
 
 const TITLE = "Datenschutz – Azuvera";
 const DESC = "Datenschutzerklärung nach DSGVO für Azuvera, das digitale Berichtsheft.";
@@ -23,7 +25,20 @@ export const Route = createFileRoute("/datenschutz")({
 });
 
 function Datenschutz() {
-  const sections = privacySections();
+  // Speicherort kommt aus den Einstellungen (öffentlicher Schlüssel, auch ohne Anmeldung lesbar).
+  const { data: hostingLocation } = useQuery({
+    queryKey: ["app-settings", "hosting_location_text"],
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("app_settings")
+        .select("value")
+        .eq("key", "hosting_location_text")
+        .maybeSingle();
+      return typeof data?.value === "string" ? data.value : HOSTING_LOCATION_DEFAULT;
+    },
+  });
+  const sections = privacySections(hostingLocation ?? HOSTING_LOCATION_DEFAULT);
   return (
     <PublicLayout>
       <LegalHeader

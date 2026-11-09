@@ -16,9 +16,13 @@ import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAenderungsprotokollRouteImport } from './routes/_authenticated/aenderungsprotokoll'
+import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_authenticated/benachrichtigungen'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin.einstellungen'
+import { Route as AuthenticatedStammdatenBerufeRouteImport } from './routes/_authenticated/stammdaten.berufe'
+import { Route as AuthenticatedStammdatenBetriebeRouteImport } from './routes/_authenticated/stammdaten.betriebe'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -54,6 +58,18 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAenderungsprotokollRoute =
+  AuthenticatedAenderungsprotokollRouteImport.update({
+    id: '/aenderungsprotokoll',
+    path: '/aenderungsprotokoll',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedBenachrichtigungenRoute =
+  AuthenticatedBenachrichtigungenRouteImport.update({
+    id: '/benachrichtigungen',
+    path: '/benachrichtigungen',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -70,6 +86,18 @@ const AuthenticatedAdminEinstellungenRoute =
     path: '/einstellungen',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedStammdatenBerufeRoute =
+  AuthenticatedStammdatenBerufeRouteImport.update({
+    id: '/stammdaten/berufe',
+    path: '/stammdaten/berufe',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStammdatenBetriebeRoute =
+  AuthenticatedStammdatenBetriebeRouteImport.update({
+    id: '/stammdaten/betriebe',
+    path: '/stammdaten/betriebe',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -78,9 +106,13 @@ export interface FileRoutesByFullPath {
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
+  '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
+  '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
+  '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -89,9 +121,13 @@ export interface FileRoutesByTo {
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
+  '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
+  '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
+  '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -102,9 +138,13 @@ export interface FileRoutesById {
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
+  '/_authenticated/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/_authenticated/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
+  '/_authenticated/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
+  '/_authenticated/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -115,9 +155,13 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/reset-password'
     | '/admin'
+    | '/aenderungsprotokoll'
+    | '/benachrichtigungen'
     | '/dashboard'
     | '/profil'
     | '/admin/einstellungen'
+    | '/stammdaten/berufe'
+    | '/stammdaten/betriebe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -126,9 +170,13 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/reset-password'
     | '/admin'
+    | '/aenderungsprotokoll'
+    | '/benachrichtigungen'
     | '/dashboard'
     | '/profil'
     | '/admin/einstellungen'
+    | '/stammdaten/berufe'
+    | '/stammdaten/betriebe'
   id:
     | '__root__'
     | '/'
@@ -138,9 +186,13 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/reset-password'
     | '/_authenticated/admin'
+    | '/_authenticated/aenderungsprotokoll'
+    | '/_authenticated/benachrichtigungen'
     | '/_authenticated/dashboard'
     | '/_authenticated/profil'
     | '/_authenticated/admin/einstellungen'
+    | '/_authenticated/stammdaten/berufe'
+    | '/_authenticated/stammdaten/betriebe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -203,6 +255,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/aenderungsprotokoll': {
+      id: '/_authenticated/aenderungsprotokoll'
+      path: '/aenderungsprotokoll'
+      fullPath: '/aenderungsprotokoll'
+      preLoaderRoute: typeof AuthenticatedAenderungsprotokollRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/benachrichtigungen': {
+      id: '/_authenticated/benachrichtigungen'
+      path: '/benachrichtigungen'
+      fullPath: '/benachrichtigungen'
+      preLoaderRoute: typeof AuthenticatedBenachrichtigungenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -224,6 +290,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEinstellungenRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/stammdaten/berufe': {
+      id: '/_authenticated/stammdaten/berufe'
+      path: '/stammdaten/berufe'
+      fullPath: '/stammdaten/berufe'
+      preLoaderRoute: typeof AuthenticatedStammdatenBerufeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/stammdaten/betriebe': {
+      id: '/_authenticated/stammdaten/betriebe'
+      path: '/stammdaten/betriebe'
+      fullPath: '/stammdaten/betriebe'
+      preLoaderRoute: typeof AuthenticatedStammdatenBetriebeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -240,14 +320,22 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedAenderungsprotokollRoute: typeof AuthenticatedAenderungsprotokollRoute
+  AuthenticatedBenachrichtigungenRoute: typeof AuthenticatedBenachrichtigungenRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
+  AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
+  AuthenticatedStammdatenBetriebeRoute: typeof AuthenticatedStammdatenBetriebeRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedAenderungsprotokollRoute: AuthenticatedAenderungsprotokollRoute,
+  AuthenticatedBenachrichtigungenRoute: AuthenticatedBenachrichtigungenRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
+  AuthenticatedStammdatenBerufeRoute: AuthenticatedStammdatenBerufeRoute,
+  AuthenticatedStammdatenBetriebeRoute: AuthenticatedStammdatenBetriebeRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
