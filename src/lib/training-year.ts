@@ -49,9 +49,11 @@ export function yearOfDate(date: Date, start: Date, end?: Date): number | null {
 
 export function currentTrainingYear(start: Date, end?: Date, today: Date = new Date()): number {
   const years = trainingYears(start, end);
-  if (years.length === 0) return 1;
+  const first = years[0];
+  const last = years[years.length - 1];
+  if (!first || !last) return 1;
   const d = startOfDay(today);
-  if (isBefore(d, years[0].start)) return 1;
-  if (isAfter(d, years[years.length - 1].end)) return years[years.length - 1].year;
+  if (isBefore(d, first.start)) return 1;
+  if (isAfter(d, last.end)) return last.year;
   return yearOfDate(d, start, end) ?? 1;
 }

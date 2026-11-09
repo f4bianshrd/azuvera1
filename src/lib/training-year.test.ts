@@ -19,7 +19,7 @@ describe("training-year", () => {
   it("trainingYears kappt am Ende", () => {
     const ys = trainingYears(d(2025, 8, 1), d(2027, 1, 31));
     expect(ys).toHaveLength(2);
-    expect(ys[1].end).toEqual(d(2027, 1, 31));
+    expect(ys[1]?.end).toEqual(d(2027, 1, 31));
   });
   it("yearOfDate und currentTrainingYear", () => {
     expect(yearOfDate(d(2026, 7, 31), d(2025, 8, 1))).toBe(1);
