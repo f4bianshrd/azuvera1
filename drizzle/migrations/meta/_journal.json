@@ -57,6 +57,13 @@
       "when": 1794236238508,
       "tag": "0007_reports_core",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794236256323,
+      "tag": "0008_report_storage_policies",
+      "breakpoints": true
     }
   ]
 }
