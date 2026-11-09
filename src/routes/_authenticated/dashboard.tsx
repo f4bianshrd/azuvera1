@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ResponsiveDialog } from "@/components/dialogs";
 import { PageHeader } from "@/components/shared";
 import { useMyProfile } from "@/features/app/session";
+import { useProfessions } from "@/features/app/queries";
 import { defaultPeriodForYear } from "@/lib/training-year";
 import { format } from "date-fns";
 
