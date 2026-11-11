@@ -112,6 +112,8 @@ const emptyProfileForm: ProfileForm = {
 
 function ProfilPage() {
   const { data: profile, isLoading } = useMyProfile();
+  const online = useOnline();
+  const globalSignOut = useSignOut(true);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { data: companies } = useCompanies();
