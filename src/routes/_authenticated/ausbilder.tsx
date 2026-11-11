@@ -31,18 +31,21 @@ import {
 } from "@/features/review/api";
 import { filterVisibleReports, isOverdue, reviewAgeLabel } from "@/features/review/review-utils";
 import { cn } from "@/lib/utils";
+import { DeputyPanel, DeputyBanner } from "@/features/deputies/deputy-panel";
+import { REVIEWER_ROLES } from "@/features/app/session";
 
 const TITLE = "Ausbilderportal – Azuvera";
-type PortalTab = "pruefen" | "abwesenheiten" | "alle";
+type PortalTab = "pruefen" | "abwesenheiten" | "alle" | "vertretung";
 
 export const Route = createFileRoute("/_authenticated/ausbilder")({
   validateSearch: (search: Record<string, unknown>): { tab?: PortalTab | undefined } => ({
-    tab: search["tab"] === "abwesenheiten" || search["tab"] === "alle" ? search["tab"] : "pruefen",
+    tab: search["tab"] === "vertretung" || search["tab"] === "abwesenheiten" || search["tab"] === "alle" ? search["tab"] : "pruefen",
   }),
   head: () => ({ meta: [
     { title: TITLE },
     { name: "description", content: "Berichte deiner Auszubildenden einsehen, freigeben oder zurückweisen." },
     { property: "og:title", content: TITLE },
+    { property: "og:type", content: "website" },
     { property: "og:description", content: "Der Prüfbereich für Ausbilder:innen in Azuvera." },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -75,7 +78,7 @@ function TrainerPortalPage() {
   const viewerRole = profile?.role === "ausbildungsberater" || profile?.role === "lehrer";
   const { data: reviewAccess } = useQuery({ queryKey: ["review", "has-access"], queryFn: hasReviewAccess, enabled: profile?.role === "betriebsleiter" });
   const readOnly = viewerRole || (profile?.role === "betriebsleiter" && reviewAccess !== true);
-  const activeTab: PortalTab = readOnly ? "alle" : tab;
+  const activeTab: PortalTab = readOnly && tab !== "vertretung" ? "alle" : tab;
 
   const queueQuery = useQuery({ queryKey: ["review", "queue", "submitted"], queryFn: () => listReviewQueue(["submitted"]), enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
   const rejectedQuery = useQuery({ queryKey: ["review", "queue", "rejected"], queryFn: () => listReviewQueue(["rejected"]), enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
@@ -145,13 +148,14 @@ function TrainerPortalPage() {
   }, [activeTab, selectedReport, filteredQueue, approveTarget, rejectTarget, bulkOpen, navigate]);
 
   useEffect(() => {
-    if (readOnly && tab !== "alle") void navigate({ to: "/ausbilder", search: { tab: "alle" }, replace: true });
+    if (readOnly && tab !== "alle" && tab !== "vertretung") void navigate({ to: "/ausbilder", search: { tab: "alle" }, replace: true });
   }, [readOnly, tab, navigate]);
 
   if (profile?.role === "azubi") return <EmptyState title="Dazu fehlt dir die Berechtigung." />;
   const queueItemFor = (id: string): ReviewQueueItem | undefined => queue.find((item) => item.report_id === id);
 
   return <div className="space-y-5">
+    <DeputyBanner />
     <PageHeader title="Ausbilderportal" subtitle="Berichte deiner Auszubildenden einsehen, freigeben oder zurückweisen." />
     {!readOnly && <><section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <MetricButton label="Zu prüfen" value={queue.length} onClick={() => setTab("pruefen")} />
@@ -165,7 +169,9 @@ function TrainerPortalPage() {
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "alle" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("alle")}>Alle Berichte</button>
     </div></>}
 
-    {activeTab !== "abwesenheiten" && <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+    {profile && REVIEWER_ROLES.includes(profile.role) && <Button variant={tab === "vertretung" ? "secondary" : "outline"} onClick={() => setTab("vertretung")}>Vertretung</Button>}
+    {activeTab === "vertretung" && profile && REVIEWER_ROLES.includes(profile.role) && <DeputyPanel />}
+    {activeTab !== "abwesenheiten" && activeTab !== "vertretung" && <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
       <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Suche nach Name, KW oder Datum" className="sm:w-64" />
       <Select value={azubi || "all"} onValueChange={(value) => setAzubi(value === "all" ? "" : value)}><SelectTrigger className="sm:w-52"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Alle Azubis</SelectItem>{people.map((person) => <SelectItem key={person.id} value={person.id}>{person.full_name}</SelectItem>)}</SelectContent></Select>
       <Select value={type} onValueChange={(value) => setType(value as ReportType | "all")}><SelectTrigger className="sm:w-44"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Alle Typen</SelectItem><SelectItem value="daily">Tagesbericht</SelectItem><SelectItem value="weekly">Wochenbericht</SelectItem></SelectContent></Select>

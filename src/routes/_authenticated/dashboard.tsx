@@ -17,6 +17,7 @@ import { computeCoverage } from "@/features/reports/coverage";
 import { CoverageDonut } from "@/features/reports/coverage-donut";
 import { isoWeekOf } from "@/features/reports/report-editor";
 import { currentTrainingYear, defaultPeriodForYear, trainingYears } from "@/lib/training-year";
+import { StaffDashboard } from "@/features/team/staff-dashboard";
 import { listAbsentDays } from "@/features/absences/api";
 
 const TITLE = "Dashboard – Azuvera";
@@ -27,6 +28,8 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       { title: TITLE },
       { name: "description", content: "Dein Azuvera-Dashboard." },
       { property: "og:title", content: TITLE },
+      { property: "og:description", content: "Berichte, Team und offene Aufgaben in Azuvera." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
@@ -103,14 +106,8 @@ function Dashboard() {
     if (!done && !profile.profession_id) setOnboardingOpen(true);
   }, [profile]);
 
-  if (!isAzubi) {
-    return (
-      <PageHeader
-        title={`${greeting()}${profile?.vorname ? `, ${profile.vorname}` : ""}`}
-        subtitle="Die Prüfungs-Ansicht kommt mit Baustein 3."
-      />
-    );
-  }
+  if (!profile) return <CardSkeleton />;
+  if (!isAzubi) return <StaffDashboard profile={profile} />;
 
   const drafts = (reports ?? []).filter((r) => r.status === "draft");
   const rejected = (reports ?? []).filter((r) => r.status === "rejected");

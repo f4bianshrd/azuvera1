@@ -45,11 +45,13 @@ export function CoverageDonut({
   size = 180,
   title,
   subtitle,
+  canCreate = true,
 }: {
   coverage: CoverageResult;
   size?: number;
   title: string;
   subtitle?: string;
+  canCreate?: boolean;
 }) {
   const [selected, setSelected] = useState<CoverageKind | null>(null);
   const [asTable, setAsTable] = useState(false);
@@ -171,7 +173,7 @@ export function CoverageDonut({
                       <Link to="/reports/$id" params={{ id: d.report.id }} className="text-primary underline-offset-4 hover:underline">
                         Öffnen
                       </Link>
-                    ) : d.kind === "missing" ? (
+                    ) : d.kind === "missing" && canCreate ? (
                       <Link
                         to="/reports/new"
                         search={{ type: "daily", date: d.date }}
