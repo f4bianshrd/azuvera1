@@ -269,3 +269,9 @@ export async function displayNames(ids: string[]): Promise<Map<string, string>> 
   if (error) throw error;
   return new Map((data ?? []).map((r) => [r.id, r.full_name]));
 }
+
+export async function reportAzubiProfile(id: string) {
+  const { data, error } = await supabase.from("profiles").select("ausbildungsbeginn, ausbildungsende").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return data;
+}
