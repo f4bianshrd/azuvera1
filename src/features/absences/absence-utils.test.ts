@@ -17,8 +17,8 @@ describe("Abwesenheitstage", () => {
   });
 
   it("erlaubt 366 Tage und blockiert 367 Tage", () => {
-    expect(validateAbsenceDates("2026-01-01", "2026-12-31")).toBeNull();
-    expect(validateAbsenceDates("2026-01-01", "2027-01-01")).toBe("Eine Abwesenheit darf höchstens 366 Tage umfassen.");
+    expect(validateAbsenceDates("2024-01-01", "2024-12-31")).toBeNull();
+    expect(validateAbsenceDates("2024-01-01", "2025-01-01")).toBe("Eine Abwesenheit darf höchstens 366 Tage umfassen.");
   });
 
   it("blockiert ein Enddatum vor dem Startdatum", () => {
