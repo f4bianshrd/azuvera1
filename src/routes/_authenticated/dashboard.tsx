@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ResponsiveDialog } from "@/components/dialogs";
 import { CardSkeleton, PageHeader, StatCard, StatusBadge } from "@/components/shared";
+import { SyncBadge } from "@/features/sync/sync-badge";
 import { useMyProfile } from "@/features/app/session";
 import { useProfessions } from "@/features/app/queries";
 import { supabase } from "@/integrations/supabase/client";
@@ -249,6 +250,7 @@ function Dashboard() {
                 >
                   <span className="min-w-0 truncate">{reportTitle(r)}</span>
                   <StatusBadge status={r.status} />
+                  <SyncBadge state={r._sync} submitPending={r._submit_pending} />
                 </Link>
               </li>
             ))}

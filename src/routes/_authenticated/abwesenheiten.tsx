@@ -22,7 +22,9 @@ import {
   ABSENCE_STATUS_LABELS, ABSENCE_TYPE_LABELS, absenceDisplayNames, canReviewAbsences, createAbsence, deleteAbsence,
   listAbsences, listAccessibleAzubis, listOverlappingAbsences, reviewAbsence, updateAbsence,
   type Absence, type AbsenceInput, type AbsenceStatus, type AbsenceType,
+  discardAbsenceChange,
 } from "@/features/absences/api";
+import { SyncBadge } from "@/features/sync/sync-badge";
 import { absenceMetric, inclusiveDays, parseLocalDate, validateAbsenceDates } from "@/features/absences/absence-utils";
 
 const TITLE = "Abwesenheiten – Azuvera";
@@ -155,12 +157,14 @@ function AbsencesPage() {
                       <Icon className="size-5 text-primary" aria-hidden />
                       <span className="font-semibold">{ABSENCE_TYPE_LABELS[absence.type]}</span>
                       <Badge variant={absence.status === "pending" ? "secondary" : absence.status === "rejected" ? "destructive" : "outline"} className={absence.status === "approved" ? "border-success/40 bg-success/15" : undefined}>{ABSENCE_STATUS_LABELS[absence.status]}</Badge>
+                      <SyncBadge state={absence._sync} />
                     </div>
                     <p className="mt-2 text-sm">
                       {format(parseLocalDate(absence.date_from), "d. MMMM yyyy", { locale: de })} – {format(parseLocalDate(absence.date_to), "d. MMMM yyyy", { locale: de })} · {inclusiveDays(absence.date_from, absence.date_to)} Tage
                       {!isAzubi && names?.get(absence.azubi_id) ? ` • ${names.get(absence.azubi_id)}` : ""}
                     </p>
                     {absence.note && <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">{absence.note}</p>}
+                    {absence._sync === "failed" && <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-destructive"><span>{absence._error ?? "Die Änderung wurde nicht übernommen."}</span><Button size="sm" variant="outline" onClick={() => void discardAbsenceChange(absence.id)}>Verwerfen</Button></div>}
                     {absence.status === "rejected" && absence.review_note && <p className="mt-2 text-sm text-destructive">Begründung: {absence.review_note}</p>}
                   </div>
                   <div className="flex shrink-0 flex-wrap gap-1">
