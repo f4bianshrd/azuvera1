@@ -28,6 +28,7 @@ export const Route = createFileRoute("/_authenticated/noten")({
     { name: "description", content: "Klausuren und Bewertungen aus der Berufsschule mit Durchschnitten und Notenverlauf." },
     { property: "og:title", content: TITLE },
     { property: "og:description", content: "Schulnoten der Ausbildung auswerten und verfolgen." },
+    { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
   component: GradesPage,

@@ -38,6 +38,7 @@ export const Route = createFileRoute("/_authenticated/abwesenheiten")({
     { name: "description", content: "Urlaub, Krankheit, Berufsschule und sonstige Abwesenheiten eintragen und prüfen." },
     { property: "og:title", content: TITLE },
     { property: "og:description", content: "Abwesenheiten während der Ausbildung übersichtlich verwalten." },
+    { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
   component: AbsencesPage,
