@@ -99,6 +99,13 @@
       "when": 1794405305325,
       "tag": "0013_reports_guard_before_version_bump",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1794405819042,
+      "tag": "0014_restrict_company_logo_reads",
+      "breakpoints": true
     }
   ]
 }
