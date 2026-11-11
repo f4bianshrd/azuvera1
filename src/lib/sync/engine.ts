@@ -368,7 +368,9 @@ async function execute(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<v
         : (({ subject, grade, grade_date, kind, note }) => ({ subject, grade, grade_date, kind, note }))(row as never as { subject: string; grade: number; grade_date: string; kind: string; note: string | null });
       if (row._base_version === null) {
         const ins = await supabase.from(table).insert({ id, azubi_id: row.azubi_id, ...fields } as never);
-        if (check(ins as Resp<null>, true) !== null || !ins.error) { await (db[table] as AzuveraDB["absences"]).update(id, { _base_version: 1 }); return; }
+        if (!ins.error) { await (db[table] as AzuveraDB["absences"]).update(id, { _base_version: 1 }); return; }
+        // 23505: existiert schon (Wiederholung) → als Änderung weitersenden
+        if (classifyError({ ...ins.error, status: ins.status }) !== "duplicate") check(ins as Resp<null>);
       }
       const upd = await supabase.from(table).update(fields as never).eq("id", id).select();
       if (upd.error && table === "absences" && classifyError({ ...upd.error, status: upd.status }) === "permanent") {
@@ -495,8 +497,6 @@ export async function pruneFiles(db: AzuveraDB): Promise<void> {
 export async function clearFileCache(): Promise<void> {
   const db = currentDb();
   if (!db) return;
-  const synced = await db.files.where("synced").equals(1 as never).primaryKeys().catch(() => [] as string[]);
-  if (synced.length) await db.files.bulkDelete(synced);
   const all = await db.files.toArray();
   await db.files.bulkDelete(all.filter((f) => f.synced).map((f) => f.key));
 }
