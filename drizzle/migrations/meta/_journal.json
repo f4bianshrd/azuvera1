@@ -120,6 +120,13 @@
       "when": 1794406051264,
       "tag": "0016_team_missing_weeks_reminders",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794407338824,
+      "tag": "0017_deputy_setting_privileged_write",
+      "breakpoints": true
     }
   ]
 }
