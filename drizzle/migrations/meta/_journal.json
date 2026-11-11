@@ -85,6 +85,13 @@
       "when": 1794404812682,
       "tag": "0011_baustein_3a_review_deputies_comments",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1794404867655,
+      "tag": "0012_comment_author_role_labels",
+      "breakpoints": true
     }
   ]
 }

@@ -1093,6 +1093,13 @@ export type Database = {
           id: string
         }[]
       }
+      display_roles: {
+        Args: { _ids: string[] }
+        Returns: {
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }[]
+      }
       grant_consent: {
         Args: {
           _kind: Database["public"]["Enums"]["consent_kind"]
