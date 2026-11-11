@@ -109,6 +109,19 @@ export async function listPendingReviewAbsences(): Promise<{ absence: Absence; n
   return (data ?? []).map((absence) => ({ absence, name: names.get(absence.azubi_id) ?? "" }));
 }
 
+export async function hasReviewAccess(): Promise<boolean> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+  const { data: people, error } = await supabase.from("profiles").select("id");
+  if (error) throw error;
+  for (const person of people ?? []) {
+    const { data, error: reviewError } = await supabase.rpc("can_review_for", { _reviewer: user.id, _azubi: person.id });
+    if (reviewError) throw reviewError;
+    if (data) return true;
+  }
+  return false;
+}
+
 export async function canReviewReport(azubiId: string): Promise<boolean> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return false;

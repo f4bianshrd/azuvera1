@@ -20,13 +20,13 @@ import { useProfessions } from "@/features/app/queries";
 import { DictationButton } from "@/features/dictation/dictation-button";
 import { readPunctuationPreference } from "@/features/dictation/api";
 import { ABSENCE_STATUS_LABELS, ABSENCE_TYPE_LABELS, reviewAbsence, type Absence, type AbsenceStatus } from "@/features/absences/api";
-import { reportTitle, type Report, type ReportStatus, type ReportType } from "@/features/reports/api";
+import { displayNames, reportTitle, type Report, type ReportStatus, type ReportType } from "@/features/reports/api";
 import { ApprovalSheet } from "@/features/review/approval-sheet";
 import { RejectionSheet } from "@/features/review/rejection-sheet";
 import { BulkApprovalDialog } from "@/features/review/bulk-approval-dialog";
 import { ReviewPreview } from "@/features/review/review-preview";
 import {
-  countTodayApprovals, listPendingReviewAbsences, listReportMetrics, listReportsByIds, listReviewPeople,
+  countTodayApprovals, hasReviewAccess, listPendingReviewAbsences, listReportMetrics, listReportsByIds, listReviewPeople,
   listReviewQueue, listVisibleReports, type ReviewQueueItem,
 } from "@/features/review/api";
 import { filterVisibleReports, isOverdue, reviewAgeLabel } from "@/features/review/review-utils";
@@ -72,20 +72,26 @@ function TrainerPortalPage() {
   const [rejectTarget, setRejectTarget] = useState<Report | null>(null);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [absenceReview, setAbsenceReview] = useState<{ absence: Absence; decision: AbsenceStatus; name: string } | null>(null);
+  const viewerRole = profile?.role === "ausbildungsberater" || profile?.role === "lehrer";
+  const { data: reviewAccess } = useQuery({ queryKey: ["review", "has-access"], queryFn: hasReviewAccess, enabled: profile?.role === "betriebsleiter" });
+  const readOnly = viewerRole || (profile?.role === "betriebsleiter" && reviewAccess !== true);
+  const activeTab: PortalTab = readOnly ? "alle" : tab;
 
-  const queueQuery = useQuery({ queryKey: ["review", "queue", "submitted"], queryFn: () => listReviewQueue(["submitted"]), enabled: !!profile && profile.role !== "azubi", refetchInterval: 60_000 });
-  const rejectedQuery = useQuery({ queryKey: ["review", "queue", "rejected"], queryFn: () => listReviewQueue(["rejected"]), enabled: !!profile && profile.role !== "azubi", refetchInterval: 60_000 });
-  const todayQuery = useQuery({ queryKey: ["review", "today-approvals"], queryFn: countTodayApprovals, enabled: !!profile && profile.role !== "azubi", refetchInterval: 60_000 });
+  const queueQuery = useQuery({ queryKey: ["review", "queue", "submitted"], queryFn: () => listReviewQueue(["submitted"]), enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
+  const rejectedQuery = useQuery({ queryKey: ["review", "queue", "rejected"], queryFn: () => listReviewQueue(["rejected"]), enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
+  const todayQuery = useQuery({ queryKey: ["review", "today-approvals"], queryFn: countTodayApprovals, enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
   const queue = useMemo(() => queueQuery.data ?? [], [queueQuery.data]);
   const queueIds = useMemo(() => queue.map((item) => item.report_id), [queue]);
   const reportsQuery = useQuery({ queryKey: ["review", "queue-reports", queueIds.join(",")], queryFn: () => listReportsByIds(queueIds), enabled: queueIds.length > 0 });
   const peopleQuery = useQuery({ queryKey: ["review", "people"], queryFn: listReviewPeople, enabled: !!profile && profile.role !== "azubi" });
   const metricsQuery = useQuery({ queryKey: ["review", "metrics", queueIds.join(",")], queryFn: () => listReportMetrics(queueIds), enabled: queueIds.length > 0 });
-  const allQuery = useQuery({ queryKey: ["review", "all", status, type, azubi, limit], queryFn: () => listVisibleReports({ status, type, azubiId: azubi || undefined, limit }), enabled: tab === "alle" && !!profile, refetchInterval: 60_000 });
-  const absencesQuery = useQuery({ queryKey: ["review", "pending-absences"], queryFn: listPendingReviewAbsences, enabled: !!profile && profile.role !== "azubi", refetchInterval: 60_000 });
+  const allQuery = useQuery({ queryKey: ["review", "all", status, type, azubi, limit], queryFn: () => listVisibleReports({ status, type, azubiId: azubi || undefined, limit }), enabled: activeTab === "alle" && !!profile, refetchInterval: 60_000 });
+  const absencesQuery = useQuery({ queryKey: ["review", "pending-absences"], queryFn: listPendingReviewAbsences, enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
 
   const people = useMemo(() => peopleQuery.data ?? [], [peopleQuery.data]);
-  const nameFor = (id: string) => people.find((person) => person.id === id)?.full_name ?? "Unbekannt";
+  const deputyIds = useMemo(() => [...new Set(queue.map((item) => item.deputy_for).filter((id): id is string => !!id))], [queue]);
+  const { data: deputyNames } = useQuery({ queryKey: ["review", "deputy-names", deputyIds.join(",")], queryFn: () => displayNames(deputyIds), enabled: deputyIds.length > 0 });
+  const nameFor = (id: string) => people.find((person) => person.id === id)?.full_name ?? deputyNames?.get(id) ?? "Unbekannt";
   const professionFor = (id: string) => {
     const professionId = people.find((person) => person.id === id)?.profession_id;
     return professions?.find((profession) => profession.id === professionId)?.name ?? "";
@@ -121,7 +127,7 @@ function TrainerPortalPage() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (tab !== "pruefen" || !selectedReport || approveTarget || rejectTarget || bulkOpen) return;
+      if (activeTab !== "pruefen" || !selectedReport || approveTarget || rejectTarget || bulkOpen) return;
       const target = event.target as HTMLElement | null;
       if (target && (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable)) return;
       const index = filteredQueue.findIndex((report) => report.id === selectedReport.id);
@@ -136,14 +142,18 @@ function TrainerPortalPage() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [tab, selectedReport, filteredQueue, approveTarget, rejectTarget, bulkOpen, navigate]);
+  }, [activeTab, selectedReport, filteredQueue, approveTarget, rejectTarget, bulkOpen, navigate]);
+
+  useEffect(() => {
+    if (readOnly && tab !== "alle") void navigate({ to: "/ausbilder", search: { tab: "alle" }, replace: true });
+  }, [readOnly, tab, navigate]);
 
   if (profile?.role === "azubi") return <EmptyState title="Dazu fehlt dir die Berechtigung." />;
   const queueItemFor = (id: string): ReviewQueueItem | undefined => queue.find((item) => item.report_id === id);
 
   return <div className="space-y-5">
     <PageHeader title="Ausbilderportal" subtitle="Berichte deiner Auszubildenden einsehen, freigeben oder zurückweisen." />
-    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    {!readOnly && <><section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <MetricButton label="Zu prüfen" value={queue.length} onClick={() => setTab("pruefen")} />
       <MetricButton label="Wartet seit 7+ Tagen" value={queue.filter((item) => isOverdue(item.submitted_at)).length} warning onClick={() => { setTab("pruefen"); setOverdueOnly(true); }} />
       <MetricButton label="Heute freigegeben" value={todayQuery.data ?? 0} onClick={() => { setTab("alle"); setStatus("approved"); setTodayApprovedOnly(true); }} />
@@ -153,16 +163,16 @@ function TrainerPortalPage() {
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "pruefen" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("pruefen")}>Zu prüfen <Badge variant="secondary">{queue.length}</Badge></button>
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "abwesenheiten" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("abwesenheiten")}>Abwesenheiten <Badge variant="secondary">{absencesQuery.data?.length ?? 0}</Badge></button>
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "alle" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("alle")}>Alle Berichte</button>
-    </div>
+    </div></>}
 
-    {tab !== "abwesenheiten" && <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+    {activeTab !== "abwesenheiten" && <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
       <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Suche nach Name, KW oder Datum" className="sm:w-64" />
       <Select value={azubi || "all"} onValueChange={(value) => setAzubi(value === "all" ? "" : value)}><SelectTrigger className="sm:w-52"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Alle Azubis</SelectItem>{people.map((person) => <SelectItem key={person.id} value={person.id}>{person.full_name}</SelectItem>)}</SelectContent></Select>
       <Select value={type} onValueChange={(value) => setType(value as ReportType | "all")}><SelectTrigger className="sm:w-44"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Alle Typen</SelectItem><SelectItem value="daily">Tagesbericht</SelectItem><SelectItem value="weekly">Wochenbericht</SelectItem></SelectContent></Select>
-      {tab === "alle" && <Select value={status} onValueChange={(value) => setStatus(value as ReportStatus | "all")}><SelectTrigger className="sm:w-44"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Alle Status</SelectItem><SelectItem value="submitted">Eingereicht</SelectItem><SelectItem value="approved">Freigegeben</SelectItem><SelectItem value="rejected">Zurückgewiesen</SelectItem></SelectContent></Select>}
+      {activeTab === "alle" && <Select value={status} onValueChange={(value) => setStatus(value as ReportStatus | "all")}><SelectTrigger className="sm:w-44"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Alle Status</SelectItem><SelectItem value="submitted">Eingereicht</SelectItem><SelectItem value="approved">Freigegeben</SelectItem><SelectItem value="rejected">Zurückgewiesen</SelectItem></SelectContent></Select>}
     </div>}
 
-    {tab === "pruefen" && <div className="grid gap-4 md:grid-cols-2">
+    {activeTab === "pruefen" && <div className="grid gap-4 md:grid-cols-2">
       <div className="min-w-0 space-y-3">
         {checkedReports.length > 0 && <div className="flex items-center justify-between gap-2 rounded-xl border bg-card p-3"><span className="text-sm font-medium">{checkedReports.length} ausgewählt</span><Button size="sm" onClick={() => setBulkOpen(true)}><CheckCheck className="size-4" />Alle freigeben</Button></div>}
         {queueQuery.isLoading || (queueIds.length > 0 && reportsQuery.isLoading) ? <ListSkeleton /> : filteredQueue.length === 0 ? <EmptyState icon={Check} title={queue.length === 0 ? "Alles geprüft – nichts offen." : "Keine Berichte für diese Auswahl."} /> : <ul className="space-y-2">{filteredQueue.map((report) => {
@@ -192,9 +202,9 @@ function TrainerPortalPage() {
       {selectedReport && <ReviewPreview report={selectedReport} azubiName={nameFor(selectedReport.azubi_id)} onApprove={() => setApproveTarget(selectedReport)} onReject={() => setRejectTarget(selectedReport)} />}
     </div>}
 
-    {tab === "alle" && (allQuery.isLoading ? <ListSkeleton /> : filteredAll.length === 0 ? <EmptyState title="Keine Berichte für diese Auswahl." /> : <><ul className="space-y-2">{filteredAll.map((report) => <li key={report.id}><Link to="/reports/$id" params={{ id: report.id }} className="flex items-center justify-between gap-3 rounded-xl border bg-card p-4 hover:bg-accent"><div className="min-w-0"><p className="truncate font-medium">{reportTitle(report)}</p><p className="text-sm text-muted-foreground">{nameFor(report.azubi_id)} · {format(new Date(report.report_date + "T00:00:00"), "dd.MM.yyyy")}</p></div><StatusBadge status={report.status} /></Link></li>)}</ul>{(allQuery.data?.length ?? 0) >= limit && <div className="text-center"><Button variant="outline" onClick={() => setLimit((value) => value + 50)}>Mehr laden</Button></div>}</>)}
+    {activeTab === "alle" && (allQuery.isLoading ? <ListSkeleton /> : filteredAll.length === 0 ? <EmptyState title="Keine Berichte für diese Auswahl." /> : <><ul className="space-y-2">{filteredAll.map((report) => <li key={report.id}><Link to="/reports/$id" params={{ id: report.id }} className="flex items-center justify-between gap-3 rounded-xl border bg-card p-4 hover:bg-accent"><div className="min-w-0"><p className="truncate font-medium">{reportTitle(report)}</p><p className="text-sm text-muted-foreground">{nameFor(report.azubi_id)} · {format(new Date(report.report_date + "T00:00:00"), "dd.MM.yyyy")}</p></div><StatusBadge status={report.status} /></Link></li>)}</ul>{(allQuery.data?.length ?? 0) >= limit && <div className="text-center"><Button variant="outline" onClick={() => setLimit((value) => value + 50)}>Mehr laden</Button></div>}</>)}
 
-    {tab === "abwesenheiten" && (absencesQuery.isLoading ? <ListSkeleton /> : (absencesQuery.data?.length ?? 0) === 0 ? <EmptyState title="Keine offenen Abwesenheitsanträge." /> : <ul className="grid gap-3 lg:grid-cols-2">{absencesQuery.data?.map(({ absence, name }) => <li key={absence.id} className="rounded-2xl border bg-card p-4"><p className="font-semibold">{name}</p><p className="mt-1 text-sm">{ABSENCE_TYPE_LABELS[absence.type]} · {format(new Date(absence.date_from + "T00:00:00"), "dd.MM.yyyy")} – {format(new Date(absence.date_to + "T00:00:00"), "dd.MM.yyyy")}</p><Badge variant="secondary" className="mt-2">{ABSENCE_STATUS_LABELS[absence.status]}</Badge>{absence.note && <p className="mt-2 text-sm text-muted-foreground">{absence.note}</p>}<div className="mt-4 flex gap-2"><Button size="sm" onClick={() => setAbsenceReview({ absence, decision: "approved", name })}><Check className="size-4" />Genehmigen</Button><Button size="sm" variant="outline" onClick={() => setAbsenceReview({ absence, decision: "rejected", name })}><X className="size-4" />Ablehnen</Button></div></li>)}</ul>)}
+    {activeTab === "abwesenheiten" && (absencesQuery.isLoading ? <ListSkeleton /> : (absencesQuery.data?.length ?? 0) === 0 ? <EmptyState title="Keine offenen Abwesenheitsanträge." /> : <ul className="grid gap-3 lg:grid-cols-2">{absencesQuery.data?.map(({ absence, name }) => <li key={absence.id} className="rounded-2xl border bg-card p-4"><p className="font-semibold">{name}</p><p className="mt-1 text-sm">{ABSENCE_TYPE_LABELS[absence.type]} · {format(new Date(absence.date_from + "T00:00:00"), "dd.MM.yyyy")} – {format(new Date(absence.date_to + "T00:00:00"), "dd.MM.yyyy")}</p><Badge variant="secondary" className="mt-2">{ABSENCE_STATUS_LABELS[absence.status]}</Badge>{absence.note && <p className="mt-2 text-sm text-muted-foreground">{absence.note}</p>}<div className="mt-4 flex gap-2"><Button size="sm" onClick={() => setAbsenceReview({ absence, decision: "approved", name })}><Check className="size-4" />Genehmigen</Button><Button size="sm" variant="outline" onClick={() => setAbsenceReview({ absence, decision: "rejected", name })}><X className="size-4" />Ablehnen</Button></div></li>)}</ul>)}
 
     {approveTarget && profile && <ApprovalSheet key={approveTarget.id} report={approveTarget} reviewerId={profile.id} azubiName={nameFor(approveTarget.azubi_id)} deputyName={queueItemFor(approveTarget.id)?.deputy_for ? nameFor(queueItemFor(approveTarget.id)!.deputy_for!) : undefined} open onOpenChange={(open) => !open && setApproveTarget(null)} onApproved={async () => { nextAfter(approveTarget.id); await refresh(); }} onConflict={() => void queryClient.invalidateQueries({ queryKey: ["reports", approveTarget.id] })} />}
     {rejectTarget && <RejectionSheet key={rejectTarget.id} report={rejectTarget} open onOpenChange={(open) => !open && setRejectTarget(null)} onRejected={async () => { nextAfter(rejectTarget.id); await refresh(); }} onConflict={() => void queryClient.invalidateQueries({ queryKey: ["reports", rejectTarget.id] })} />}
