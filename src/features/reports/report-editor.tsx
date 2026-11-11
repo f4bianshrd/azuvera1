@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-import { Mic, Sparkles } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { DictationButton } from "@/features/dictation/dictation-button";
+import { readPunctuationPreference, writePunctuationPreference } from "@/features/dictation/api";
+import { AiTextButton } from "@/features/ai/ai-text-button";
+import type { AiField } from "@/features/ai/api";
 import {
   createDraft,
   saveReportDraft,
@@ -97,6 +101,18 @@ export function ReportEditor({
   const [state, setState] = useState<EditorState>(initial);
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [spokenPunctuation, setSpokenPunctuation] = useState(true);
+  const [interim, setInterim] = useState<Record<AiField, string>>({ activities: "", school_content: "", instructions: "", summary: "" });
+  const activitiesRef = useRef<HTMLTextAreaElement>(null);
+  const schoolRef = useRef<HTMLTextAreaElement>(null);
+  const instructionsRef = useRef<HTMLTextAreaElement>(null);
+  const summaryRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRefs: Record<AiField, RefObject<HTMLTextAreaElement | null>> = {
+    activities: activitiesRef,
+    school_content: schoolRef,
+    instructions: instructionsRef,
+    summary: summaryRef,
+  };
   const reportRef = useRef<Report | null>(report);
   const stateRef = useRef(state);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -155,8 +171,11 @@ export function ReportEditor({
     timerRef.current = setTimeout(() => void saveRef.current(), 3000);
   };
 
-  useEffect(() => () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
+  useEffect(() => {
+    setSpokenPunctuation(readPunctuationPreference());
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, []);
 
   const set = <K extends keyof EditorState>(key: K, value: EditorState[K]) => {
@@ -269,6 +288,18 @@ export function ReportEditor({
         <Progress value={(filled / 4) * 100} />
       </div>
 
+      <div className="flex items-center justify-between gap-4 rounded-xl border bg-card p-3">
+        <Label htmlFor="spoken-punctuation" className="text-sm font-normal">Satzzeichen per Sprache</Label>
+        <Switch
+          id="spoken-punctuation"
+          checked={spokenPunctuation}
+          onCheckedChange={(checked) => {
+            setSpokenPunctuation(checked);
+            writePunctuationPreference(checked);
+          }}
+        />
+      </div>
+
       {SECTIONS.map((s) => (
         <div key={s.key} className="space-y-1.5">
           <div className="flex items-center justify-between gap-2">
@@ -276,22 +307,33 @@ export function ReportEditor({
               {s.label}
               {s.required && <span className="text-destructive"> *</span>}
             </Label>
-            <div className="flex gap-1">
-              <Button type="button" variant="ghost" size="sm" disabled title="Kommt mit Baustein 2B">
-                <Mic className="size-4" aria-hidden /> Diktat
-              </Button>
-              <Button type="button" variant="ghost" size="sm" disabled title="Kommt mit Baustein 2B">
-                <Sparkles className="size-4" aria-hidden /> KI-Text
-              </Button>
+            <div className="flex flex-wrap justify-end gap-1">
+              <DictationButton
+                textareaRef={textareaRefs[s.key]}
+                getValue={() => stateRef.current[s.key]}
+                onValueChange={(value) => set(s.key, value)}
+                onInterim={(text) => setInterim((current) => ({ ...current, [s.key]: text }))}
+                spokenPunctuation={spokenPunctuation}
+              />
+              <AiTextButton
+                field={s.key}
+                reportType={state.reportType}
+                weeklyMode={state.weeklyMode}
+                reportId={report?.id}
+                currentValue={state[s.key]}
+                onAccept={(value) => set(s.key, value)}
+              />
             </div>
           </div>
           <AutoTextarea
             id={`sec-${s.key}`}
+            textareaRef={textareaRefs[s.key]}
             value={state[s.key]}
             placeholder={s.placeholder}
             maxLength={20000}
             onChange={(v) => set(s.key, v)}
           />
+          {interim[s.key] && <p className="text-sm italic text-muted-foreground">{interim[s.key]}</p>}
           <p className="text-right text-xs text-muted-foreground tabular-nums">
             {state[s.key].length.toLocaleString("de-DE")} / 20.000
           </p>
@@ -308,12 +350,15 @@ export function ReportEditor({
 function AutoTextarea({
   value,
   onChange,
+  textareaRef,
   ...props
 }: {
   value: string;
   onChange: (v: string) => void;
+  textareaRef?: RefObject<HTMLTextAreaElement | null> | undefined;
 } & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange">) {
-  const ref = useRef<HTMLTextAreaElement>(null);
+  const localRef = useRef<HTMLTextAreaElement>(null);
+  const ref = textareaRef ?? localRef;
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
