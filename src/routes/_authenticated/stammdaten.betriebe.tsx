@@ -25,6 +25,8 @@ export const Route = createFileRoute("/_authenticated/stammdaten/betriebe")({
       { title: TITLE },
       { name: "description", content: "Ausbildungsbetriebe verwalten." },
       { property: "og:title", content: TITLE },
+      { property: "og:description", content: "Ausbildungsbetriebe verwalten." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),

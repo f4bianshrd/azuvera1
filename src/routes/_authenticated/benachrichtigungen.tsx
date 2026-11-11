@@ -18,6 +18,8 @@ export const Route = createFileRoute("/_authenticated/benachrichtigungen")({
       { title: TITLE },
       { name: "description", content: "Deine Benachrichtigungen bei Azuvera." },
       { property: "og:title", content: TITLE },
+      { property: "og:description", content: "Deine Benachrichtigungen bei Azuvera." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),

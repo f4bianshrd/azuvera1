@@ -28,6 +28,8 @@ export const Route = createFileRoute("/_authenticated/reports/")({
       { title: TITLE },
       { name: "description", content: "Alle Tages- und Wochenberichte – inklusive gespeicherter Entwürfe." },
       { property: "og:title", content: TITLE },
+      { property: "og:description", content: "Alle Tages- und Wochenberichte – inklusive gespeicherter Entwürfe." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),

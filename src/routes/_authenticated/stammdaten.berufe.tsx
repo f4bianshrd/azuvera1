@@ -21,6 +21,8 @@ export const Route = createFileRoute("/_authenticated/stammdaten/berufe")({
       { title: TITLE },
       { name: "description", content: "Ausbildungsberufe verwalten." },
       { property: "og:title", content: TITLE },
+      { property: "og:description", content: "Ausbildungsberufe verwalten." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
