@@ -14,6 +14,7 @@ import { NotificationBell } from "@/features/notifications/notification-bell";
 import { SyncChip } from "@/features/sync/sync-chip";
 import { SyncRuntime } from "@/features/sync/sync-runtime";
 import { useSignOut } from "@/features/sync/sign-out";
+import { OfflinePageHint } from "@/features/sync/offline-page-hint";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -284,6 +285,7 @@ export function AppShell() {
         <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 pb-24 pt-6 sm:px-6 md:pb-10">
           <SyncRuntime userId={profile.id} />
           {signOutDialog}
+          <OfflinePageHint />
           <Outlet />
         </main>
 

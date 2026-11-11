@@ -34,3 +34,12 @@ async function readCache<T>(key: string): Promise<{ at: number; data: T } | null
 export async function cachedAt(key: string): Promise<number | null> {
   return (await readCache(key))?.at ?? null;
 }
+
+/** Jüngster zwischengespeicherter Stand für Schlüssel mit diesem Präfix. */
+export async function latestCacheAt(prefixes: string[]): Promise<number | null> {
+  const db = currentDb();
+  if (!db) return null;
+  const rows = await db.meta.where("key").startsWithAnyOf(prefixes.map((p) => `qcache:${p}`)).toArray();
+  const at = rows.map((r) => (r.value as { at: number }).at).filter((t) => Date.now() - t <= MAX_AGE);
+  return at.length ? Math.max(...at) : null;
+}
