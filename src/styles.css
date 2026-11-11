@@ -69,6 +69,7 @@
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-signature-paper: var(--signature-paper);
   --shadow-elegant: var(--shadow-elegant);
   --shadow-teal: var(--shadow-teal);
   --color-sidebar: var(--sidebar);
@@ -106,6 +107,7 @@
   --success-foreground: oklch(0.99 0.005 247);
   --warning: oklch(0.75 0.15 75);
   --warning-foreground: oklch(0.18 0.04 265);
+  --signature-paper: oklch(1 0 0);
   --border: oklch(0.91 0.015 240);
   --input: oklch(0.91 0.015 240);
   --ring: oklch(0.64 0.18 250);
@@ -152,6 +154,7 @@
   --success-foreground: oklch(0.16 0.035 265);
   --warning: oklch(0.8 0.14 75);
   --warning-foreground: oklch(0.16 0.035 265);
+  --signature-paper: oklch(1 0 0);
   --border: oklch(0.3 0.04 262);
   --input: oklch(0.3 0.04 262);
   --ring: oklch(0.72 0.15 250);
