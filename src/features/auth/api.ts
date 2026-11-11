@@ -5,7 +5,7 @@ export type SocialProvider = "google" | "apple" | "microsoft";
 const PENDING_KEY = "azuvera-oauth-pending";
 const TARGET_KEY = "azuvera-auth-target";
 
-export async function signInWithProvider(provider: SocialProvider): Promise<{ error?: Error | undefined; redirected?: boolean | undefined }> {
+export async function signInWithProvider(provider: SocialProvider): Promise<{ error?: Error | null | undefined; redirected?: boolean | undefined }> {
   try {
     sessionStorage.setItem(PENDING_KEY, "1");
   } catch { /* optionale Zielspeicherung */ }

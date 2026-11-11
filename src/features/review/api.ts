@@ -20,7 +20,7 @@ export type ReviewQueueItem = {
 };
 export type ReportComment = Database["public"]["Tables"]["report_comments"]["Row"];
 export type CommentKind = ReportComment["kind"];
-export type CommentSection = NonNullable<ReportComment["section"]>;
+export type CommentSection = "activities" | "school_content" | "instructions" | "summary";
 export type UserSignature = Database["public"]["Tables"]["user_signatures"]["Row"];
 export type ReviewPerson = Pick<Database["public"]["Tables"]["profiles"]["Row"], "id" | "full_name" | "profession_id">;
 
@@ -132,14 +132,22 @@ export async function approveReport(input: {
   imagePath?: string | undefined;
   note?: string | undefined;
 }): Promise<void> {
-  const { error } = await supabase.rpc("approve_report", {
+  const args: {
+    _report_id: string;
+    _expected_version: number;
+    _method: string;
+    _image_path?: string;
+    _note?: string;
+    _client_signed_at: string;
+  } = {
     _report_id: input.reportId,
     _expected_version: input.expectedVersion,
     _method: input.method,
-    _image_path: input.imagePath,
-    _note: input.note,
     _client_signed_at: new Date().toISOString(),
-  });
+  };
+  if (input.imagePath) args._image_path = input.imagePath;
+  if (input.note) args._note = input.note;
+  const { error } = await supabase.rpc("approve_report", args);
   if (error) {
     if (error.message.includes("inzwischen geändert")) throw new ReportConflictError();
     throw error;
@@ -166,7 +174,8 @@ export async function listComments(reportId: string): Promise<ReportComment[]> {
 }
 
 export async function addComment(reportId: string, section: CommentSection | null, body: string): Promise<void> {
-  const { error } = await supabase.from("report_comments").insert({ id: crypto.randomUUID(), report_id: reportId, section, body: body.trim() });
+  // azubi_id und author_id setzt der Datenbank-Trigger; die Client-Grants lassen nur diese vier Felder zu.
+  const { error } = await supabase.from("report_comments").insert({ id: crypto.randomUUID(), report_id: reportId, section, body: body.trim() } as never);
   if (error) throw error;
 }
 

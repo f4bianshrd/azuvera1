@@ -70,11 +70,13 @@ function ReportDetailPage() {
 
   const title = reportTitle(report);
   const dateLabel = format(new Date(report.report_date + "T00:00:00"), "d. MMMM yyyy", { locale: de });
-  const refresh = () => Promise.all([
-    queryClient.invalidateQueries({ queryKey: ["reports", id] }),
-    queryClient.invalidateQueries({ queryKey: ["review"] }),
-    queryClient.invalidateQueries({ queryKey: ["notifications"] }),
-  ]);
+  const refresh = async (): Promise<void> => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["reports", id] }),
+      queryClient.invalidateQueries({ queryKey: ["review"] }),
+      queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+    ]);
+  };
   const doDelete = async () => {
     try {
       await deleteReport(report.id);
@@ -88,7 +90,7 @@ function ReportDetailPage() {
 
   return <div className="space-y-5 pb-28">
     <div className="flex flex-col gap-3">
-      <Link to={profile?.role === "azubi" ? "/reports" : "/ausbilder"} search={profile?.role === "azubi" ? undefined : { tab: "pruefen" }} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" aria-hidden /> Zurück</Link>
+      {profile?.role === "azubi" ? <Link to="/reports" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" aria-hidden /> Zurück</Link> : <Link to="/ausbilder" search={{ tab: "pruefen" }} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" aria-hidden /> Zurück</Link>}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div><h1 className="text-2xl font-bold tracking-tight">{title}</h1><p className="mt-1 text-muted-foreground">{dateLabel}{!isOwner && names?.get(report.azubi_id) ? ` • ${names.get(report.azubi_id)}` : ""}</p></div>
         <div className="flex flex-wrap items-center gap-2">
