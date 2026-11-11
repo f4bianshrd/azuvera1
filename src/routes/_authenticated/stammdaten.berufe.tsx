@@ -34,9 +34,10 @@ interface ProfForm {
   description: string;
   code: string;
   duration_months: string;
+  ai_hints: string;
 }
 
-const emptyForm: ProfForm = { name: "", chamber: "", description: "", code: "", duration_months: "36" };
+const emptyForm: ProfForm = { name: "", chamber: "", description: "", code: "", duration_months: "36", ai_hints: "" };
 
 function BerufePage() {
   const { data: me } = useMyProfile();
@@ -68,6 +69,7 @@ function BerufePage() {
       description: p.description ?? "",
       code: p.code ?? "",
       duration_months: String(p.duration_months ?? 36),
+      ai_hints: p.ai_hints ?? "",
     });
     setOpen(true);
   };
@@ -84,6 +86,7 @@ function BerufePage() {
       description: form.description || null,
       code: form.code || null,
       duration_months: Number(form.duration_months) || 36,
+      ai_hints: form.ai_hints,
     };
     const { error } = form.id
       ? await supabase.from("professions").update(payload).eq("id", form.id)
@@ -184,6 +187,11 @@ function BerufePage() {
           <div className="space-y-1.5">
             <Label htmlFor="p-desc">Beschreibung</Label>
             <Textarea id="p-desc" value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="text-base" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="p-ai-hints">KI-Hinweise (Fachsprache)</Label>
+            <Textarea id="p-ai-hints" rows={4} maxLength={4000} value={form.ai_hints} onChange={(e) => setForm((f) => ({ ...f, ai_hints: e.target.value }))} className="text-base" />
+            <p className="text-xs text-muted-foreground">Wird dem KI-Text als Fachwissen mitgegeben. Nur allgemein gültige Fachbegriffe, keine Betriebsdaten.</p>
           </div>
           <Button className="h-11 w-full" onClick={() => void save()} disabled={busy}>
             Speichern
