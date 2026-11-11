@@ -31,7 +31,7 @@ export function ConflictBox({ report }: { report: Report }) {
       <div className="flex flex-wrap gap-2">
         {!locked && <Button size="sm" onClick={async () => { await keepMyVersion(report.id); await refresh(); toast.success("Deine Version wird gesendet."); }}>Meine Version behalten</Button>}
         <Button size="sm" variant="outline" onClick={() => setConfirm(true)}>Serverversion übernehmen</Button>
-        {!locked && <Button size="sm" variant="outline" onClick={() => setCompare((c) => !c)}>Texte vergleichen</Button>}
+        {!locked && <Button size="sm" variant="outline" onClick={() => { setMerged(Object.fromEntries(SECTIONS.map((x) => [x.key, report[x.key] ?? ""])) as Record<Key, string>); setCompare((c) => !c); }}>Texte vergleichen</Button>}
         {locked && <Button size="sm" variant="ghost" onClick={() => setShowCopy((c) => !c)}>Lokale Kopie anzeigen</Button>}
       </div>
 
