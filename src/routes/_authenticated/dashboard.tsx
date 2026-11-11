@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, isAfter } from "date-fns";
 import { toast } from "sonner";
-import { ArrowRight, CalendarDays, FilePlus2 } from "lucide-react";
+import { ArrowRight, CalendarDays, CalendarOff, FilePlus2, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,6 +17,7 @@ import { computeCoverage } from "@/features/reports/coverage";
 import { CoverageDonut } from "@/features/reports/coverage-donut";
 import { isoWeekOf } from "@/features/reports/report-editor";
 import { currentTrainingYear, defaultPeriodForYear, trainingYears } from "@/lib/training-year";
+import { listAbsentDays } from "@/features/absences/api";
 
 const TITLE = "Dashboard – Azuvera";
 
@@ -70,9 +71,25 @@ function Dashboard() {
       listReportsInRange(profile!.id, format(coveragePeriod!.start, "yyyy-MM-dd"), format(coveragePeriod!.end, "yyyy-MM-dd")),
   });
 
+  const { data: absentDates } = useQuery({
+    queryKey: ["absent-days", profile?.id, coveragePeriod?.start.toISOString(), coveragePeriod?.end.toISOString()],
+    enabled: !!profile && !!coveragePeriod,
+    queryFn: () => listAbsentDays(profile!.id, format(coveragePeriod!.start, "yyyy-MM-dd"), format(coveragePeriod!.end, "yyyy-MM-dd")),
+  });
+
+  const thisWeek = isoWeekOf(new Date());
+  const lastWeekMonday = new Date(thisWeek.monday.getTime() - 7 * 86400000);
+  const lastWeek = isoWeekOf(lastWeekMonday);
+  const lastWeekFriday = format(new Date(lastWeekMonday.getTime() + 4 * 86400000), "yyyy-MM-dd");
+  const { data: lastWeekAbsentDays } = useQuery({
+    queryKey: ["absent-days", "last-week", profile?.id, format(lastWeekMonday, "yyyy-MM-dd")],
+    enabled: !!profile && isAzubi,
+    queryFn: () => listAbsentDays(profile!.id, format(lastWeekMonday, "yyyy-MM-dd"), lastWeekFriday),
+  });
+
   const coverage = useMemo(
-    () => (rangeReports && coveragePeriod ? computeCoverage(rangeReports, coveragePeriod.start, coveragePeriod.end) : null),
-    [rangeReports, coveragePeriod],
+    () => (rangeReports && absentDates && coveragePeriod ? computeCoverage(rangeReports, coveragePeriod.start, coveragePeriod.end, absentDates) : null),
+    [rangeReports, absentDates, coveragePeriod],
   );
 
   useEffect(() => {
@@ -100,9 +117,8 @@ function Dashboard() {
   const submitted = (reports ?? []).filter((r) => r.status === "submitted");
   const approved = (reports ?? []).filter((r) => r.status === "approved");
 
-  const thisWeek = isoWeekOf(new Date());
-  const lastWeekMonday = new Date(thisWeek.monday.getTime() - 7 * 86400000);
-  const lastWeek = isoWeekOf(lastWeekMonday);
+  const allLastWeekAbsent = Array.from({ length: 5 }, (_, index) => format(new Date(lastWeekMonday.getTime() + index * 86400000), "yyyy-MM-dd"))
+    .every((day) => lastWeekAbsentDays?.has(day));
   const hasThisWeek = (reports ?? []).some(
     (r) => r.report_type === "weekly" && r.year === thisWeek.year && r.week_number === thisWeek.weekNumber,
   );
@@ -119,7 +135,7 @@ function Dashboard() {
       link: { to: `/reports/${r.id}`, label: "Ansehen" },
     });
   }
-  if (!hasLastWeek) {
+  if (!hasLastWeek && !allLastWeekAbsent) {
     tasks.push({
       key: "last-week",
       color: "border-amber-500/40 bg-amber-500/5",
@@ -258,12 +274,12 @@ function Dashboard() {
       {/* Schnellzugriff – nur Links zu existierenden Seiten */}
       <section className="rounded-2xl border bg-card p-5">
         <h2 className="font-semibold">Schnellzugriff</h2>
-        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           <QuickLink to="/reports/new" icon={FilePlus2} title="Neuer Bericht" hint="Tages- oder Wochenbericht erfassen" />
+          <QuickLink to="/abwesenheiten" icon={CalendarOff} title="Abwesenheiten" hint="Urlaub, Krankheit und Berufsschule" />
+          <QuickLink to="/noten" icon={GraduationCap} title="Schulnoten" hint="Bewertungen und Durchschnitte" />
         </ul>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Ausbildungsplan, Abwesenheit und Schulnoten erscheinen hier, sobald die Bausteine gebaut sind.
-        </p>
+        <p className="mt-3 text-xs text-muted-foreground">Der Ausbildungsplan erscheint hier mit einem späteren Baustein.</p>
       </section>
 
       {profile && (

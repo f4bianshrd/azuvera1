@@ -132,7 +132,7 @@ function AbsencesPage() {
       {period && (
         <section className="grid gap-3 sm:grid-cols-3">
           {(["urlaub", "krank", "berufsschule"] as const).map((type) => (
-            <StatCard key={type} label={`${ABSENCE_TYPE_LABELS[type]}tage`} value={absenceMetric(inYear, type, period.start, period.end)} hint={`im ${effectiveYear}. Lehrjahr · Kalendertage, ohne abgelehnte`} />
+            <StatCard key={type} label={{ urlaub: "Urlaubstage", krank: "Krankheitstage", berufsschule: "Berufsschultage" }[type]} value={absenceMetric(inYear, type, period.start, period.end)} hint={`im ${effectiveYear}. Lehrjahr · Kalendertage, ohne abgelehnte`} />
           ))}
         </section>
       )}

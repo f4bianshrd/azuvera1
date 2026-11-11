@@ -20,6 +20,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAenderungsprotokollRouteImport } from './routes/_authenticated/aenderungsprotokoll'
 import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_authenticated/benachrichtigungen'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedNotenRouteImport } from './routes/_authenticated/noten'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin.einstellungen'
@@ -86,6 +87,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotenRoute = AuthenticatedNotenRouteImport.update({
+  id: '/noten',
+  path: '/noten',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/noten': typeof AuthenticatedNotenRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/noten': typeof AuthenticatedNotenRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/_authenticated/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/_authenticated/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/noten': typeof AuthenticatedNotenRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
   '/_authenticated/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/aenderungsprotokoll'
     | '/benachrichtigungen'
     | '/dashboard'
+    | '/noten'
     | '/profil'
     | '/reports'
     | '/admin/einstellungen'
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/aenderungsprotokoll'
     | '/benachrichtigungen'
     | '/dashboard'
+    | '/noten'
     | '/profil'
     | '/admin/einstellungen'
     | '/reports/$id'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/_authenticated/aenderungsprotokoll'
     | '/_authenticated/benachrichtigungen'
     | '/_authenticated/dashboard'
+    | '/_authenticated/noten'
     | '/_authenticated/profil'
     | '/_authenticated/reports'
     | '/_authenticated/admin/einstellungen'
@@ -343,6 +355,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/noten': {
+      id: '/_authenticated/noten'
+      path: '/noten'
+      fullPath: '/noten'
+      preLoaderRoute: typeof AuthenticatedNotenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profil': {
       id: '/_authenticated/profil'
       path: '/profil'
@@ -434,6 +453,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAenderungsprotokollRoute: typeof AuthenticatedAenderungsprotokollRoute
   AuthenticatedBenachrichtigungenRoute: typeof AuthenticatedBenachrichtigungenRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedNotenRoute: typeof AuthenticatedNotenRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
   AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
@@ -446,6 +466,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAenderungsprotokollRoute: AuthenticatedAenderungsprotokollRoute,
   AuthenticatedBenachrichtigungenRoute: AuthenticatedBenachrichtigungenRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedNotenRoute: AuthenticatedNotenRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
   AuthenticatedStammdatenBerufeRoute: AuthenticatedStammdatenBerufeRoute,
