@@ -25,6 +25,10 @@ export const Route = createFileRoute("/_authenticated/reports/$id")({
     meta: [
       { title: `Bericht ${params.id.slice(0, 8)} – Azuvera` },
       { name: "robots", content: "noindex" },
+      { name: "description", content: "Ausbildungsbericht mit Anhängen, Kommentaren und Unterschriften." },
+      { property: "og:title", content: `Bericht ${params.id.slice(0, 8)} – Azuvera` },
+      { property: "og:description", content: "Ausbildungsbericht mit Anhängen, Kommentaren und Unterschriften." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),

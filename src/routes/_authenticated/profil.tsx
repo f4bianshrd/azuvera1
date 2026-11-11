@@ -25,6 +25,8 @@ export const Route = createFileRoute("/_authenticated/profil")({
       { title: TITLE },
       { name: "description", content: "Dein Azuvera-Profil: persönliche Daten, Ausbildung und Sicherheit." },
       { property: "og:title", content: TITLE },
+      { property: "og:description", content: "Dein Azuvera-Profil: persönliche Daten, Ausbildung und Sicherheit." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),

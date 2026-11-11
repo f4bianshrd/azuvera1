@@ -39,3 +39,7 @@ use the editor.
 - Roles come from `user_roles` via `useMyProfile()` (`src/features/app/session.ts`); never from user-editable metadata. `audit_log` is append-only with a hash chain — never update or delete rows.
 - Feature modules access the database only through their own data-access layer (`src/features/<module>/api.ts`); components never import supabase directly. New records get their UUID on the device (`crypto.randomUUID()`), writes send the expected `version` (optimistic concurrency) — this keeps Baustein 4's offline sync possible without UI changes.
 - Guard triggers that allow writes only from SECURITY DEFINER functions must read the bypass flag with `coalesce(current_setting('app.bypass_guard', true), '') = 'on'` — without coalesce the check is silently skipped when the setting was never set in the session.
+
+- Team, deputy, reminder and notification features keep all database and realtime access in their module api.ts; shared dialogs reuse these APIs to preserve offline-ready boundaries.
+- The staff dashboard and team list use team_week_overview as their common weekly-status source; missing_weeks is the sole reminder backlog source so role visibility and counts stay consistent.
+- Settings at /admin/einstellungen use an unnested admin_ route because the administration content page does not render an Outlet.

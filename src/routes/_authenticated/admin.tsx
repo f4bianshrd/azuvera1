@@ -33,6 +33,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { title: TITLE },
       { name: "description", content: "Benutzer, Rollen und Einladungs-Codes verwalten." },
       { property: "og:title", content: TITLE },
+      { property: "og:description", content: "Benutzer, Rollen und Einladungs-Codes verwalten." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),

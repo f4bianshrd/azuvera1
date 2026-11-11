@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState, ListSkeleton, PageHeader, StatusBadge } from "@/components/shared";
 import { useMyProfile } from "@/features/app/session";
-import { listReports, listReportsInRange, reportTitle, STATUS_LABELS, type ReportStatus, type ReportType } from "@/features/reports/api";
+import { listReports, listReportsInRange, reportAzubiProfile, reportTitle, STATUS_LABELS, type ReportStatus, type ReportType } from "@/features/reports/api";
 import { computeCoverage } from "@/features/reports/coverage";
 import { CoverageDonut } from "@/features/reports/coverage-donut";
 import { currentTrainingYear, trainingYears } from "@/lib/training-year";
@@ -28,6 +28,8 @@ export const Route = createFileRoute("/_authenticated/reports/")({
       { title: TITLE },
       { name: "description", content: "Alle Tages- und Wochenberichte – inklusive gespeicherter Entwürfe." },
       { property: "og:title", content: TITLE },
+      { property: "og:description", content: "Alle Tages- und Wochenberichte – inklusive gespeicherter Entwürfe." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
@@ -38,6 +40,8 @@ function ReportsPage() {
   const { azubi: azubiFilter } = Route.useSearch();
   const { data: profile } = useMyProfile();
   const isAzubi = profile?.role === "azubi";
+  const { data: selectedAzubi } = useQuery({ queryKey: ["reports", "azubi-profile", azubiFilter], queryFn: () => azubiFilter ? reportAzubiProfile(azubiFilter) : null, enabled: !!azubiFilter && !isAzubi });
+  const trainingProfile = isAzubi ? profile : selectedAzubi;
 
   const [yearFilter, setYearFilter] = useState<string>("current");
   const [search, setSearch] = useState("");
@@ -46,20 +50,20 @@ function ReportsPage() {
   const [limit, setLimit] = useState(PAGE_SIZE);
 
   const years = useMemo(() => {
-    if (!profile?.ausbildungsbeginn) return [];
+    if (!trainingProfile?.ausbildungsbeginn) return [];
     return trainingYears(
-      new Date(profile.ausbildungsbeginn + "T00:00:00"),
-      profile.ausbildungsende ? new Date(profile.ausbildungsende + "T00:00:00") : undefined,
+      new Date(trainingProfile.ausbildungsbeginn + "T00:00:00"),
+      trainingProfile.ausbildungsende ? new Date(trainingProfile.ausbildungsende + "T00:00:00") : undefined,
     );
-  }, [profile]);
+  }, [trainingProfile]);
 
   const currentYear = useMemo(() => {
-    if (!profile?.ausbildungsbeginn) return 1;
+    if (!trainingProfile?.ausbildungsbeginn) return 1;
     return currentTrainingYear(
-      new Date(profile.ausbildungsbeginn + "T00:00:00"),
-      profile.ausbildungsende ? new Date(profile.ausbildungsende + "T00:00:00") : undefined,
+      new Date(trainingProfile.ausbildungsbeginn + "T00:00:00"),
+      trainingProfile.ausbildungsende ? new Date(trainingProfile.ausbildungsende + "T00:00:00") : undefined,
     );
-  }, [profile]);
+  }, [trainingProfile]);
 
   const effectiveYear = yearFilter === "current" ? currentYear : yearFilter === "all" ? null : Number(yearFilter);
 
@@ -68,7 +72,7 @@ function ReportsPage() {
     enabled: !!profile,
     queryFn: () =>
       listReports({
-        azubiId: isAzubi ? profile!.id : azubiFilter,
+        azubiId: isAzubi ? profile?.id : azubiFilter,
         status,
         type,
         search,
@@ -79,14 +83,14 @@ function ReportsPage() {
   // Abdeckung: für Azubis immer eigene, für andere nur bei gewähltem Azubi
   const coverageAzubi = isAzubi ? profile?.id : azubiFilter;
   const coveragePeriod = useMemo(() => {
-    if (!profile?.ausbildungsbeginn) return null;
-    const start = new Date(profile.ausbildungsbeginn + "T00:00:00");
+    if (!trainingProfile?.ausbildungsbeginn) return null;
+    const start = new Date(trainingProfile.ausbildungsbeginn + "T00:00:00");
     const today = new Date();
     if (effectiveYear === null) return { start, end: today };
     const y = years.find((x) => x.year === effectiveYear);
     if (!y) return { start, end: today };
     return { start: y.start, end: isAfter(y.end, today) ? today : y.end };
-  }, [profile, effectiveYear, years]);
+  }, [trainingProfile, effectiveYear, years]);
 
   const { data: rangeReports } = useQuery({
     queryKey: ["reports", "range", coverageAzubi, coveragePeriod?.start.toISOString(), coveragePeriod?.end.toISOString()],
@@ -118,17 +122,18 @@ function ReportsPage() {
       <PageHeader
         title="Berichte"
         subtitle="Alle Tages- und Wochenberichte – inklusive gespeicherter Entwürfe"
-        actions={
+        actions={isAzubi ?
           <Button asChild>
             <Link to="/reports/new" search={{ type: undefined, date: undefined }}>
               <Plus className="size-4" aria-hidden /> Neuer Bericht
             </Link>
-          </Button>
+          </Button> : undefined
         }
       />
 
       {coverage && coverageAzubi && (
         <CoverageDonut
+          canCreate={isAzubi}
           coverage={coverage}
           title={coverageTitle}
           subtitle={`seit ${format(coveragePeriod!.start, "d. MMMM yyyy", { locale: de })}`}
@@ -189,12 +194,12 @@ function ReportsPage() {
         <EmptyState
           icon={FileText}
           title={search || status !== "all" || type !== "all" ? "Keine Berichte entsprechen dem Filter." : "Noch keine Berichte vorhanden."}
-          action={
+          action={isAzubi ?
             <Button asChild>
               <Link to="/reports/new" search={{ type: undefined, date: undefined }}>
                 Ersten Bericht erstellen
               </Link>
-            </Button>
+            </Button> : undefined
           }
         />
       ) : (

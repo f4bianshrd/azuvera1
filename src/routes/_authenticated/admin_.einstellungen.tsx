@@ -3,19 +3,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { EmptyState, PageHeader } from "@/components/shared";
 import { useMyProfile } from "@/features/app/session";
-import { deputySelfService, saveDeputySetting } from "@/features/deputies/api";
+import { deputySelfService, saveDeputySetting, hostingLocation, saveHostingLocation } from "@/features/deputies/api";
 import { getAdminAiSettings, saveAdminAiSettings } from "@/features/ai/api";
 
 const TITLE = "Einstellungen – Azuvera";
 
-export const Route = createFileRoute("/_authenticated/admin/einstellungen")({
+export const Route = createFileRoute("/_authenticated/admin_/einstellungen")({
   head: () => ({
     meta: [
       { title: TITLE },
@@ -42,10 +42,7 @@ function EinstellungenPage() {
   const { data: setting } = useQuery({
     queryKey: ["app-settings", "hosting_location_text"],
     enabled: isLeitung,
-    queryFn: async () => {
-      const { data } = await supabase.from("app_settings").select("value").eq("key", "hosting_location_text").maybeSingle();
-      return typeof data?.value === "string" ? data.value : "";
-    },
+    queryFn: hostingLocation,
   });
   const { data: aiSettings } = useQuery({
     queryKey: ["app-settings", "ai"],
@@ -68,12 +65,9 @@ function EinstellungenPage() {
 
   const save = async () => {
     setBusy(true);
-    const { error } = await supabase.from("app_settings").upsert({ key: "hosting_location_text", value, is_public: true, updated_by: me?.id ?? null });
+    try { await saveHostingLocation(value, me?.id ?? null); }
+    catch { toast.error("Einstellung konnte nicht gespeichert werden."); setBusy(false); return; }
     setBusy(false);
-    if (error) {
-      toast.error("Einstellung konnte nicht gespeichert werden.");
-      return;
-    }
     await queryClient.invalidateQueries({ queryKey: ["app-settings"] });
     toast.success("Einstellung gespeichert");
   };

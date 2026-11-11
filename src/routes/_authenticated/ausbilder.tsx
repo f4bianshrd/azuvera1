@@ -78,7 +78,8 @@ function TrainerPortalPage() {
   const viewerRole = profile?.role === "ausbildungsberater" || profile?.role === "lehrer";
   const { data: reviewAccess } = useQuery({ queryKey: ["review", "has-access"], queryFn: hasReviewAccess, enabled: profile?.role === "betriebsleiter" });
   const readOnly = viewerRole || (profile?.role === "betriebsleiter" && reviewAccess !== true);
-  const activeTab: PortalTab = readOnly && tab !== "vertretung" ? "alle" : tab;
+  const canManageDeputies = !!profile && REVIEWER_ROLES.includes(profile.role);
+  const activeTab: PortalTab = readOnly && !(tab === "vertretung" && canManageDeputies) ? "alle" : tab;
 
   const queueQuery = useQuery({ queryKey: ["review", "queue", "submitted"], queryFn: () => listReviewQueue(["submitted"]), enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
   const rejectedQuery = useQuery({ queryKey: ["review", "queue", "rejected"], queryFn: () => listReviewQueue(["rejected"]), enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
@@ -148,8 +149,8 @@ function TrainerPortalPage() {
   }, [activeTab, selectedReport, filteredQueue, approveTarget, rejectTarget, bulkOpen, navigate]);
 
   useEffect(() => {
-    if (readOnly && tab !== "alle" && tab !== "vertretung") void navigate({ to: "/ausbilder", search: { tab: "alle" }, replace: true });
-  }, [readOnly, tab, navigate]);
+    if (readOnly && tab !== "alle" && !(tab === "vertretung" && canManageDeputies)) void navigate({ to: "/ausbilder", search: { tab: "alle" }, replace: true });
+  }, [readOnly, tab, navigate, canManageDeputies]);
 
   if (profile?.role === "azubi") return <EmptyState title="Dazu fehlt dir die Berechtigung." />;
   const queueItemFor = (id: string): ReviewQueueItem | undefined => queue.find((item) => item.report_id === id);
@@ -167,9 +168,10 @@ function TrainerPortalPage() {
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "pruefen" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("pruefen")}>Zu prüfen <Badge variant="secondary">{queue.length}</Badge></button>
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "abwesenheiten" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("abwesenheiten")}>Abwesenheiten <Badge variant="secondary">{absencesQuery.data?.length ?? 0}</Badge></button>
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "alle" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("alle")}>Alle Berichte</button>
+      {canManageDeputies && <Button variant={tab === "vertretung" ? "secondary" : "ghost"} onClick={() => setTab("vertretung")}>Vertretung</Button>}
     </div></>}
 
-    {profile && REVIEWER_ROLES.includes(profile.role) && <Button variant={tab === "vertretung" ? "secondary" : "outline"} onClick={() => setTab("vertretung")}>Vertretung</Button>}
+    {readOnly && canManageDeputies && <Button variant="outline" onClick={() => setTab(tab === "vertretung" ? "alle" : "vertretung")}>{tab === "vertretung" ? "Alle Berichte" : "Vertretung"}</Button>}
     {activeTab === "vertretung" && profile && REVIEWER_ROLES.includes(profile.role) && <DeputyPanel />}
     {activeTab !== "abwesenheiten" && activeTab !== "vertretung" && <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
       <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Suche nach Name, KW oder Datum" className="sm:w-64" />

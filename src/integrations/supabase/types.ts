@@ -1262,6 +1262,10 @@ export type Database = {
         }
         Returns: string
       }
+      set_deputy_self_service: {
+        Args: { _enabled: boolean }
+        Returns: undefined
+      }
       set_my_profession: {
         Args: { _profession_id: string }
         Returns: undefined

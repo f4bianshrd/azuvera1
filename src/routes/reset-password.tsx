@@ -16,6 +16,7 @@ export const Route = createFileRoute("/reset-password")({
       { name: "description", content: "Neues Passwort für dein Azuvera-Konto setzen." },
       { property: "og:title", content: TITLE },
       { property: "og:type", content: "website" },
+      { property: "og:description", content: "Neues Passwort für dein Azuvera-Konto setzen." },
       { name: "twitter:card", content: "summary" },
     ],
   }),

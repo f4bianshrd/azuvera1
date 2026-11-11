@@ -4,7 +4,7 @@ import { Bell, CheckCheck, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
+import { listNotifications, markRead as markNotificationRead, deleteNotification } from "@/features/notifications/api";
 import { Button } from "@/components/ui/button";
 import { EmptyState, ListSkeleton, PageHeader } from "@/components/shared";
 import { cn } from "@/lib/utils";
@@ -18,6 +18,8 @@ export const Route = createFileRoute("/_authenticated/benachrichtigungen")({
       { title: TITLE },
       { name: "description", content: "Deine Benachrichtigungen bei Azuvera." },
       { property: "og:title", content: TITLE },
+      { property: "og:description", content: "Deine Benachrichtigungen bei Azuvera." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
@@ -31,38 +33,23 @@ function BenachrichtigungenPage() {
   const { data: items, isLoading } = useQuery({
     queryKey: ["notifications", "list", me?.id],
     enabled: !!me?.id,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("notifications")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(100);
-      if (error) throw error;
-      return data;
-    },
+    queryFn: listNotifications,
   });
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["notifications"] });
 
   const markRead = async (id: string) => {
-    await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+    await markNotificationRead(id);
     await refresh();
   };
 
   const markAllRead = async () => {
-    const { error } = await supabase
-      .from("notifications")
-      .update({ read_at: new Date().toISOString() })
-      .is("read_at", null);
-    if (error) {
-      toast.error("Konnte nicht als gelesen markiert werden.");
-      return;
-    }
+    try { await markNotificationRead(); } catch { toast.error("Konnte nicht als gelesen markiert werden."); return; }
     await refresh();
   };
 
   const remove = async (id: string) => {
-    await supabase.from("notifications").delete().eq("id", id);
+    await deleteNotification(id);
     await refresh();
   };
 
