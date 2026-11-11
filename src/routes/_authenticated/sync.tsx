@@ -47,7 +47,7 @@ function SyncPage() {
 
   return (
     <div className="space-y-5">
-      <PageHeader title="Synchronisation" description={DESC} />
+      <PageHeader title="Synchronisation" subtitle={DESC} />
       <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-card p-4">
         <div className="flex items-center gap-2">
           {s.online ? <CheckCircle2 className="size-5 text-primary" aria-hidden /> : <CloudOff className="size-5 text-muted-foreground" aria-hidden />}
