@@ -10,6 +10,8 @@ import {
 } from "@/features/reports/api";
 import type { Absence } from "@/features/absences/api";
 import { cachedOnline } from "@/lib/sync/online-cache";
+import { currentDb } from "@/lib/sync/db";
+import { enqueue, myId, nowIso } from "@/lib/sync/local";
 import { berlinStartOfDay } from "./review-utils";
 
 export type ReviewQueueItem = {
@@ -182,12 +184,24 @@ export async function reopenReport(reportId: string, reason: string): Promise<vo
 }
 
 export async function listComments(reportId: string): Promise<ReportComment[]> {
+  const db = currentDb();
+  if (db && (await db.reports.get(reportId))) {
+    return (await db.report_comments.where("report_id").equals(reportId).toArray()).sort((a, b) => a.created_at.localeCompare(b.created_at));
+  }
   const { data, error } = await supabase.from("report_comments").select("*").eq("report_id", reportId).order("created_at");
   if (error) throw error;
   return data ?? [];
 }
 
 export async function addComment(reportId: string, section: CommentSection | null, body: string): Promise<void> {
+  const db = currentDb();
+  const uid = myId();
+  if (db && uid && (await db.reports.get(reportId))) {
+    const id = crypto.randomUUID();
+    await db.report_comments.put({ id, report_id: reportId, azubi_id: uid, author_id: uid, section, body: body.trim(), kind: "comment", created_at: nowIso(), _sync: "pending", _base_version: null });
+    await enqueue({ record: `comment:${id}`, op: "comment.insert", payload: { id }, title: "Kommentar senden" });
+    return;
+  }
   // azubi_id und author_id setzt der Datenbank-Trigger; die Client-Grants lassen nur diese vier Felder zu.
   const { error } = await supabase.from("report_comments").insert({ id: crypto.randomUUID(), report_id: reportId, section, body: body.trim() } as never);
   if (error) throw error;
