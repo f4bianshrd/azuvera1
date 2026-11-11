@@ -8,6 +8,10 @@ export function parseGradeInput(value: string): number | null {
   return Number.isFinite(parsed) ? Math.round(parsed * 10) / 10 : null;
 }
 
+export function isGradeInRange(value: number | null): value is number {
+  return value !== null && value >= 1 && value <= 6;
+}
+
 export function formatGrade(value: number, digits = 1): string {
   return value.toLocaleString("de-DE", { minimumFractionDigits: digits, maximumFractionDigits: digits });
 }

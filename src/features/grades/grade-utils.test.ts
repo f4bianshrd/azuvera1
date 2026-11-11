@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { averageGrade, parseGradeInput, subjectAverages } from "./grade-utils";
+import { averageGrade, isGradeInRange, parseGradeInput, subjectAverages } from "./grade-utils";
 import type { Grade } from "./api";
 
 function grade(id: string, subject: string, value: number): Grade {
@@ -14,6 +14,13 @@ describe("Schulnoten", () => {
 
   it("berechnet den ungewichteten Gesamtschnitt", () => {
     expect(averageGrade([grade("1", "WiSo", 1.5), grade("2", "WiSo", 2.5), grade("3", "Deutsch", 3)])).toBeCloseTo(7 / 3);
+  });
+
+  it("akzeptiert nur Noten von 1 bis 6", () => {
+    expect(isGradeInRange(parseGradeInput("1"))).toBe(true);
+    expect(isGradeInRange(parseGradeInput("6"))).toBe(true);
+    expect(isGradeInRange(parseGradeInput("0,9"))).toBe(false);
+    expect(isGradeInRange(parseGradeInput("6,1"))).toBe(false);
   });
 
   it("berechnet Fachschnitte und sortiert den besten zuerst", () => {

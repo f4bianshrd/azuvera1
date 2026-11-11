@@ -23,7 +23,7 @@ import {
   listAbsences, listAccessibleAzubis, listOverlappingAbsences, reviewAbsence, updateAbsence,
   type Absence, type AbsenceInput, type AbsenceStatus, type AbsenceType,
 } from "@/features/absences/api";
-import { absenceMetric, inclusiveDays, parseLocalDate } from "@/features/absences/absence-utils";
+import { absenceMetric, inclusiveDays, parseLocalDate, validateAbsenceDates } from "@/features/absences/absence-utils";
 
 const TITLE = "Abwesenheiten – Azuvera";
 const TYPE_ICONS = { urlaub: Sun, krank: HeartPulse, berufsschule: School, sonstiges: CircleEllipsis };
@@ -195,9 +195,9 @@ function AbsenceFormDialog({ open, onOpenChange, azubiId, absence, onSaved }: { 
   const { data: overlaps } = useQuery({ queryKey: ["absences", "overlap", azubiId, from, to, absence?.id], queryFn: () => listOverlappingAbsences(azubiId, from, to, absence?.id), enabled: open && validDates });
 
   const save = async () => {
-    if (!type || !from || !to) { toast.error("Bitte alle Pflichtfelder ausfüllen"); return; }
-    if (to < from) { toast.error("Das Enddatum darf nicht vor dem Startdatum liegen."); return; }
-    if (inclusiveDays(from, to) > 366) { toast.error("Eine Abwesenheit darf höchstens 366 Tage umfassen."); return; }
+    if (!type) { toast.error("Bitte alle Pflichtfelder ausfüllen"); return; }
+    const dateError = validateAbsenceDates(from, to);
+    if (dateError) { toast.error(dateError); return; }
     setBusy(true);
     try {
       const input: AbsenceInput = { type, dateFrom: from, dateTo: to, note: note.trim() };

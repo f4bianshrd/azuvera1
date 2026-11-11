@@ -17,7 +17,7 @@ import { EmptyState, ListSkeleton, PageHeader, StatCard } from "@/components/sha
 import { useMyProfile } from "@/features/app/session";
 import { currentTrainingYear, trainingYears } from "@/lib/training-year";
 import { GRADE_KIND_LABELS, createGrade, deleteGrade, gradeDisplayNames, listGradeAzubis, listGrades, updateGrade, type Grade, type GradeInput, type GradeKind } from "@/features/grades/api";
-import { averageGrade, formatGrade, gradeTrend, parseGradeInput, subjectAverages } from "@/features/grades/grade-utils";
+import { averageGrade, formatGrade, gradeTrend, isGradeInRange, parseGradeInput, subjectAverages } from "@/features/grades/grade-utils";
 
 const TITLE = "Schulnoten – Azuvera";
 
@@ -139,7 +139,7 @@ function GradeFormDialog({ open, onOpenChange, azubiId, grade, subjects, onSaved
   const save = async () => {
     const parsed = parseGradeInput(value);
     if (!subject.trim() || !value.trim() || !date) { toast.error("Bitte alle Pflichtfelder ausfüllen"); return; }
-    if (parsed === null || parsed < 1 || parsed > 6) { toast.error("Note muss zwischen 1 und 6 liegen"); return; }
+    if (!isGradeInRange(parsed)) { toast.error("Note muss zwischen 1 und 6 liegen"); return; }
     setBusy(true);
     try {
       const input: GradeInput = { subject: subject.trim(), grade: parsed, gradeDate: date, kind, note: note.trim() };
