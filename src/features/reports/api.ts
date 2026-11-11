@@ -411,3 +411,11 @@ export async function reportAzubiProfile(id: string) {
   if (error) throw error;
   return data;
 }
+
+/** Unterschrifts-PNG direkt hochladen (Online-Prüfungen); gibt den Pfad zurück. */
+export async function uploadSignature(userId: string, png: Blob): Promise<string> {
+  const path = `${userId}/${crypto.randomUUID()}.png`;
+  const { error } = await supabase.storage.from("signatures").upload(path, png, { contentType: "image/png", upsert: false });
+  if (error) throw error;
+  return path;
+}
