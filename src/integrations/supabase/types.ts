@@ -333,6 +333,67 @@ export type Database = {
           },
         ]
       }
+      deputies: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          date_from: string
+          date_to: string
+          deputy_id: string
+          id: string
+          note: string | null
+          principal_id: string
+          reason: string
+          revoked_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          date_from: string
+          date_to: string
+          deputy_id: string
+          id?: string
+          note?: string | null
+          principal_id: string
+          reason: string
+          revoked_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          date_from?: string
+          date_to?: string
+          deputy_id?: string
+          id?: string
+          note?: string | null
+          principal_id?: string
+          reason?: string
+          revoked_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deputies_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deputies_deputy_id_fkey"
+            columns: ["deputy_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deputies_principal_id_fkey"
+            columns: ["principal_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invite_codes: {
         Row: {
           code: string
@@ -604,6 +665,61 @@ export type Database = {
           },
         ]
       }
+      report_comments: {
+        Row: {
+          author_id: string
+          azubi_id: string
+          body: string
+          created_at: string
+          id: string
+          kind: string
+          report_id: string
+          section: string | null
+        }
+        Insert: {
+          author_id?: string
+          azubi_id: string
+          body: string
+          created_at?: string
+          id?: string
+          kind?: string
+          report_id: string
+          section?: string | null
+        }
+        Update: {
+          author_id?: string
+          azubi_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          report_id?: string
+          section?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_comments_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_comments_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_signatures: {
         Row: {
           client_signed_at: string | null
@@ -864,6 +980,32 @@ export type Database = {
         }
         Relationships: []
       }
+      user_signatures: {
+        Row: {
+          image_path: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          image_path: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          image_path?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_signatures_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -872,6 +1014,10 @@ export type Database = {
       absent_days: {
         Args: { _azubi: string; _from_date: string; _to_date: string }
         Returns: string[]
+      }
+      acting_principal: {
+        Args: { _azubi: string; _reviewer: string }
+        Returns: string
       }
       admin_list_users: {
         Args: never
@@ -899,6 +1045,17 @@ export type Database = {
       }
       admin_update_azubi: {
         Args: { _azubi_id: string; _patch: Json }
+        Returns: undefined
+      }
+      approve_report: {
+        Args: {
+          _client_signed_at?: string
+          _expected_version: number
+          _image_path?: string
+          _method: string
+          _note?: string
+          _report_id: string
+        }
         Returns: undefined
       }
       audit_hash: {
@@ -954,18 +1111,38 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_active_deputy: {
+        Args: { _deputy: string; _on_date?: string; _principal: string }
+        Returns: boolean
+      }
       is_leitung: { Args: { _user_id: string }; Returns: boolean }
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
       log_ai_assist: {
         Args: { _field: string; _report_id: string }
         Returns: undefined
       }
+      notification_recipients: {
+        Args: { _azubi: string }
+        Returns: {
+          deputy_for: string
+          user_id: string
+        }[]
+      }
       redeem_invite_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      reject_report: {
+        Args: { _expected_version: number; _note: string; _report_id: string }
+        Returns: undefined
+      }
+      reopen_report: {
+        Args: { _reason: string; _report_id: string }
+        Returns: undefined
+      }
       report_canonical: { Args: { _report_id: string }; Returns: string }
       report_hash: { Args: { _report_id: string }; Returns: string }
+      report_title: { Args: { _report_id: string }; Returns: string }
       review_absence: {
         Args: {
           _absence_id: string
@@ -974,11 +1151,33 @@ export type Database = {
         }
         Returns: undefined
       }
+      review_queue: {
+        Args: { _statuses?: Database["public"]["Enums"]["report_status"][] }
+        Returns: {
+          azubi_id: string
+          deputy_for: string
+          report_id: string
+          status: Database["public"]["Enums"]["report_status"]
+          submitted_at: string
+        }[]
+      }
       revoke_consent: {
         Args: { _kind: Database["public"]["Enums"]["consent_kind"] }
         Returns: undefined
       }
+      revoke_deputy: { Args: { _id: string }; Returns: undefined }
       revoke_invite_code: { Args: { _code: string }; Returns: undefined }
+      set_deputy: {
+        Args: {
+          _date_from: string
+          _date_to: string
+          _deputy: string
+          _note?: string
+          _principal: string
+          _reason: string
+        }
+        Returns: string
+      }
       set_my_profession: {
         Args: { _profession_id: string }
         Returns: undefined
