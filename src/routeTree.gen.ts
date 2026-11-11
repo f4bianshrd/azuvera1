@@ -18,6 +18,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAbwesenheitenRouteImport } from './routes/_authenticated/abwesenheiten'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAenderungsprotokollRouteImport } from './routes/_authenticated/aenderungsprotokoll'
+import { Route as AuthenticatedAusbilderRouteImport } from './routes/_authenticated/ausbilder'
 import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_authenticated/benachrichtigungen'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedNotenRouteImport } from './routes/_authenticated/noten'
@@ -76,6 +77,11 @@ const AuthenticatedAenderungsprotokollRoute =
     path: '/aenderungsprotokoll',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAusbilderRoute = AuthenticatedAusbilderRouteImport.update({
+  id: '/ausbilder',
+  path: '/ausbilder',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBenachrichtigungenRoute =
   AuthenticatedBenachrichtigungenRouteImport.update({
     id: '/benachrichtigungen',
@@ -146,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
+  '/ausbilder': typeof AuthenticatedAusbilderRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/noten': typeof AuthenticatedNotenRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
+  '/ausbilder': typeof AuthenticatedAusbilderRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/noten': typeof AuthenticatedNotenRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/_authenticated/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
+  '/_authenticated/ausbilder': typeof AuthenticatedAusbilderRoute
   '/_authenticated/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/noten': typeof AuthenticatedNotenRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
     | '/abwesenheiten'
     | '/admin'
     | '/aenderungsprotokoll'
+    | '/ausbilder'
     | '/benachrichtigungen'
     | '/dashboard'
     | '/noten'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/abwesenheiten'
     | '/admin'
     | '/aenderungsprotokoll'
+    | '/ausbilder'
     | '/benachrichtigungen'
     | '/dashboard'
     | '/noten'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/_authenticated/abwesenheiten'
     | '/_authenticated/admin'
     | '/_authenticated/aenderungsprotokoll'
+    | '/_authenticated/ausbilder'
     | '/_authenticated/benachrichtigungen'
     | '/_authenticated/dashboard'
     | '/_authenticated/noten'
@@ -339,6 +351,13 @@ declare module '@tanstack/react-router' {
       path: '/aenderungsprotokoll'
       fullPath: '/aenderungsprotokoll'
       preLoaderRoute: typeof AuthenticatedAenderungsprotokollRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ausbilder': {
+      id: '/_authenticated/ausbilder'
+      path: '/ausbilder'
+      fullPath: '/ausbilder'
+      preLoaderRoute: typeof AuthenticatedAusbilderRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/benachrichtigungen': {
@@ -451,6 +470,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAbwesenheitenRoute: typeof AuthenticatedAbwesenheitenRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedAenderungsprotokollRoute: typeof AuthenticatedAenderungsprotokollRoute
+  AuthenticatedAusbilderRoute: typeof AuthenticatedAusbilderRoute
   AuthenticatedBenachrichtigungenRoute: typeof AuthenticatedBenachrichtigungenRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedNotenRoute: typeof AuthenticatedNotenRoute
@@ -464,6 +484,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAbwesenheitenRoute: AuthenticatedAbwesenheitenRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedAenderungsprotokollRoute: AuthenticatedAenderungsprotokollRoute,
+  AuthenticatedAusbilderRoute: AuthenticatedAusbilderRoute,
   AuthenticatedBenachrichtigungenRoute: AuthenticatedBenachrichtigungenRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedNotenRoute: AuthenticatedNotenRoute,

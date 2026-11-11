@@ -40,6 +40,7 @@ const TEAM_ROLES: AppRole[] = [...REVIEWER_ROLES, ...VIEWER_ROLES];
 export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: Home, section: "arbeit", to: "/dashboard" },
   { label: "Berichte", icon: FileText, section: "arbeit", to: "/reports" },
+  { label: "Ausbilderportal", icon: ClipboardCheck, section: "arbeit", to: "/ausbilder", roles: TEAM_ROLES },
   { label: "Team", icon: Users, section: "arbeit", roles: TEAM_ROLES },
   { label: "Ausbildungsplan", icon: CalendarDays, section: "arbeit" },
   { label: "Unterweisungen", icon: ShieldCheck, section: "arbeit" },
@@ -86,7 +87,7 @@ export function mobileTabs(role: AppRole): (TabItem | null)[] {
   }
   return [
     { label: "Start", icon: Home, to: "/dashboard" },
-    { label: "Prüfung", icon: ClipboardCheck },
+    { label: "Prüfung", icon: ClipboardCheck, to: "/ausbilder" },
     { label: "Team", icon: Users },
     { label: "Plan", icon: CalendarDays },
     null,

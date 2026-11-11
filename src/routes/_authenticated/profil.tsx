@@ -14,6 +14,7 @@ import { ROLE_LABELS, signOutAndLeave, useMyProfile, type MyProfile } from "@/fe
 import { useCompanies, useProfessions } from "@/features/app/queries";
 import { defaultPeriodForYear } from "@/lib/training-year";
 import { ConsentSettings } from "@/features/consents/consent-settings";
+import { SavedSignatureCard } from "@/features/review/saved-signature-card";
 import { format } from "date-fns";
 
 const TITLE = "Mein Profil – Azuvera";
@@ -307,6 +308,8 @@ function ProfilPage() {
           <Field id="ausbildungsende" label="Ausbildungsende" type="date" value={form.ausbildungsende ?? ""} onChange={set("ausbildungsende")} />
         </div>
       </Card>
+
+      <SavedSignatureCard />
 
       <Card title="Datenschutz-Einwilligungen">
         <ConsentSettings />
