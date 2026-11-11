@@ -11,6 +11,9 @@ import {
   Plus,
 } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/notification-bell";
+import { SyncChip } from "@/features/sync/sync-chip";
+import { SyncRuntime } from "@/features/sync/sync-runtime";
+import { useSignOut } from "@/features/sync/sign-out";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +29,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ResponsiveDialog } from "@/components/dialogs";
 import { Logo } from "@/components/shared";
-import { initials, signOutAndLeave, useMyProfile, ROLE_LABELS, type AppRole, type MyProfile } from "./session";
+import { initials, useMyProfile, ROLE_LABELS, type AppRole, type MyProfile } from "./session";
 import { mobileTabs, SECTION_LABELS, titleForPath, visibleNav, type NavSection } from "./nav";
 import { listReviewQueue } from "@/features/review/api";
 
@@ -151,7 +154,7 @@ export function AppShell() {
   const title = titleForPath(pathname);
   const tabs = useMemo(() => (profile ? mobileTabs(profile.role) : []), [profile]);
 
-  const signOut = () => void signOutAndLeave(queryClient, (opts) => void navigate(opts));
+  const { request: signOut, dialog: signOutDialog } = useSignOut();
 
   // Tastenkürzel am PC: ? öffnet die Übersicht. N und / folgen mit den Berichte-Seiten.
   useEffect(() => {
@@ -178,7 +181,7 @@ export function AppShell() {
     );
   }
 
-  const bell = <NotificationBell userId={profile.id} />;
+  const bell = <><SyncChip /><NotificationBell userId={profile.id} /></>;
 
   const avatarMenu = (
     <DropdownMenu>
@@ -279,6 +282,8 @@ export function AppShell() {
         </header>
 
         <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 pb-24 pt-6 sm:px-6 md:pb-10">
+          <SyncRuntime userId={profile.id} />
+          {signOutDialog}
           <Outlet />
         </main>
 
