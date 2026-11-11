@@ -9,7 +9,7 @@ describe("Sync-Regeln", () => {
     expect([1, 2, 3, 4, 5, 9].map(backoffDelayMs)).toEqual([5_000, 15_000, 60_000, 300_000, 900_000, 900_000]);
   });
   it("fasst wartende Änderungen am selben Bericht zusammen", () => {
-    const r = coalesce([entry({ id: 1 })], { ...entry({ payload: { x: 2 } }), id: undefined } as never);
+    const r = coalesce([entry({ id: 1 })], { ...entry({ payload: { id: "a" } }), id: undefined } as never);
     expect(r.update?.id).toBe(1);
     expect(r.insert).toBeUndefined();
   });

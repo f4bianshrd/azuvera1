@@ -118,7 +118,7 @@ export function startSync(userId: string, qc: QueryClient): void {
     .on("postgres_changes", { event: "INSERT", schema: "public", table: "report_comments", filter: `azubi_id=eq.${userId}` }, (payload) => {
       void (async () => {
         const row = payload.new as Record<string, unknown>;
-        await currentDb()?.report_comments.put({ ...(row as never), _sync: "synced", _base_version: 0 });
+        await currentDb()?.report_comments.put({ ...(row as object), _sync: "synced", _base_version: 0 } as never);
         notifyLocalChange();
         scheduleSync(200); // Kommentar kommt oft mit Statuswechsel – Bericht nachladen
       })();
