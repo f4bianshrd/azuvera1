@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedAbwesenheitenRouteImport } from './routes/_authenticated/abwesenheiten'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAenderungsprotokollRouteImport } from './routes/_authenticated/aenderungsprotokoll'
 import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_authenticated/benachrichtigungen'
@@ -57,6 +58,12 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAbwesenheitenRoute =
+  AuthenticatedAbwesenheitenRouteImport.update({
+    id: '/abwesenheiten',
+    path: '/abwesenheiten',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -130,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
@@ -149,6 +157,7 @@ export interface FileRoutesByTo {
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
@@ -169,6 +178,7 @@ export interface FileRoutesById {
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/_authenticated/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/impressum'
     | '/reset-password'
+    | '/abwesenheiten'
     | '/admin'
     | '/aenderungsprotokoll'
     | '/benachrichtigungen'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/impressum'
     | '/reset-password'
+    | '/abwesenheiten'
     | '/admin'
     | '/aenderungsprotokoll'
     | '/benachrichtigungen'
@@ -228,6 +240,7 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/impressum'
     | '/reset-password'
+    | '/_authenticated/abwesenheiten'
     | '/_authenticated/admin'
     | '/_authenticated/aenderungsprotokoll'
     | '/_authenticated/benachrichtigungen'
@@ -294,6 +307,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/abwesenheiten': {
+      id: '/_authenticated/abwesenheiten'
+      path: '/abwesenheiten'
+      fullPath: '/abwesenheiten'
+      preLoaderRoute: typeof AuthenticatedAbwesenheitenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
@@ -409,6 +429,7 @@ const AuthenticatedReportsRouteWithChildren =
   AuthenticatedReportsRoute._addFileChildren(AuthenticatedReportsRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAbwesenheitenRoute: typeof AuthenticatedAbwesenheitenRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedAenderungsprotokollRoute: typeof AuthenticatedAenderungsprotokollRoute
   AuthenticatedBenachrichtigungenRoute: typeof AuthenticatedBenachrichtigungenRoute
@@ -420,6 +441,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAbwesenheitenRoute: AuthenticatedAbwesenheitenRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedAenderungsprotokollRoute: AuthenticatedAenderungsprotokollRoute,
   AuthenticatedBenachrichtigungenRoute: AuthenticatedBenachrichtigungenRoute,
