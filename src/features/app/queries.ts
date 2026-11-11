@@ -7,7 +7,7 @@ export function useProfessions() {
     queryFn: async () => {
       const { data } = await supabase
         .from("professions")
-        .select("id, name, code, chamber, description, duration_months")
+        .select("id, name, code, chamber, description, duration_months, ai_hints")
         .order("name");
       return data ?? [];
     },

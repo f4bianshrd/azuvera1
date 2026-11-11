@@ -15,10 +15,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedAbwesenheitenRouteImport } from './routes/_authenticated/abwesenheiten'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAenderungsprotokollRouteImport } from './routes/_authenticated/aenderungsprotokoll'
 import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_authenticated/benachrichtigungen'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedNotenRouteImport } from './routes/_authenticated/noten'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin.einstellungen'
@@ -57,6 +59,12 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAbwesenheitenRoute =
+  AuthenticatedAbwesenheitenRouteImport.update({
+    id: '/abwesenheiten',
+    path: '/abwesenheiten',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -77,6 +85,11 @@ const AuthenticatedBenachrichtigungenRoute =
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNotenRoute = AuthenticatedNotenRouteImport.update({
+  id: '/noten',
+  path: '/noten',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
@@ -130,10 +143,12 @@ export interface FileRoutesByFullPath {
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/noten': typeof AuthenticatedNotenRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
@@ -149,10 +164,12 @@ export interface FileRoutesByTo {
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/noten': typeof AuthenticatedNotenRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
@@ -169,10 +186,12 @@ export interface FileRoutesById {
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/_authenticated/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/noten': typeof AuthenticatedNotenRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
   '/_authenticated/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
@@ -190,10 +209,12 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/impressum'
     | '/reset-password'
+    | '/abwesenheiten'
     | '/admin'
     | '/aenderungsprotokoll'
     | '/benachrichtigungen'
     | '/dashboard'
+    | '/noten'
     | '/profil'
     | '/reports'
     | '/admin/einstellungen'
@@ -209,10 +230,12 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/impressum'
     | '/reset-password'
+    | '/abwesenheiten'
     | '/admin'
     | '/aenderungsprotokoll'
     | '/benachrichtigungen'
     | '/dashboard'
+    | '/noten'
     | '/profil'
     | '/admin/einstellungen'
     | '/reports/$id'
@@ -228,10 +251,12 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/impressum'
     | '/reset-password'
+    | '/_authenticated/abwesenheiten'
     | '/_authenticated/admin'
     | '/_authenticated/aenderungsprotokoll'
     | '/_authenticated/benachrichtigungen'
     | '/_authenticated/dashboard'
+    | '/_authenticated/noten'
     | '/_authenticated/profil'
     | '/_authenticated/reports'
     | '/_authenticated/admin/einstellungen'
@@ -295,6 +320,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/abwesenheiten': {
+      id: '/_authenticated/abwesenheiten'
+      path: '/abwesenheiten'
+      fullPath: '/abwesenheiten'
+      preLoaderRoute: typeof AuthenticatedAbwesenheitenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -321,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/noten': {
+      id: '/_authenticated/noten'
+      path: '/noten'
+      fullPath: '/noten'
+      preLoaderRoute: typeof AuthenticatedNotenRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profil': {
@@ -409,10 +448,12 @@ const AuthenticatedReportsRouteWithChildren =
   AuthenticatedReportsRoute._addFileChildren(AuthenticatedReportsRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAbwesenheitenRoute: typeof AuthenticatedAbwesenheitenRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedAenderungsprotokollRoute: typeof AuthenticatedAenderungsprotokollRoute
   AuthenticatedBenachrichtigungenRoute: typeof AuthenticatedBenachrichtigungenRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedNotenRoute: typeof AuthenticatedNotenRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
   AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
@@ -420,10 +461,12 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAbwesenheitenRoute: AuthenticatedAbwesenheitenRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedAenderungsprotokollRoute: AuthenticatedAenderungsprotokollRoute,
   AuthenticatedBenachrichtigungenRoute: AuthenticatedBenachrichtigungenRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedNotenRoute: AuthenticatedNotenRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
   AuthenticatedStammdatenBerufeRoute: AuthenticatedStammdatenBerufeRoute,

@@ -13,6 +13,7 @@ import { listReports, listReportsInRange, reportTitle, STATUS_LABELS, type Repor
 import { computeCoverage } from "@/features/reports/coverage";
 import { CoverageDonut } from "@/features/reports/coverage-donut";
 import { currentTrainingYear, trainingYears } from "@/lib/training-year";
+import { listAbsentDays } from "@/features/absences/api";
 import { FileText } from "lucide-react";
 
 const TITLE = "Berichte – Azuvera";
@@ -98,9 +99,15 @@ function ReportsPage() {
       ),
   });
 
+  const { data: absentDates } = useQuery({
+    queryKey: ["absent-days", coverageAzubi, coveragePeriod?.start.toISOString(), coveragePeriod?.end.toISOString()],
+    enabled: !!coverageAzubi && !!coveragePeriod,
+    queryFn: () => listAbsentDays(coverageAzubi!, format(coveragePeriod!.start, "yyyy-MM-dd"), format(coveragePeriod!.end, "yyyy-MM-dd")),
+  });
+
   const coverage = useMemo(
-    () => (rangeReports && coveragePeriod ? computeCoverage(rangeReports, coveragePeriod.start, coveragePeriod.end) : null),
-    [rangeReports, coveragePeriod],
+    () => (rangeReports && absentDates && coveragePeriod ? computeCoverage(rangeReports, coveragePeriod.start, coveragePeriod.end, absentDates) : null),
+    [rangeReports, absentDates, coveragePeriod],
   );
 
   const coverageTitle =
