@@ -9,15 +9,23 @@ import { cleanupOutdatedCaches, matchPrecache, precacheAndRoute } from "workbox-
 import { registerRoute } from "workbox-routing";
 import { StaleWhileRevalidate } from "workbox-strategies";
 
+type PrecacheEntry = { url: string; revision: string | null } | string;
+
+declare global {
+  interface Window {
+    __WB_MANIFEST: PrecacheEntry[];
+  }
+}
+
 interface SwScope {
-  __WB_MANIFEST: Array<{ url: string; revision: string | null } | string>;
   location: Location;
   addEventListener: (type: string, cb: (event: never) => void) => void;
   skipWaiting: () => Promise<void>;
 }
 const sw = self as unknown as SwScope;
 
-const manifest = sw.__WB_MANIFEST;
+// Workbox ersetzt genau diesen Ausdruck beim Build durch die Precache-Liste.
+const manifest = self.__WB_MANIFEST;
 precacheAndRoute(manifest);
 cleanupOutdatedCaches();
 
