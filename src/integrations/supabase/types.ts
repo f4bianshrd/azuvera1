@@ -14,6 +14,107 @@ export type Database = {
   }
   public: {
     Tables: {
+      absences: {
+        Row: {
+          azubi_id: string
+          created_at: string
+          date_from: string
+          date_to: string
+          id: string
+          note: string | null
+          review_note: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: Database["public"]["Enums"]["absence_status"]
+          type: Database["public"]["Enums"]["absence_type"]
+          updated_at: string
+        }
+        Insert: {
+          azubi_id: string
+          created_at?: string
+          date_from: string
+          date_to: string
+          id?: string
+          note?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: Database["public"]["Enums"]["absence_status"]
+          type: Database["public"]["Enums"]["absence_type"]
+          updated_at?: string
+        }
+        Update: {
+          azubi_id?: string
+          created_at?: string
+          date_from?: string
+          date_to?: string
+          id?: string
+          note?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: Database["public"]["Enums"]["absence_status"]
+          type?: Database["public"]["Enums"]["absence_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "absences_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "absences_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_usage: {
+        Row: {
+          created_at: string
+          duration_ms: number
+          field: string
+          id: string
+          input_chars: number
+          ok: boolean
+          output_chars: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number
+          field: string
+          id?: string
+          input_chars: number
+          ok?: boolean
+          output_chars?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number
+          field?: string
+          id?: string
+          input_chars?: number
+          ok?: boolean
+          output_chars?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_settings: {
         Row: {
           is_public: boolean
@@ -197,6 +298,41 @@ export type Database = {
           },
         ]
       }
+      consents: {
+        Row: {
+          granted_at: string
+          id: string
+          kind: Database["public"]["Enums"]["consent_kind"]
+          revoked_at: string | null
+          text_version: string
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["consent_kind"]
+          revoked_at?: string | null
+          text_version: string
+          user_id: string
+        }
+        Update: {
+          granted_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["consent_kind"]
+          revoked_at?: string | null
+          text_version?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invite_codes: {
         Row: {
           code: string
@@ -274,6 +410,7 @@ export type Database = {
       }
       professions: {
         Row: {
+          ai_hints: string
           chamber: string | null
           code: string | null
           created_at: string
@@ -284,6 +421,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          ai_hints?: string
           chamber?: string | null
           code?: string | null
           created_at?: string
@@ -294,6 +432,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          ai_hints?: string
           chamber?: string | null
           code?: string | null
           created_at?: string
@@ -660,6 +799,50 @@ export type Database = {
           },
         ]
       }
+      school_grades: {
+        Row: {
+          azubi_id: string
+          created_at: string
+          grade: number
+          grade_date: string
+          id: string
+          kind: Database["public"]["Enums"]["grade_kind"]
+          note: string | null
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          azubi_id: string
+          created_at?: string
+          grade: number
+          grade_date: string
+          id?: string
+          kind?: Database["public"]["Enums"]["grade_kind"]
+          note?: string | null
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          azubi_id?: string
+          created_at?: string
+          grade?: number
+          grade_date?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["grade_kind"]
+          note?: string | null
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_grades_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -686,6 +869,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      absent_days: {
+        Args: { _azubi: string; _from_date: string; _to_date: string }
+        Returns: string[]
+      }
       admin_list_users: {
         Args: never
         Returns: {
@@ -749,6 +936,17 @@ export type Database = {
           id: string
         }[]
       }
+      grant_consent: {
+        Args: {
+          _kind: Database["public"]["Enums"]["consent_kind"]
+          _text_version: string
+        }
+        Returns: string
+      }
+      has_my_consent: {
+        Args: { _kind: Database["public"]["Enums"]["consent_kind"] }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -758,12 +956,28 @@ export type Database = {
       }
       is_leitung: { Args: { _user_id: string }; Returns: boolean }
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
+      log_ai_assist: {
+        Args: { _field: string; _report_id: string }
+        Returns: undefined
+      }
       redeem_invite_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
       report_canonical: { Args: { _report_id: string }; Returns: string }
       report_hash: { Args: { _report_id: string }; Returns: string }
+      review_absence: {
+        Args: {
+          _absence_id: string
+          _decision: Database["public"]["Enums"]["absence_status"]
+          _note?: string
+        }
+        Returns: undefined
+      }
+      revoke_consent: {
+        Args: { _kind: Database["public"]["Enums"]["consent_kind"] }
+        Returns: undefined
+      }
       revoke_invite_code: { Args: { _code: string }; Returns: undefined }
       set_my_profession: {
         Args: { _profession_id: string }
@@ -798,6 +1012,8 @@ export type Database = {
       }
     }
     Enums: {
+      absence_status: "pending" | "approved" | "rejected"
+      absence_type: "urlaub" | "krank" | "berufsschule" | "sonstiges"
       app_role:
         | "azubi"
         | "ausbilder"
@@ -805,6 +1021,8 @@ export type Database = {
         | "ausbildungsberater"
         | "lehrer"
         | "ausbildungsleitung"
+      consent_kind: "dictation" | "ai_text"
+      grade_kind: "klausur" | "muendlich" | "test" | "sonstige"
       report_status: "draft" | "submitted" | "approved" | "rejected"
       report_type: "daily" | "weekly"
     }
@@ -934,6 +1152,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      absence_status: ["pending", "approved", "rejected"],
+      absence_type: ["urlaub", "krank", "berufsschule", "sonstiges"],
       app_role: [
         "azubi",
         "ausbilder",
@@ -942,6 +1162,8 @@ export const Constants = {
         "lehrer",
         "ausbildungsleitung",
       ],
+      consent_kind: ["dictation", "ai_text"],
+      grade_kind: ["klausur", "muendlich", "test", "sonstige"],
       report_status: ["draft", "submitted", "approved", "rejected"],
       report_type: ["daily", "weekly"],
     },

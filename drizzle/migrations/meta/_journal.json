@@ -71,6 +71,13 @@
       "when": 1794286992851,
       "tag": "0009_fix_reports_guard_null_bypass",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794402996879,
+      "tag": "0010_baustein_2b_consents_absences_grades_ai",
+      "breakpoints": true
     }
   ]
 }
