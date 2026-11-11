@@ -10,7 +10,7 @@ import {
   Menu,
   Plus,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { NotificationBell } from "@/features/notifications/notification-bell";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,41 +29,6 @@ import { Logo } from "@/components/shared";
 import { initials, signOutAndLeave, useMyProfile, ROLE_LABELS, type AppRole, type MyProfile } from "./session";
 import { mobileTabs, SECTION_LABELS, titleForPath, visibleNav, type NavSection } from "./nav";
 import { listReviewQueue } from "@/features/review/api";
-
-function useUnreadCount(userId: string | undefined) {
-  const queryClient = useQueryClient();
-  const query = useQuery({
-    queryKey: ["notifications", "unread", userId],
-    enabled: !!userId,
-    queryFn: async () => {
-      const { count } = await supabase
-        .from("notifications")
-        .select("id", { count: "exact", head: true })
-        .is("read_at", null);
-      return count ?? 0;
-    },
-  });
-
-  useEffect(() => {
-    if (!userId) return;
-    const channel = supabase
-      .channel(`notifications-${userId}-${Math.random().toString(36).slice(2)}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
-        () => {
-          void queryClient.invalidateQueries({ queryKey: ["notifications"] });
-          void queryClient.invalidateQueries({ queryKey: ["review"] });
-        },
-      )
-      .subscribe();
-    return () => {
-      void supabase.removeChannel(channel);
-    };
-  }, [userId, queryClient]);
-
-  return query.data ?? 0;
-}
 
 function RoleBadge({ role }: { role: AppRole }) {
   return (
@@ -177,7 +142,6 @@ export function AppShell() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
-  const unread = useUnreadCount(profile?.id);
   const { data: reviewCount = 0 } = useQuery({
     queryKey: ["review", "queue-count"],
     queryFn: async () => (await listReviewQueue()).length,
@@ -214,18 +178,7 @@ export function AppShell() {
     );
   }
 
-  const bell = (
-    <Button asChild variant="ghost" size="icon" className="relative h-11 w-11" aria-label="Benachrichtigungen">
-      <Link to="/benachrichtigungen">
-        <Bell className="size-5" />
-        {unread > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 grid min-w-5 place-items-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
-            {unread > 99 ? "99+" : unread}
-          </span>
-        )}
-      </Link>
-    </Button>
-  );
+  const bell = <NotificationBell userId={profile.id} />;
 
   const avatarMenu = (
     <DropdownMenu>

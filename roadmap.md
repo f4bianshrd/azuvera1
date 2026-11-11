@@ -1,4 +1,12 @@
-# Azuvera – Baustein 3A Roadmap
+# Azuvera – Baustein 3B Roadmap
+
+## Baustein 3B
+- [ ] Geschützte Team-, Vertretungs- und Erinnerungsfunktionen
+- [ ] Vertretungen und Einstellung zur Selbstverwaltung
+- [ ] Team und Azubi-Übersicht
+- [ ] Dashboard für Prüfende, Lesende und Leitung
+- [ ] Erinnerungen und Benachrichtigungs-Popover
+- [ ] Regeltests, Berechtigungsprüfung und mobile Abnahme
 
 ## Datenbank und Rechte
 - [x] Vertretungen, Empfängerlogik und erweiterte Prüf-Berechtigung

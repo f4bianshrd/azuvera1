@@ -41,12 +41,12 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: Home, section: "arbeit", to: "/dashboard" },
   { label: "Berichte", icon: FileText, section: "arbeit", to: "/reports" },
   { label: "Ausbilderportal", icon: ClipboardCheck, section: "arbeit", to: "/ausbilder", roles: TEAM_ROLES },
-  { label: "Team", icon: Users, section: "arbeit", roles: TEAM_ROLES },
+  { label: "Team", icon: Users, section: "arbeit", to: "/team", roles: TEAM_ROLES },
   { label: "Ausbildungsplan", icon: CalendarDays, section: "arbeit" },
   { label: "Unterweisungen", icon: ShieldCheck, section: "arbeit" },
   { label: "Abwesenheiten", icon: CalendarOff, section: "arbeit", to: "/abwesenheiten" },
   { label: "Schulnoten", icon: GraduationCap, section: "arbeit", to: "/noten" },
-  { label: "Erinnerungen", icon: Bell, section: "arbeit" },
+  { label: "Erinnerungen", icon: Bell, section: "arbeit", to: "/erinnerungen", roles: REVIEWER_ROLES },
   { label: "Benachrichtigungen", icon: Bell, section: "konto", to: "/benachrichtigungen" },
   { label: "Änderungsprotokoll", icon: History, section: "konto", to: "/aenderungsprotokoll" },
   { label: "Mein Profil", icon: UserRound, section: "konto", to: "/profil" },
@@ -88,7 +88,7 @@ export function mobileTabs(role: AppRole): (TabItem | null)[] {
   return [
     { label: "Start", icon: Home, to: "/dashboard" },
     { label: "Prüfung", icon: ClipboardCheck, to: "/ausbilder" },
-    { label: "Team", icon: Users },
+    { label: "Team", icon: Users, to: "/team" },
     { label: "Plan", icon: CalendarDays },
     null,
   ];

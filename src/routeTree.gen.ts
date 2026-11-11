@@ -21,15 +21,19 @@ import { Route as AuthenticatedAenderungsprotokollRouteImport } from './routes/_
 import { Route as AuthenticatedAusbilderRouteImport } from './routes/_authenticated/ausbilder'
 import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_authenticated/benachrichtigungen'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedErinnerungenRouteImport } from './routes/_authenticated/erinnerungen'
 import { Route as AuthenticatedNotenRouteImport } from './routes/_authenticated/noten'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin.einstellungen'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
 import { Route as AuthenticatedReportsNewRouteImport } from './routes/_authenticated/reports.new'
 import { Route as AuthenticatedStammdatenBerufeRouteImport } from './routes/_authenticated/stammdaten.berufe'
 import { Route as AuthenticatedStammdatenBetriebeRouteImport } from './routes/_authenticated/stammdaten.betriebe'
+import { Route as AuthenticatedTeamIndexRouteImport } from './routes/_authenticated/team.index'
+import { Route as AuthenticatedTeamAzubiIdRouteImport } from './routes/_authenticated/team.$azubiId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -93,6 +97,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedErinnerungenRoute =
+  AuthenticatedErinnerungenRouteImport.update({
+    id: '/erinnerungen',
+    path: '/erinnerungen',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedNotenRoute = AuthenticatedNotenRouteImport.update({
   id: '/noten',
   path: '/noten',
@@ -106,6 +116,11 @@ const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminEinstellungenRoute =
@@ -142,6 +157,17 @@ const AuthenticatedStammdatenBetriebeRoute =
     path: '/stammdaten/betriebe',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTeamIndexRoute = AuthenticatedTeamIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedTeamRoute,
+} as any)
+const AuthenticatedTeamAzubiIdRoute =
+  AuthenticatedTeamAzubiIdRouteImport.update({
+    id: '/$azubiId',
+    path: '/$azubiId',
+    getParentRoute: () => AuthenticatedTeamRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -155,15 +181,19 @@ export interface FileRoutesByFullPath {
   '/ausbilder': typeof AuthenticatedAusbilderRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/erinnerungen': typeof AuthenticatedErinnerungenRoute
   '/noten': typeof AuthenticatedNotenRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/team': typeof AuthenticatedTeamRouteWithChildren
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/reports/': typeof AuthenticatedReportsIndexRoute
+  '/team/': typeof AuthenticatedTeamIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -177,6 +207,7 @@ export interface FileRoutesByTo {
   '/ausbilder': typeof AuthenticatedAusbilderRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/erinnerungen': typeof AuthenticatedErinnerungenRoute
   '/noten': typeof AuthenticatedNotenRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
@@ -184,7 +215,9 @@ export interface FileRoutesByTo {
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
+  '/team': typeof AuthenticatedTeamIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -200,15 +233,19 @@ export interface FileRoutesById {
   '/_authenticated/ausbilder': typeof AuthenticatedAusbilderRoute
   '/_authenticated/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/erinnerungen': typeof AuthenticatedErinnerungenRoute
   '/_authenticated/noten': typeof AuthenticatedNotenRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/_authenticated/team': typeof AuthenticatedTeamRouteWithChildren
   '/_authenticated/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/reports/new': typeof AuthenticatedReportsNewRoute
   '/_authenticated/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/_authenticated/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/_authenticated/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
+  '/_authenticated/team/': typeof AuthenticatedTeamIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -224,15 +261,19 @@ export interface FileRouteTypes {
     | '/ausbilder'
     | '/benachrichtigungen'
     | '/dashboard'
+    | '/erinnerungen'
     | '/noten'
     | '/profil'
     | '/reports'
+    | '/team'
     | '/admin/einstellungen'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
+    | '/team/$azubiId'
     | '/reports/'
+    | '/team/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -246,6 +287,7 @@ export interface FileRouteTypes {
     | '/ausbilder'
     | '/benachrichtigungen'
     | '/dashboard'
+    | '/erinnerungen'
     | '/noten'
     | '/profil'
     | '/admin/einstellungen'
@@ -253,7 +295,9 @@ export interface FileRouteTypes {
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
+    | '/team/$azubiId'
     | '/reports'
+    | '/team'
   id:
     | '__root__'
     | '/'
@@ -268,15 +312,19 @@ export interface FileRouteTypes {
     | '/_authenticated/ausbilder'
     | '/_authenticated/benachrichtigungen'
     | '/_authenticated/dashboard'
+    | '/_authenticated/erinnerungen'
     | '/_authenticated/noten'
     | '/_authenticated/profil'
     | '/_authenticated/reports'
+    | '/_authenticated/team'
     | '/_authenticated/admin/einstellungen'
     | '/_authenticated/reports/$id'
     | '/_authenticated/reports/new'
     | '/_authenticated/stammdaten/berufe'
     | '/_authenticated/stammdaten/betriebe'
+    | '/_authenticated/team/$azubiId'
     | '/_authenticated/reports/'
+    | '/_authenticated/team/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -374,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/erinnerungen': {
+      id: '/_authenticated/erinnerungen'
+      path: '/erinnerungen'
+      fullPath: '/erinnerungen'
+      preLoaderRoute: typeof AuthenticatedErinnerungenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/noten': {
       id: '/_authenticated/noten'
       path: '/noten'
@@ -393,6 +448,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/team': {
+      id: '/_authenticated/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof AuthenticatedTeamRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/einstellungen': {
@@ -437,6 +499,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStammdatenBetriebeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/team/': {
+      id: '/_authenticated/team/'
+      path: '/'
+      fullPath: '/team/'
+      preLoaderRoute: typeof AuthenticatedTeamIndexRouteImport
+      parentRoute: typeof AuthenticatedTeamRoute
+    }
+    '/_authenticated/team/$azubiId': {
+      id: '/_authenticated/team/$azubiId'
+      path: '/$azubiId'
+      fullPath: '/team/$azubiId'
+      preLoaderRoute: typeof AuthenticatedTeamAzubiIdRouteImport
+      parentRoute: typeof AuthenticatedTeamRoute
+    }
   }
 }
 
@@ -466,6 +542,19 @@ const AuthenticatedReportsRouteChildren: AuthenticatedReportsRouteChildren = {
 const AuthenticatedReportsRouteWithChildren =
   AuthenticatedReportsRoute._addFileChildren(AuthenticatedReportsRouteChildren)
 
+interface AuthenticatedTeamRouteChildren {
+  AuthenticatedTeamAzubiIdRoute: typeof AuthenticatedTeamAzubiIdRoute
+  AuthenticatedTeamIndexRoute: typeof AuthenticatedTeamIndexRoute
+}
+
+const AuthenticatedTeamRouteChildren: AuthenticatedTeamRouteChildren = {
+  AuthenticatedTeamAzubiIdRoute: AuthenticatedTeamAzubiIdRoute,
+  AuthenticatedTeamIndexRoute: AuthenticatedTeamIndexRoute,
+}
+
+const AuthenticatedTeamRouteWithChildren =
+  AuthenticatedTeamRoute._addFileChildren(AuthenticatedTeamRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAbwesenheitenRoute: typeof AuthenticatedAbwesenheitenRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
@@ -473,9 +562,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAusbilderRoute: typeof AuthenticatedAusbilderRoute
   AuthenticatedBenachrichtigungenRoute: typeof AuthenticatedBenachrichtigungenRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedErinnerungenRoute: typeof AuthenticatedErinnerungenRoute
   AuthenticatedNotenRoute: typeof AuthenticatedNotenRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
+  AuthenticatedTeamRoute: typeof AuthenticatedTeamRouteWithChildren
   AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
   AuthenticatedStammdatenBetriebeRoute: typeof AuthenticatedStammdatenBetriebeRoute
 }
@@ -487,9 +578,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAusbilderRoute: AuthenticatedAusbilderRoute,
   AuthenticatedBenachrichtigungenRoute: AuthenticatedBenachrichtigungenRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedErinnerungenRoute: AuthenticatedErinnerungenRoute,
   AuthenticatedNotenRoute: AuthenticatedNotenRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
+  AuthenticatedTeamRoute: AuthenticatedTeamRouteWithChildren,
   AuthenticatedStammdatenBerufeRoute: AuthenticatedStammdatenBerufeRoute,
   AuthenticatedStammdatenBetriebeRoute: AuthenticatedStammdatenBetriebeRoute,
 }
