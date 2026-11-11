@@ -720,6 +720,51 @@ export type Database = {
           },
         ]
       }
+      report_reminders: {
+        Row: {
+          azubi_id: string
+          channel: string
+          created_at: string
+          id: string
+          message: string
+          period_label: string
+          sender_id: string | null
+        }
+        Insert: {
+          azubi_id: string
+          channel?: string
+          created_at?: string
+          id?: string
+          message: string
+          period_label: string
+          sender_id?: string | null
+        }
+        Update: {
+          azubi_id?: string
+          channel?: string
+          created_at?: string
+          id?: string
+          message?: string
+          period_label?: string
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_reminders_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_reminders_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_signatures: {
         Row: {
           client_signed_at: string | null
@@ -1078,6 +1123,16 @@ export type Database = {
         Args: { _azubi: string; _viewer: string }
         Returns: boolean
       }
+      compute_missing_weeks: {
+        Args: { p_as_of: string; p_azubi: string }
+        Returns: {
+          azubi_id: string
+          days_missing: number
+          days_overdue: number
+          week_end: string
+          week_start: string
+        }[]
+      }
       create_invite_code: {
         Args: {
           _note?: string
@@ -1124,9 +1179,27 @@ export type Database = {
       }
       is_leitung: { Args: { _user_id: string }; Returns: boolean }
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
+      list_possible_deputies: {
+        Args: never
+        Returns: {
+          full_name: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
       log_ai_assist: {
         Args: { _field: string; _report_id: string }
         Returns: undefined
+      }
+      missing_weeks: {
+        Args: { p_azubi?: string }
+        Returns: {
+          azubi_id: string
+          days_missing: number
+          days_overdue: number
+          week_end: string
+          week_start: string
+        }[]
       }
       notification_recipients: {
         Args: { _azubi: string }
@@ -1174,6 +1247,10 @@ export type Database = {
       }
       revoke_deputy: { Args: { _id: string }; Returns: undefined }
       revoke_invite_code: { Args: { _code: string }; Returns: undefined }
+      send_report_reminder: {
+        Args: { azubi_id: string; message: string; period_label: string }
+        Returns: string
+      }
       set_deputy: {
         Args: {
           _date_from: string
@@ -1199,11 +1276,14 @@ export type Database = {
         }
         Returns: undefined
       }
-      team_week_status: {
-        Args: { _week_start: string }
+      team_week_overview: {
+        Args: { week_start: string }
         Returns: {
+          approved_total: number
           azubi_id: string
-          status: Database["public"]["Enums"]["report_status"]
+          can_review: boolean
+          to_review: number
+          week_status: string
         }[]
       }
       write_audit: {
