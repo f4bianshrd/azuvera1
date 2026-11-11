@@ -10,12 +10,15 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageHeader } from "@/components/shared";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ROLE_LABELS, signOutAndLeave, useMyProfile, type MyProfile } from "@/features/app/session";
+import { ROLE_LABELS, useMyProfile, type MyProfile } from "@/features/app/session";
 import { useCompanies, useProfessions } from "@/features/app/queries";
 import { defaultPeriodForYear } from "@/lib/training-year";
 import { ConsentSettings } from "@/features/consents/consent-settings";
 import { SavedSignatureCard } from "@/features/review/saved-signature-card";
 import { format } from "date-fns";
+import { AppOfflineCard } from "@/features/sync/app-offline-card";
+import { useSignOut } from "@/features/sync/sign-out";
+import { OFFLINE_ACTION_HINT, useOnline } from "@/lib/sync/status";
 
 const TITLE = "Mein Profil – Azuvera";
 
@@ -329,12 +332,16 @@ function ProfilPage() {
           <Button
             variant="outline"
             className="h-11"
-            onClick={() => void signOutAndLeave(queryClient, (opts) => void navigate(opts), true)}
+            disabled={!online}
+            onClick={globalSignOut.request}
           >
             Auf allen Geräten abmelden
           </Button>
         </div>
       </Card>
+
+      <AppOfflineCard />
+      {globalSignOut.dialog}
 
       <Card title="Darstellung">
         <ThemeToggle />
@@ -342,7 +349,8 @@ function ProfilPage() {
 
       <div className="sticky bottom-20 z-10 md:bottom-4">
         <div className="flex justify-end rounded-2xl border bg-card/95 p-3 shadow-elegant backdrop-blur">
-          <Button className="h-11 px-8" onClick={() => void save()} disabled={busy}>
+          {!online && <p className="mr-auto self-center text-sm text-muted-foreground">{OFFLINE_ACTION_HINT}</p>}
+          <Button className="h-11 px-8" onClick={() => void save()} disabled={busy || !online}>
             Speichern
           </Button>
         </div>
