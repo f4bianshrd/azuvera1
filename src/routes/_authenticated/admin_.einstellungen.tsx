@@ -15,7 +15,7 @@ import { getAdminAiSettings, saveAdminAiSettings } from "@/features/ai/api";
 
 const TITLE = "Einstellungen – Azuvera";
 
-export const Route = createFileRoute("/_authenticated/admin/einstellungen")({
+export const Route = createFileRoute("/_authenticated/admin_/einstellungen")({
   head: () => ({
     meta: [
       { title: TITLE },
