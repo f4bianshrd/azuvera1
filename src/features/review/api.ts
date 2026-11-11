@@ -9,6 +9,7 @@ import {
   type ReportType,
 } from "@/features/reports/api";
 import type { Absence } from "@/features/absences/api";
+import { cachedOnline } from "@/lib/sync/online-cache";
 import { berlinStartOfDay } from "./review-utils";
 
 export type ReviewQueueItem = {
@@ -24,7 +25,7 @@ export type CommentSection = "activities" | "school_content" | "instructions" | 
 export type UserSignature = Database["public"]["Tables"]["user_signatures"]["Row"];
 export type ReviewPerson = Pick<Database["public"]["Tables"]["profiles"]["Row"], "id" | "full_name" | "profession_id">;
 
-export async function listReviewQueue(statuses: ReportStatus[] = ["submitted"]): Promise<ReviewQueueItem[]> {
+async function fetchReviewQueue(statuses: ReportStatus[] = ["submitted"]): Promise<ReviewQueueItem[]> {
   const { data, error } = await supabase.rpc("review_queue", { _statuses: statuses });
   if (error) throw error;
   return (data ?? []) as ReviewQueueItem[];
@@ -37,7 +38,7 @@ export async function listReportsByIds(ids: string[]): Promise<Report[]> {
   return data ?? [];
 }
 
-export async function listVisibleReports(filters: {
+async function fetchVisibleReports(filters: {
   status?: ReportStatus | "all";
   type?: ReportType | "all";
   azubiId?: string | undefined;
@@ -52,7 +53,7 @@ export async function listVisibleReports(filters: {
   return data ?? [];
 }
 
-export async function listReviewPeople(): Promise<ReviewPerson[]> {
+async function fetchReviewPeople(): Promise<ReviewPerson[]> {
   const { data, error } = await supabase.from("profiles").select("id, full_name, profession_id").order("full_name");
   if (error) throw error;
   return data ?? [];
@@ -239,3 +240,8 @@ export async function deleteSavedSignature(): Promise<void> {
 export async function savedSignatureUrl(path: string): Promise<string> {
   return signedUrl("signatures", path);
 }
+
+// Offline: zuletzt geladener Stand (höchstens 24 Stunden alt).
+export const listReviewQueue = (statuses: ReportStatus[] = ["submitted"]) => cachedOnline(`review-queue:${statuses.join(",")}`, () => fetchReviewQueue(statuses));
+export const listVisibleReports = (filters: Parameters<typeof fetchVisibleReports>[0]) => cachedOnline(`visible-reports:${JSON.stringify(filters)}`, () => fetchVisibleReports(filters));
+export const listReviewPeople = () => cachedOnline("review-people", fetchReviewPeople);

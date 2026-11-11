@@ -1,3 +1,4 @@
+import { cachedOnline } from "@/lib/sync/online-cache";
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { displayNames, listReportsInRange } from '@/features/reports/api';
@@ -8,7 +9,7 @@ import { currentTrainingYear, trainingYears } from '@/lib/training-year';
 import { format } from 'date-fns';
 export type WeekRow = Database['public']['Functions']['team_week_overview']['Returns'][number];
 export type TeamPerson = Database['public']['Tables']['profiles']['Row'] & WeekRow & { profession: string; company: string; principalName: string; deputyName: string | null };
-export async function listTeam(week: string): Promise<TeamPerson[]> {
+async function fetchTeam(week: string): Promise<TeamPerson[]> {
  const {data: overview,error}=await supabase.rpc('team_week_overview',{week_start:week}); if(error) throw error;
  if(!overview?.length) return [];
  const [p,prof,comp]=await Promise.all([supabase.from('profiles').select('*').in('id',overview.map(r=>r.azubi_id)),supabase.from('professions').select('id,name'),supabase.from('companies').select('id,name')]);
@@ -33,3 +34,5 @@ export async function getTeamDetail(id:string) {
  return {profile:p,reports:reports.data??[],grades,year,coverage:period?computeCoverage(range,period.start,to,absences):null,canReview:review.data,principalName:names.get(p.ausbilder_id??'')??'Nicht zugewiesen',profession:profession.data?.name??'—',company:company.data?.name??'—'};
 }
 export async function managementCounts(){const [users,invites]=await Promise.all([supabase.rpc('admin_list_users'),supabase.from('invite_codes').select('id').is('used_at',null).gt('expires_at',new Date().toISOString())]);if(users.error)throw users.error;if(invites.error)throw invites.error;return {unassigned:(users.data??[]).filter(p=>p.role==='azubi'&&!p.ausbilder_id).length,invites:invites.data?.length??0};}
+
+export const listTeam = (week: string) => cachedOnline(`team:${week}`, () => fetchTeam(week));
