@@ -28,6 +28,7 @@ import { ResponsiveDialog } from "@/components/dialogs";
 import { Logo } from "@/components/shared";
 import { initials, signOutAndLeave, useMyProfile, ROLE_LABELS, type AppRole, type MyProfile } from "./session";
 import { mobileTabs, SECTION_LABELS, titleForPath, visibleNav, type NavSection } from "./nav";
+import { listReviewQueue } from "@/features/review/api";
 
 function useUnreadCount(userId: string | undefined) {
   const queryClient = useQueryClient();
@@ -52,6 +53,7 @@ function useUnreadCount(userId: string | undefined) {
         { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
         () => {
           void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+          void queryClient.invalidateQueries({ queryKey: ["review"] });
         },
       )
       .subscribe();
@@ -97,7 +99,7 @@ function AccountBlock({ profile, onSignOut }: { profile: MyProfile; onSignOut: (
   );
 }
 
-function SidebarNav({ role, collapsed }: { role: AppRole; collapsed: boolean }) {
+function SidebarNav({ role, collapsed, reviewCount = 0 }: { role: AppRole; collapsed: boolean; reviewCount?: number }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const items = visibleNav(role);
   const sections: NavSection[] = ["arbeit", "konto", "verwaltung"];
@@ -129,6 +131,7 @@ function SidebarNav({ role, collapsed }: { role: AppRole; collapsed: boolean }) 
                     >
                       <item.icon className="size-5 shrink-0" aria-hidden />
                       {!collapsed && <span className="truncate">{item.label}</span>}
+                      {!collapsed && item.to === "/ausbilder" && reviewCount > 0 && <Badge variant="secondary" className="ml-auto">{reviewCount}</Badge>}
                     </Link>
                   </li>
                 );
@@ -175,6 +178,12 @@ export function AppShell() {
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
   const unread = useUnreadCount(profile?.id);
+  const { data: reviewCount = 0 } = useQuery({
+    queryKey: ["review", "queue-count"],
+    queryFn: async () => (await listReviewQueue()).length,
+    enabled: !!profile && profile.role !== "azubi",
+    refetchInterval: 60_000,
+  });
   const title = titleForPath(pathname);
   const tabs = useMemo(() => (profile ? mobileTabs(profile.role) : []), [profile]);
 
@@ -264,7 +273,7 @@ export function AppShell() {
             </span>
           )}
         </div>
-        <SidebarNav role={profile.role} collapsed={collapsed} />
+        <SidebarNav role={profile.role} collapsed={collapsed} reviewCount={reviewCount} />
         <div className="space-y-2 p-3">
           <Button
             variant="ghost"
@@ -346,7 +355,7 @@ export function AppShell() {
                     pathname === tab.to ? "font-semibold text-primary" : "text-muted-foreground",
                   )}
                 >
-                  <tab.icon className="size-5" aria-hidden />
+                  <span className="relative"><tab.icon className="size-5" aria-hidden />{tab.to === "/ausbilder" && reviewCount > 0 && <span className="absolute -right-3 -top-2 grid min-w-4 place-items-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">{reviewCount > 99 ? "99+" : reviewCount}</span>}</span>
                   {tab.label}
                 </Link>
               ) : tab.accent ? (
@@ -374,7 +383,7 @@ export function AppShell() {
             <SheetTitle className="text-sidebar-foreground">Menü</SheetTitle>
           </SheetHeader>
           <div onClick={() => setMoreOpen(false)}>
-            <SidebarNav role={profile.role} collapsed={false} />
+            <SidebarNav role={profile.role} collapsed={false} reviewCount={reviewCount} />
           </div>
           <div className="px-2 pb-4">
             <AccountBlock profile={profile} onSignOut={signOut} />
