@@ -12,6 +12,9 @@
 - [ ] Berichtsdetails: Prüfung, Unterschriften, Kommentare und Wiederöffnen
 - [ ] Gespeicherte Unterschrift im Profil und Navigation mit Prüfzähler
 
+## Anmeldung (neu)
+- [ ] Google-, Apple- und Microsoft-Anmeldung mit vorgesehenen Buttons und konfigurierten Anbietern
+
 ## Abnahme
 - [ ] Automatisierte Tests und Typprüfung
 - [ ] Freigabe, Zurückweisung, Manipulations- und Rechteprüfungen
