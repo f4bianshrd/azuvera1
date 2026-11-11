@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { getNetworkStatus, onNetworkChange } from "@/lib/platform";
+import { OFFLINE_ACTION_HINT } from "@/lib/sync/status";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -54,17 +56,13 @@ export function AiTextButton({
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const update = () => setOnline(navigator.onLine);
+    const update = () => setOnline(getNetworkStatus().online);
     update();
-    window.addEventListener("online", update);
-    window.addEventListener("offline", update);
-    return () => {
-      window.removeEventListener("online", update);
-      window.removeEventListener("offline", update);
-    };
+    return onNetworkChange(update);
   }, []);
 
-  if (profile?.role !== "azubi" || aiEnabled !== true || !online) return null;
+  if (profile?.role !== "azubi" || aiEnabled !== true) return null;
+  if (!online) return <Button type="button" variant="ghost" size="sm" disabled title={OFFLINE_ACTION_HINT} aria-label={`KI-Text – ${OFFLINE_ACTION_HINT}`}><Sparkles className="size-4" aria-hidden /></Button>;
   const profession = professions?.find((p) => p.id === profile.profession_id);
 
   const openGenerator = () => {

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { copyText } from "@/lib/platform";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
@@ -20,7 +21,7 @@ function SignatureEntry({ signature, principalName }: { signature: ReportSignatu
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     if (!signature.content_hash) return;
-    await navigator.clipboard.writeText(signature.content_hash);
+    await copyText(signature.content_hash);
     setCopied(true);
     toast.success("Prüfsumme kopiert");
     window.setTimeout(() => setCopied(false), 1500);

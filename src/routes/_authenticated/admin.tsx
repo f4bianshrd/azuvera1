@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { copyText } from "@/lib/platform";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpDown, Copy, Plus, ShieldAlert } from "lucide-react";
@@ -487,7 +488,7 @@ function InviteCodesCard() {
 
   const copy = async (code: string) => {
     try {
-      await navigator.clipboard.writeText(code);
+      await copyText(code);
       toast.success("Code kopiert");
     } catch {
       toast.error("Kopieren fehlgeschlagen");

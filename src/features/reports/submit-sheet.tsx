@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ResponsiveDialog } from "@/components/dialogs";
 import { reportTitle, submitReport, ReportConflictError, type Report } from "./api";
 import { SignaturePad } from "./signature-pad";
+import { getNetworkStatus } from "@/lib/platform";
 
 const SECTIONS: { key: keyof Pick<Report, "activities" | "school_content" | "instructions" | "summary">; label: string }[] = [
   { key: "activities", label: "Tätigkeiten" },
@@ -51,7 +52,7 @@ export function SubmitSheet({
         signature: method === "draw" ? sigBlob : null,
         clientSignedAt: new Date().toISOString(),
       });
-      toast.success(navigator.onLine ? "Eingereicht" : "Wird eingereicht, sobald du online bist.");
+      toast.success(getNetworkStatus().online ? "Eingereicht" : "Wird eingereicht, sobald du online bist.");
       await queryClient.invalidateQueries({ queryKey: ["reports"] });
       onSubmitted();
     } catch (e) {

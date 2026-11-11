@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getNetworkStatus, onNetworkChange } from "@/lib/platform";
 import { toast } from "sonner";
 import { dictationErrorMessage } from "./api";
 
@@ -129,17 +130,15 @@ export function useDictation({ onFinal, onInterim }: { onFinal: (text: string) =
   useEffect(() => {
     const Constructor = recognitionConstructor();
     setSupported(!!Constructor);
-    const updateOnline = () => setOnline(navigator.onLine);
+    const updateOnline = () => setOnline(getNetworkStatus().online);
     const visibility = () => { if (document.hidden) stopRef.current(); };
     const pagehide = () => stopRef.current();
     updateOnline();
-    window.addEventListener("online", updateOnline);
-    window.addEventListener("offline", updateOnline);
+    const offNet = onNetworkChange(updateOnline);
     window.addEventListener("pagehide", pagehide);
     document.addEventListener("visibilitychange", visibility);
     return () => {
-      window.removeEventListener("online", updateOnline);
-      window.removeEventListener("offline", updateOnline);
+      offNet();
       window.removeEventListener("pagehide", pagehide);
       document.removeEventListener("visibilitychange", visibility);
       stopRef.current();
