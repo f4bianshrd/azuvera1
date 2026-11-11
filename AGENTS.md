@@ -43,3 +43,7 @@ use the editor.
 - Team, deputy, reminder and notification features keep all database and realtime access in their module api.ts; shared dialogs reuse these APIs to preserve offline-ready boundaries.
 - The staff dashboard and team list use team_week_overview as their common weekly-status source; missing_weeks is the sole reminder backlog source so role visibility and counts stay consistent.
 - Settings at /admin/einstellungen use an unnested admin_ route because the administration content page does not render an Outlet.
+
+- Own trainee data (reports, attachments, absences, grades, comments) is read from and written to the per-user Dexie DB via module api.ts; the outbox/sync engine in src/lib/sync is the only path to the backend for those writes, so offline and online behave the same.
+- Browser/device APIs (network, storage, install, clipboard, push, window.open) go through src/lib/platform.ts so Capacitor plugins can replace them later.
+- The service worker is built from src/sw.ts (vite-plugin-pwa injectManifest, manifest static in public/) and registered only via src/features/sync/pwa-update.ts, never in previews/iframes/dev; it never caches backend requests.

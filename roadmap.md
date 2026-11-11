@@ -1,4 +1,16 @@
-# Azuvera – Baustein 3B Roadmap
+# Azuvera – Roadmap
+
+## Baustein 4A – App-Fähigkeit und Offline
+- [x] PWA: Manifest, Icons, Service Worker (injectManifest), Update-Hinweis, Vorschau-Schutz
+- [x] Lokaler Speicher je Konto (Dexie) und outbox mit Zusammenfassung
+- [x] Sync-Engine (Senden, Holen, Abgleich, Wiederholungen, WLAN-Regeln)
+- [x] Berichte, Anhänge, Abwesenheiten, Noten, Kommentare lokal zuerst
+- [x] Konflikte (behalten, übernehmen, vergleichen)
+- [x] Statuschip, Badges, /sync, Profilkarte „App & Offline“, Abmelde-Rückfrage
+- [x] Online-only-Aktionen offline deaktiviert, Team/Portal mit „Stand: …“
+- [ ] Live-Übernahme eigener Berichte/Abwesenheiten per Realtime (wartet auf Freigabe der Tabellen für Realtime)
+
+# Baustein 3B
 
 ## Baustein 3B
 - [x] Geschützte Team-, Vertretungs- und Erinnerungsfunktionen
