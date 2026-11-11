@@ -14,7 +14,7 @@ describe("Sync-Regeln", () => {
     expect(r.insert).toBeUndefined();
   });
   it("hängt nach einem Einreichen keinen Speicherstand an einen früheren Eintrag", () => {
-    const r = coalesce([entry({ id: 1 }), entry({ id: 2, op: "report.submit" })], entry({ id: undefined }) as never);
+    const r = coalesce([entry({ id: 1 }), entry({ id: 2, op: "report.submit" })], ({ ...entry({}), id: undefined }) as never);
     expect(r.insert).toBeDefined();
   });
   it("sendet je Datensatz strikt der Reihe nach, ein Fehler blockiert nur denselben Datensatz", () => {

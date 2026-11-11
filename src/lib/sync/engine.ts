@@ -117,7 +117,7 @@ export function startSync(userId: string, qc: QueryClient): void {
     .channel(`own-comments-${userId}`)
     .on("postgres_changes", { event: "INSERT", schema: "public", table: "report_comments", filter: `azubi_id=eq.${userId}` }, (payload) => {
       void (async () => {
-        const row = payload.new as LocalReport & Record<string, unknown>;
+        const row = payload.new as Record<string, unknown>;
         await currentDb()?.report_comments.put({ ...(row as never), _sync: "synced", _base_version: 0 });
         notifyLocalChange();
         scheduleSync(200); // Kommentar kommt oft mit Statuswechsel – Bericht nachladen
@@ -253,7 +253,7 @@ async function markRecordSynced(db: AzuveraDB, record: string): Promise<void> {
   if (t) await (db[t] as AzuveraDB["reports"]).update(id, { _sync: "synced", _error: null });
 }
 
-type Resp<T> = { data: T; error: { code?: string; message?: string } | null; status?: number };
+type Resp<T> = { data: T; error: { code?: string | undefined; message?: string | undefined } | null; status?: number | undefined };
 function check<T>(r: Resp<T>, allowDuplicate = false): T | null {
   if (!r.error) return r.data;
   const kind = classifyError({ ...r.error, status: r.status });
@@ -273,7 +273,7 @@ async function execute(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<v
       let base = row._base_version;
       if (base === null) {
         const ins = await supabase.from("reports").insert({ id, azubi_id: row.azubi_id, report_type: row.report_type, ...content } as never).select().maybeSingle();
-        const created = check(ins as Resp<LocalReport | null>, true);
+        const created = check(ins as unknown as Resp<LocalReport | null>, true);
         if (created) { await storeServerReport(db, created, row); return; }
         // 23505: existiert schon (Wiederholung nach Netzabbruch) → laden und als vorhanden behandeln
         const { data: server } = await supabase.from("reports").select("*").eq("id", id).maybeSingle();
@@ -282,7 +282,7 @@ async function execute(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<v
         await db.reports.update(id, { _base_version: base });
       }
       const upd = await supabase.from("reports").update(content as never).eq("id", id).eq("version", base).select();
-      const rows = check(upd as Resp<LocalReport[]>) ?? [];
+      const rows = check(upd as unknown as Resp<LocalReport[]>) ?? [];
       if (rows.length === 0) {
         const { data: server } = await supabase.from("reports").select("*").eq("id", id).maybeSingle();
         if (!server) throw new SyncError("permanent", "Der Bericht existiert auf dem Server nicht mehr.");
@@ -309,7 +309,7 @@ async function execute(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<v
           if (up.error && !/exists|duplicate/i.test(up.error.message)) throw new SyncError(classifyError({ message: up.error.message, status: Number((up.error as { statusCode?: string }).statusCode) || undefined }) === "network" ? "network" : "permanent", up.error.message);
         }
       }
-      const args: Record<string, unknown> = { _report_id: id, _expected_version: row._base_version, _method: e.payload.method };
+      const args: { _report_id: string; _expected_version: number | null; _method: string | undefined; _image_path?: string; _client_signed_at?: string } = { _report_id: id, _expected_version: row._base_version, _method: e.payload.method };
       if (imagePath) args._image_path = imagePath;
       if (e.payload.clientSignedAt) args._client_signed_at = e.payload.clientSignedAt;
       const res = await supabase.rpc("submit_report", args as never);

@@ -32,13 +32,23 @@ export type OutboxOp =
   | "grade.upsert" | "grade.delete"
   | "comment.insert" | "profile.update";
 
+export interface OutboxPayload {
+  id?: string | undefined;
+  method?: string | undefined;
+  signatureId?: string | undefined;
+  clientSignedAt?: string | undefined;
+  patch?: Record<string, unknown> | undefined;
+  storage_path?: string | null | undefined;
+  thumb_path?: string | null | undefined;
+}
+
 export type OutboxStatus = "waiting" | "sending" | "failed" | "conflict";
 export interface OutboxEntry {
   id?: number;
   /** Datensatz-Schlüssel, z. B. "report:<uuid>" – je Schlüssel strikt der Reihe nach. */
   record: string;
   op: OutboxOp;
-  payload: Record<string, unknown>;
+  payload: OutboxPayload;
   title: string;
   size?: number;
   status: OutboxStatus;

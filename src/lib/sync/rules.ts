@@ -51,7 +51,7 @@ export function readyHeads(entries: OutboxEntry[], now: number, allow: (e: Outbo
 }
 
 export type ErrorKind = "network" | "permanent" | "conflict" | "duplicate" | "auth";
-export function classifyError(err: { code?: string; status?: number; message?: string } | null | undefined): ErrorKind {
+export function classifyError(err: { code?: string | undefined; status?: number | undefined; message?: string | undefined } | null | undefined): ErrorKind {
   if (!err) return "network";
   const msg = (err.message ?? "").toLowerCase();
   if (err.code === "23505" || msg.includes("already exists") || msg.includes("duplicate")) return "duplicate";
@@ -61,7 +61,7 @@ export function classifyError(err: { code?: string; status?: number; message?: s
   return "permanent";
 }
 
-export function friendlyError(err: { code?: string; message?: string } | null | undefined): string {
+export function friendlyError(err: { code?: string | undefined; message?: string | undefined } | null | undefined): string {
   const code = err?.code ?? "";
   if (code === "42501") return "Dazu fehlt dir die Berechtigung.";
   if (code === "23514" || code === "22P02" || code === "22007") return "Die Eingaben sind ungültig.";
