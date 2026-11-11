@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, FileSignature, Info, KeyRound, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResponsiveDialog } from "@/components/dialogs";
 import { Logo } from "@/components/shared";
 import { cn } from "@/lib/utils";
+import { SocialButtons } from "@/features/auth/social-buttons";
 
 const TITLE = "Anmelden – Azuvera";
 const DESC = "Bei Azuvera anmelden oder ein Konto erstellen – das digitale Berichtsheft für die Ausbildung.";
@@ -99,7 +100,7 @@ function AuthPage() {
   const [tab, setTab] = useState(mode === "signup" ? "signup" : "login");
   const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
 
-  const target = redirect && redirect.startsWith("/") ? redirect : "/dashboard";
+  const target = redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/dashboard";
 
   if (signedUpEmail) {
     return (
@@ -192,6 +193,9 @@ function AuthFrame({ children }: { children: React.ReactNode }) {
 }
 
 function LoginForm({ onSuccess }: { onSuccess: () => void }) {
+  const { redirect } = Route.useSearch();
+  const target = redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/dashboard";
+  const handleSuccess = useCallback(onSuccess, [onSuccess]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -253,6 +257,7 @@ function LoginForm({ onSuccess }: { onSuccess: () => void }) {
       <Button type="submit" className="h-11 w-full" disabled={busy}>
         Anmelden
       </Button>
+      <SocialButtons target={target} onSuccess={handleSuccess} />
 
       <ResponsiveDialog
         open={resetOpen}
