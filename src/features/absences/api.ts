@@ -56,7 +56,7 @@ export async function deleteAbsence(id: string): Promise<void> {
 }
 
 export async function reviewAbsence(id: string, decision: AbsenceStatus, note: string): Promise<void> {
-  const { error } = await supabase.rpc("review_absence", { _absence_id: id, _decision: decision, _note: note || null });
+  const { error } = await supabase.rpc("review_absence", { _absence_id: id, _decision: decision, _note: note || undefined });
   if (error) throw error;
 }
 
