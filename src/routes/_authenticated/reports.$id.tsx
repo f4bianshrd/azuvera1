@@ -13,6 +13,8 @@ import { deleteReport, displayNames, getReport, reportTitle, STATUS_LABELS } fro
 import { AttachmentSection } from "@/features/reports/attachment-section";
 import { ReportEditor, stateFromReport } from "@/features/reports/report-editor";
 import { SubmitSheet } from "@/features/reports/submit-sheet";
+import { SyncBadge } from "@/features/sync/sync-badge";
+import { ConflictBox } from "@/features/sync/conflict-box";
 import { ApprovalSheet } from "@/features/review/approval-sheet";
 import { RejectionSheet } from "@/features/review/rejection-sheet";
 import { ReopenSheet } from "@/features/review/reopen-sheet";
@@ -52,7 +54,7 @@ function ReportDetailPage() {
 
   const report = data?.report;
   const isOwner = profile?.id === report?.azubi_id;
-  const editable = isOwner && (report?.status === "draft" || report?.status === "rejected");
+  const editable = isOwner && (report?.status === "draft" || report?.status === "rejected") && !report?._submit_pending && report?._sync !== "conflict";
   const { data: canReview } = useQuery({ queryKey: ["review", "can-review", report?.azubi_id], queryFn: () => canReviewReport(report!.azubi_id), enabled: !!report && !isOwner });
   const { data: principalId } = useQuery({ queryKey: ["review", "acting-principal", report?.azubi_id], queryFn: () => actingPrincipal(report!.azubi_id), enabled: !!report && !!canReview });
   const { data: comments } = useQuery({ queryKey: ["review", "comments", id], queryFn: () => listComments(id), enabled: !!report && report.status !== "draft" });
@@ -99,14 +101,18 @@ function ReportDetailPage() {
         <div><h1 className="text-2xl font-bold tracking-tight">{title}</h1><p className="mt-1 text-muted-foreground">{dateLabel}{!isOwner && names?.get(report.azubi_id) ? ` • ${names.get(report.azubi_id)}` : ""}</p></div>
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge status={report.status} />
+          <SyncBadge state={report._sync} submitPending={report._submit_pending} />
           {editable && !editing && <Button variant="outline" size="sm" onClick={() => setEditing(true)}>Bearbeiten</Button>}
           {editing && <Button variant="outline" size="sm" disabled={dirty} onClick={() => setEditing(false)}>Fertig</Button>}
-          {isOwner && report.status === "draft" && <Button variant="outline" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}><Trash2 className="size-4" aria-hidden /> Löschen</Button>}
+          {isOwner && report.status === "draft" && !report._submit_pending && <Button variant="outline" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}><Trash2 className="size-4" aria-hidden /> Löschen</Button>}
           {editable && <Button size="sm" onClick={() => setSubmitOpen(true)}>{report.status === "rejected" ? "Erneut einreichen" : "Einreichen"}</Button>}
         </div>
       </div>
     </div>
 
+    {isOwner && report._submit_pending && report._sync !== "conflict" && <div className="rounded-xl border bg-muted/40 p-4 text-sm">Wird eingereicht, sobald du online bist.</div>}
+    {isOwner && report._sync === "failed" && report._error && <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm">{report._error}</div>}
+    {isOwner && <ConflictBox report={report} />}
     {isOwner && report.status === "rejected" && <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm font-medium">Dein Bericht wurde zurückgewiesen. Lies die Korrekturnotiz, überarbeite den Bericht und reiche ihn erneut ein.</div>}
     {report.review_note && !isOwner && <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4"><h2 className="text-sm font-semibold">Korrekturnotiz{names?.get(report.reviewer_id ?? "") ? ` von ${names.get(report.reviewer_id ?? "")}` : ""}</h2><p className="mt-1 text-sm whitespace-pre-wrap">{report.review_note}</p></div>}
 

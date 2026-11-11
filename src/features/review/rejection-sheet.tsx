@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { OnlineButton } from "@/features/sync/online-button";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -55,7 +56,7 @@ export function RejectionSheet({ report, open, onOpenChange, onRejected, onConfl
         <p className="text-right text-xs text-muted-foreground">{note.length} / 2.000</p>
       </div>
       <p className="text-sm text-muted-foreground">Die Notiz wird sofort zugestellt. Der Bericht kann überarbeitet und erneut eingereicht werden.</p>
-      <Button variant="destructive" className="w-full" disabled={busy} onClick={() => void submit()}>{busy ? "Wird zurückgewiesen…" : "Zurückweisen"}</Button>
+      <OnlineButton variant="destructive" className="w-full" disabled={busy} onClick={() => void submit()}>{busy ? "Wird zurückgewiesen…" : "Zurückweisen"}</OnlineButton>
     </div>
   </ResponsiveDialog>;
 }

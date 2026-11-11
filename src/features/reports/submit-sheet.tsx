@@ -7,8 +7,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ResponsiveDialog } from "@/components/dialogs";
-import { reportTitle, submitReport, uploadSignature, ReportConflictError, type Report } from "./api";
+import { reportTitle, submitReport, ReportConflictError, type Report } from "./api";
 import { SignaturePad } from "./signature-pad";
+import { getNetworkStatus } from "@/lib/platform";
 
 const SECTIONS: { key: keyof Pick<Report, "activities" | "school_content" | "instructions" | "summary">; label: string }[] = [
   { key: "activities", label: "Tätigkeiten" },
@@ -44,18 +45,14 @@ export function SubmitSheet({
   const doSubmit = async () => {
     setBusy(true);
     try {
-      let imagePath: string | undefined;
-      if (method === "draw" && sigBlob) {
-        imagePath = await uploadSignature(report.azubi_id, sigBlob);
-      }
       await submitReport({
         reportId: report.id,
         expectedVersion: report.version,
         method,
-        imagePath,
+        signature: method === "draw" ? sigBlob : null,
         clientSignedAt: new Date().toISOString(),
       });
-      toast.success("Eingereicht");
+      toast.success(getNetworkStatus().online ? "Eingereicht" : "Wird eingereicht, sobald du online bist.");
       await queryClient.invalidateQueries({ queryKey: ["reports"] });
       onSubmitted();
     } catch (e) {

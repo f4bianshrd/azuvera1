@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState, ListSkeleton, PageHeader, StatusBadge } from "@/components/shared";
+import { SyncBadge } from "@/features/sync/sync-badge";
 import { useMyProfile } from "@/features/app/session";
 import { listReports, listReportsInRange, reportAzubiProfile, reportTitle, STATUS_LABELS, type ReportStatus, type ReportType } from "@/features/reports/api";
 import { computeCoverage } from "@/features/reports/coverage";
@@ -219,6 +220,7 @@ function ReportsPage() {
                     </p>
                   </div>
                   <StatusBadge status={r.status} />
+                  <SyncBadge state={r._sync} submitPending={r._submit_pending} />
                 </Link>
               </li>
             ))}

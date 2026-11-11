@@ -4,7 +4,13 @@ import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
   // One client per request: a module-level QueryClient leaks cached data between SSR requests.
-  const queryClient = new QueryClient();
+  // networkMode "always": eigene Daten kommen offline aus dem Gerätespeicher.
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { networkMode: "always", retry: (count) => count < 1 && typeof navigator !== "undefined" && navigator.onLine },
+      mutations: { networkMode: "always" },
+    },
+  });
 
   const router = createRouter({
     routeTree,

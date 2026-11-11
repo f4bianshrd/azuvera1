@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Clock } from "lucide-react";
 import {
-  deleteAttachmentRow,
-  insertAttachmentRow,
-  removeFile,
-  signedUrl,
+  addAttachment,
+  attachmentUrl,
+  deleteAttachment,
+  openAttachmentExternally,
   updateAttachment,
-  uploadFile,
   type Report,
   type ReportAttachment,
 } from "./api";
@@ -56,24 +56,12 @@ export function AttachmentSection({
         setPending((p) => [...p, { key, name: file.name, progress: "uploading" }]);
         try {
           const processed = await processFile(file);
-          const attachmentId = crypto.randomUUID();
-          const isPdf = processed.mimeType === "application/pdf";
-          const ext = isPdf ? "pdf" : "jpg";
-          const storagePath = `${report.azubi_id}/${report.id}/${attachmentId}.${ext}`;
-          const thumbPath = isPdf ? undefined : `${report.azubi_id}/${report.id}/${attachmentId}_thumb.jpg`;
-
-          await uploadFile("report-files", storagePath, processed.blob, processed.mimeType);
-          if (processed.thumb && thumbPath) {
-            await uploadFile("report-files", thumbPath, processed.thumb, "image/jpeg");
-          }
-          await insertAttachmentRow({
-            id: attachmentId,
-            reportId: report.id,
-            storagePath,
-            thumbPath,
+          await addAttachment({
+            report,
+            blob: processed.blob,
+            thumb: processed.thumb ?? undefined,
             fileName: sanitizeFileName(file.name),
             mimeType: processed.mimeType,
-            sizeBytes: processed.blob.size,
             width: processed.width,
             height: processed.height,
             sha256: processed.sha256,
@@ -98,9 +86,7 @@ export function AttachmentSection({
 
   const remove = async (a: ReportAttachment) => {
     try {
-      await deleteAttachmentRow(a.id);
-      await removeFile("report-files", a.storage_path);
-      if (a.thumb_path) await removeFile("report-files", a.thumb_path);
+      await deleteAttachment(a);
       await invalidate();
       toast.success("Anhang gelöscht");
     } catch {
@@ -123,10 +109,10 @@ export function AttachmentSection({
 
   const openViewer = async (a: ReportAttachment, index: number) => {
     try {
-      const url = await signedUrl("report-files", a.storage_path);
       if (a.mime_type === "application/pdf") {
-        window.open(url, "_blank", "noopener");
+        await openAttachmentExternally(a);
       } else {
+        const url = await attachmentUrl(a, "original");
         setViewer({ index, url });
       }
     } catch {
@@ -134,8 +120,7 @@ export function AttachmentSection({
     }
   };
 
-  const thumbUrl = async (a: ReportAttachment): Promise<string> =>
-    signedUrl("report-files", a.thumb_path ?? a.storage_path);
+  const thumbUrl = async (a: ReportAttachment): Promise<string> => attachmentUrl(a, "thumb");
 
   return (
     <section className="space-y-3">
@@ -275,6 +260,11 @@ export function AttachmentSection({
                     }}
                   />
                 </div>
+              )}
+              {a._sync === "pending" && a._base_version === null && (
+                <span className="absolute left-1 top-1 inline-flex items-center gap-1 rounded-md bg-background/90 px-1.5 py-0.5 text-[11px] font-medium">
+                  <Clock className="size-3" aria-hidden /> Wartet auf Upload
+                </span>
               )}
               {!editable && a.caption && <p className="p-1.5 text-xs text-muted-foreground">{a.caption}</p>}
             </li>

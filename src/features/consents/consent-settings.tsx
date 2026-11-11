@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { OFFLINE_ACTION_HINT, useOnline } from "@/lib/sync/status";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
@@ -17,6 +18,7 @@ const DESCRIPTIONS: Record<ConsentKind, { title: string; description: string }> 
 
 export function ConsentSettings() {
   const { data: profile } = useMyProfile();
+  const online = useOnline();
   const queryClient = useQueryClient();
   const { data: consents } = useQuery({ queryKey: ["consents"], queryFn: listMyConsents });
   const [grantKind, setGrantKind] = useState<ConsentKind | null>(null);
@@ -61,7 +63,7 @@ export function ConsentSettings() {
               <Switch
                 id={`consent-${kind}`}
                 checked={!!consent}
-                disabled={busy}
+                disabled={busy || !online}
                 onCheckedChange={(checked) => checked ? setGrantKind(kind) : setRevokeKind(kind)}
                 aria-label={`${content.title} ${consent ? "widerrufen" : "erteilen"}`}
               />
@@ -69,6 +71,7 @@ export function ConsentSettings() {
           );
         })}
       </div>
+      {!online && <p className="mt-2 text-xs text-muted-foreground">{OFFLINE_ACTION_HINT}</p>}
       <ConsentDialog
         kind={grantKind ?? "dictation"}
         open={grantKind !== null}

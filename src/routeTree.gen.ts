@@ -25,6 +25,7 @@ import { Route as AuthenticatedErinnerungenRouteImport } from './routes/_authent
 import { Route as AuthenticatedNotenRouteImport } from './routes/_authenticated/noten'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/sync'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin_.einstellungen'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
@@ -121,6 +122,11 @@ const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSyncRoute = AuthenticatedSyncRouteImport.update({
+  id: '/sync',
+  path: '/sync',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -204,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/noten': typeof AuthenticatedNotenRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/sync': typeof AuthenticatedSyncRoute
   '/team': typeof AuthenticatedTeamRouteWithChildren
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/erinnerungen': typeof AuthenticatedErinnerungenRoute
   '/noten': typeof AuthenticatedNotenRoute
   '/profil': typeof AuthenticatedProfilRoute
+  '/sync': typeof AuthenticatedSyncRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
@@ -262,6 +270,7 @@ export interface FileRoutesById {
   '/_authenticated/noten': typeof AuthenticatedNotenRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/_authenticated/sync': typeof AuthenticatedSyncRoute
   '/_authenticated/team': typeof AuthenticatedTeamRouteWithChildren
   '/_authenticated/admin_/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/noten'
     | '/profil'
     | '/reports'
+    | '/sync'
     | '/team'
     | '/admin/einstellungen'
     | '/reports/$id'
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/erinnerungen'
     | '/noten'
     | '/profil'
+    | '/sync'
     | '/admin/einstellungen'
     | '/reports/$id'
     | '/reports/new'
@@ -350,6 +361,7 @@ export interface FileRouteTypes {
     | '/_authenticated/noten'
     | '/_authenticated/profil'
     | '/_authenticated/reports'
+    | '/_authenticated/sync'
     | '/_authenticated/team'
     | '/_authenticated/admin_/einstellungen'
     | '/_authenticated/reports/$id'
@@ -490,6 +502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sync': {
+      id: '/_authenticated/sync'
+      path: '/sync'
+      fullPath: '/sync'
+      preLoaderRoute: typeof AuthenticatedSyncRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/team': {
       id: '/_authenticated/team'
       path: '/team'
@@ -616,6 +635,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotenRoute: typeof AuthenticatedNotenRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
+  AuthenticatedSyncRoute: typeof AuthenticatedSyncRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRouteWithChildren
   AuthenticatedAdminEinstellungenRoute: typeof AuthenticatedAdminEinstellungenRoute
   AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
@@ -633,6 +653,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotenRoute: AuthenticatedNotenRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
+  AuthenticatedSyncRoute: AuthenticatedSyncRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRouteWithChildren,
   AuthenticatedAdminEinstellungenRoute: AuthenticatedAdminEinstellungenRoute,
   AuthenticatedStammdatenBerufeRoute: AuthenticatedStammdatenBerufeRoute,

@@ -17,6 +17,7 @@ import { EmptyState, ListSkeleton, PageHeader, StatCard } from "@/components/sha
 import { useMyProfile } from "@/features/app/session";
 import { currentTrainingYear, trainingYears } from "@/lib/training-year";
 import { GRADE_KIND_LABELS, createGrade, deleteGrade, gradeDisplayNames, listGradeAzubis, listGrades, updateGrade, type Grade, type GradeInput, type GradeKind } from "@/features/grades/api";
+import { SyncBadge } from "@/features/sync/sync-badge";
 import { averageGrade, formatGrade, gradeTrend, isGradeInRange, parseGradeInput, subjectAverages } from "@/features/grades/grade-utils";
 
 const TITLE = "Schulnoten – Azuvera";
@@ -96,7 +97,7 @@ function GradesPage() {
     {!selectedAzubi ? <EmptyState icon={GraduationCap} title="Bitte wähle eine Person aus." /> : isLoading ? <ListSkeleton /> : filtered.length === 0 ? (
       <EmptyState icon={GraduationCap} title="Noch keine Noten eingetragen." action={isAzubi ? <Button onClick={() => openForm()}><Plus className="size-4" />Neue Note</Button> : undefined} />
     ) : <ul className="space-y-2">{filtered.map((grade) => <li key={grade.id} className="flex items-start justify-between gap-3 rounded-2xl border bg-card p-4 shadow-sm">
-      <div className="min-w-0"><p className="font-semibold">{grade.subject} <span className="ml-2 text-lg">{formatGrade(Number(grade.grade))}</span></p><p className="mt-1 text-sm text-muted-foreground">{format(new Date(`${grade.grade_date}T00:00:00`), "d. MMMM yyyy", { locale: de })} • {GRADE_KIND_LABELS[grade.kind]}{!isAzubi && names?.get(grade.azubi_id) ? ` • ${names.get(grade.azubi_id)}` : ""}</p>{grade.note && <p className="mt-2 whitespace-pre-wrap text-sm">{grade.note}</p>}</div>
+      <div className="min-w-0"><p className="flex flex-wrap items-center gap-2 font-semibold">{grade.subject} <span className="text-lg">{formatGrade(Number(grade.grade))}</span><SyncBadge state={grade._sync} /></p><p className="mt-1 text-sm text-muted-foreground">{format(new Date(`${grade.grade_date}T00:00:00`), "d. MMMM yyyy", { locale: de })} • {GRADE_KIND_LABELS[grade.kind]}{!isAzubi && names?.get(grade.azubi_id) ? ` • ${names.get(grade.azubi_id)}` : ""}</p>{grade.note && <p className="mt-2 whitespace-pre-wrap text-sm">{grade.note}</p>}</div>
       {isAzubi && grade.azubi_id === profile?.id && <div className="flex shrink-0 gap-1"><Button variant="ghost" size="icon" aria-label="Note bearbeiten" onClick={() => openForm(grade)}><Pencil className="size-4" /></Button><Button variant="ghost" size="icon" aria-label="Note löschen" className="text-destructive" onClick={() => setDeleting(grade)}><Trash2 className="size-4" /></Button></div>}
     </li>)}</ul>}
 
