@@ -20,7 +20,7 @@ import { useProfessions } from "@/features/app/queries";
 import { DictationButton } from "@/features/dictation/dictation-button";
 import { readPunctuationPreference } from "@/features/dictation/api";
 import { ABSENCE_STATUS_LABELS, ABSENCE_TYPE_LABELS, reviewAbsence, type Absence, type AbsenceStatus } from "@/features/absences/api";
-import { reportTitle, type Report, type ReportStatus, type ReportType } from "@/features/reports/api";
+import { displayNames, reportTitle, type Report, type ReportStatus, type ReportType } from "@/features/reports/api";
 import { ApprovalSheet } from "@/features/review/approval-sheet";
 import { RejectionSheet } from "@/features/review/rejection-sheet";
 import { BulkApprovalDialog } from "@/features/review/bulk-approval-dialog";
@@ -85,7 +85,9 @@ function TrainerPortalPage() {
   const absencesQuery = useQuery({ queryKey: ["review", "pending-absences"], queryFn: listPendingReviewAbsences, enabled: !!profile && profile.role !== "azubi", refetchInterval: 60_000 });
 
   const people = useMemo(() => peopleQuery.data ?? [], [peopleQuery.data]);
-  const nameFor = (id: string) => people.find((person) => person.id === id)?.full_name ?? "Unbekannt";
+  const deputyIds = useMemo(() => [...new Set(queue.map((item) => item.deputy_for).filter((id): id is string => !!id))], [queue]);
+  const { data: deputyNames } = useQuery({ queryKey: ["review", "deputy-names", deputyIds.join(",")], queryFn: () => displayNames(deputyIds), enabled: deputyIds.length > 0 });
+  const nameFor = (id: string) => people.find((person) => person.id === id)?.full_name ?? deputyNames?.get(id) ?? "Unbekannt";
   const professionFor = (id: string) => {
     const professionId = people.find((person) => person.id === id)?.profession_id;
     return professions?.find((profession) => profession.id === professionId)?.name ?? "";
