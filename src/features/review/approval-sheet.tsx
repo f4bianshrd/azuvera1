@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { OnlineButton } from "@/features/sync/online-button";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -111,7 +112,7 @@ export function ApprovalSheet({
           <p className="text-right text-xs text-muted-foreground">{note.length} / 2.000</p>
         </div>
         <p className="text-xs text-muted-foreground">Einfache elektronische Bestätigung mit Zeitstempel und Prüfsumme – keine qualifizierte elektronische Signatur.</p>
-        <Button className="w-full" disabled={!canApprove || busy} onClick={() => void submit()}>{busy ? "Wird freigegeben…" : "Verbindlich freigeben"}</Button>
+        <OnlineButton className="w-full" disabled={!canApprove || busy} onClick={() => void submit()}>{busy ? "Wird freigegeben…" : "Verbindlich freigeben"}</OnlineButton>
       </div>
     </ResponsiveDialog>
   );

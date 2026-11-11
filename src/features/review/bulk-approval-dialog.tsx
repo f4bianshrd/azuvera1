@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { OnlineButton } from "@/features/sync/online-button";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,7 @@ export function BulkApprovalDialog({ reports, open, onOpenChange, onDone }: { re
         <div className="flex items-center gap-2"><RadioGroupItem value="click" id="bulk-click" /><Label htmlFor="bulk-click">Klick-Freigabe</Label></div>
       </RadioGroup>
       <div className="flex items-start gap-2"><Checkbox id="bulk-confirmed" checked={confirmed} onCheckedChange={(checked) => setConfirmed(checked === true)} /><Label htmlFor="bulk-confirmed" className="font-normal">Ich habe die ausgewählten Berichte geprüft.</Label></div>
-      <Button className="w-full" disabled={!confirmed || busy || (method === "saved" && !saved)} onClick={() => void submit()}>{busy ? "Werden freigegeben…" : "Alle freigeben"}</Button>
+      <OnlineButton className="w-full" disabled={!confirmed || busy || (method === "saved" && !saved)} onClick={() => void submit()}>{busy ? "Werden freigegeben…" : "Alle freigeben"}</OnlineButton>
     </div>
   </ResponsiveDialog>;
 }

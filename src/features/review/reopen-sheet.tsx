@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { OnlineButton } from "@/features/sync/online-button";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -35,7 +36,7 @@ export function ReopenSheet({ reportId, open, onOpenChange, onReopened }: { repo
         <p className="text-right text-xs text-muted-foreground">{reason.length} / 1.000</p>
       </div>
       <p className="rounded-xl border border-warning/40 bg-warning/10 p-3 text-sm">Der Bericht wird wieder zum Entwurf. Frühere Unterschriften bleiben erhalten. Nach dem erneuten Einreichen ist eine neue Freigabe nötig.</p>
-      <Button className="w-full" disabled={busy} onClick={() => void submit()}>{busy ? "Wird geöffnet…" : "Wieder öffnen"}</Button>
+      <OnlineButton className="w-full" disabled={busy} onClick={() => void submit()}>{busy ? "Wird geöffnet…" : "Wieder öffnen"}</OnlineButton>
     </div>
   </ResponsiveDialog>;
 }
