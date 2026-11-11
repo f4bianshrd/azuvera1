@@ -33,6 +33,7 @@ import { Route as AuthenticatedReportsNewRouteImport } from './routes/_authentic
 import { Route as AuthenticatedStammdatenBerufeRouteImport } from './routes/_authenticated/stammdaten.berufe'
 import { Route as AuthenticatedStammdatenBetriebeRouteImport } from './routes/_authenticated/stammdaten.betriebe'
 import { Route as AuthenticatedTeamIndexRouteImport } from './routes/_authenticated/team.index'
+import { Route as AuthenticatedTeamAzubiIdRouteImport } from './routes/_authenticated/team.$azubiId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -161,6 +162,12 @@ const AuthenticatedTeamIndexRoute = AuthenticatedTeamIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedTeamRoute,
 } as any)
+const AuthenticatedTeamAzubiIdRoute =
+  AuthenticatedTeamAzubiIdRouteImport.update({
+    id: '/$azubiId',
+    path: '/$azubiId',
+    getParentRoute: () => AuthenticatedTeamRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/reports/': typeof AuthenticatedReportsIndexRoute
   '/team/': typeof AuthenticatedTeamIndexRoute
 }
@@ -207,6 +215,7 @@ export interface FileRoutesByTo {
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/team': typeof AuthenticatedTeamIndexRoute
 }
@@ -234,6 +243,7 @@ export interface FileRoutesById {
   '/_authenticated/reports/new': typeof AuthenticatedReportsNewRoute
   '/_authenticated/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/_authenticated/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/_authenticated/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/_authenticated/team/': typeof AuthenticatedTeamIndexRoute
 }
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
+    | '/team/$azubiId'
     | '/reports/'
     | '/team/'
   fileRoutesByTo: FileRoutesByTo
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
+    | '/team/$azubiId'
     | '/reports'
     | '/team'
   id:
@@ -310,6 +322,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports/new'
     | '/_authenticated/stammdaten/berufe'
     | '/_authenticated/stammdaten/betriebe'
+    | '/_authenticated/team/$azubiId'
     | '/_authenticated/reports/'
     | '/_authenticated/team/'
   fileRoutesById: FileRoutesById
@@ -493,6 +506,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTeamIndexRouteImport
       parentRoute: typeof AuthenticatedTeamRoute
     }
+    '/_authenticated/team/$azubiId': {
+      id: '/_authenticated/team/$azubiId'
+      path: '/$azubiId'
+      fullPath: '/team/$azubiId'
+      preLoaderRoute: typeof AuthenticatedTeamAzubiIdRouteImport
+      parentRoute: typeof AuthenticatedTeamRoute
+    }
   }
 }
 
@@ -523,10 +543,12 @@ const AuthenticatedReportsRouteWithChildren =
   AuthenticatedReportsRoute._addFileChildren(AuthenticatedReportsRouteChildren)
 
 interface AuthenticatedTeamRouteChildren {
+  AuthenticatedTeamAzubiIdRoute: typeof AuthenticatedTeamAzubiIdRoute
   AuthenticatedTeamIndexRoute: typeof AuthenticatedTeamIndexRoute
 }
 
 const AuthenticatedTeamRouteChildren: AuthenticatedTeamRouteChildren = {
+  AuthenticatedTeamAzubiIdRoute: AuthenticatedTeamAzubiIdRoute,
   AuthenticatedTeamIndexRoute: AuthenticatedTeamIndexRoute,
 }
 
