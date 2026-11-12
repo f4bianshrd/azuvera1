@@ -48,6 +48,10 @@ export const ACTION_LABELS: Record<string, string> = {
   reminder_sent: "Erinnerung gesendet",
   consent_granted: "Einwilligung erteilt",
   consent_revoked: "Einwilligung widerrufen",
+  data_export: "Daten exportiert",
+  deletion_requested: "Löschantrag gestellt",
+  deletion_rejected: "Löschantrag abgelehnt",
+  account_deleted: "Konto gelöscht oder geschlossen",
 };
 
 /** Ältere Verwaltungs-Ereignisse aus Baustein 1B (nicht im Filter, aber lesbar). */
@@ -68,6 +72,7 @@ export const ENTITY_LABELS: Record<string, string> = {
   consent: "Einwilligung",
   export: "Export",
   reminder: "Erinnerung",
+  account: "Konto",
 };
 
 export const HISTORY_FILTERS = {
@@ -182,6 +187,10 @@ export function describeEntry(entry: Pick<AuditEntry, "action" | "details">, nam
       const kind = d.kind === "zip" ? "ZIP" : d.kind === "bulk" ? "Sammel-PDF" : d.kind === "single" ? "Einzel-PDF" : null;
       const count = typeof d.count === "number" ? `${d.count} Bericht${d.count === 1 ? "" : "e"}` : null;
       return { title: "PDF exportiert", details: [[kind, count].filter(Boolean).join(" · ")].filter(Boolean) };
+    }
+    case "account_deleted": {
+      const d2 = entry.details as { mode?: unknown } | null;
+      return { title: d2 && typeof d2 === "object" && d2.mode === "anonymized" ? "Konto geschlossen" : "Konto gelöscht", details: [] };
     }
     case "review": {
       const st = d.status === "approved" ? "Genehmigt" : d.status === "rejected" ? "Abgelehnt" : null;

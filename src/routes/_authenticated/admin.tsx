@@ -24,6 +24,9 @@ import {
   type AppRole,
 } from "@/features/app/session";
 import { useCompanies, useProfessions } from "@/features/app/queries";
+import { DeletionRequestsCard } from "@/features/account/deletion-requests-card";
+import { DeleteAccountDialog, type DeletableUser } from "@/features/account/delete-account-dialog";
+import { isClosedAccount } from "@/features/account/rules";
 
 const TITLE = "Administration – Azuvera";
 const ALL_ROLES = Object.keys(ROLE_LABELS) as AppRole[];
@@ -124,7 +127,10 @@ function AdminPage() {
       {usersQuery.isLoading || !users ? (
         <ListSkeleton rows={5} />
       ) : (
-        <UsersCard users={users} myId={me?.id ?? ""} />
+        <>
+          <DeletionRequestsCard users={users} />
+          <UsersCard users={users} myId={me?.id ?? ""} />
+        </>
       )}
       <InviteCodesCard />
     </div>
@@ -144,8 +150,9 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortAsc, setSortAsc] = useState(true);
   const [pendingRole, setPendingRole] = useState<{ user: AdminUser; role: AppRole } | null>(null);
+  const [deleting, setDeleting] = useState<DeletableUser | null>(null);
 
-  const reviewers = users.filter((u) => REVIEWER_ROLES.includes(u.role));
+  const reviewers = users.filter((u) => REVIEWER_ROLES.includes(u.role) && !isClosedAccount(u.email));
   const viewerCandidates = users.filter((u) => VIEWER_ROLES.includes(u.role));
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["admin-users"] });
@@ -220,6 +227,16 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
       </SelectContent>
     </Select>
   );
+
+  const accountAction = (u: AdminUser) => {
+    if (isClosedAccount(u.email)) return <Badge variant="outline">Geschlossen</Badge>;
+    if (u.id === myId) return null;
+    return (
+      <Button variant="outline" size="sm" className="h-10 border-destructive/50 text-destructive hover:bg-destructive/10" onClick={() => setDeleting(u)}>
+        {u.role === "azubi" ? "Konto löschen" : "Konto schließen"}
+      </Button>
+    );
+  };
 
   const azubiControls = (u: AdminUser) => {
     if (u.role !== "azubi") return null;
@@ -332,6 +349,7 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
                 </button>
               </TableHead>
               <TableHead>Zuordnung (Azubis)</TableHead>
+              <TableHead className="text-right">Konto</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -341,6 +359,7 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
                 <TableCell>{u.email}</TableCell>
                 <TableCell>{roleSelect(u)}</TableCell>
                 <TableCell className="min-w-72">{azubiControls(u)}</TableCell>
+                <TableCell className="text-right">{accountAction(u)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -357,6 +376,7 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
             </div>
             {roleSelect(u)}
             {azubiControls(u)}
+            {accountAction(u)}
           </div>
         ))}
       </div>
@@ -364,6 +384,8 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
       {filtered.length === 0 && (
         <p className="mt-4 text-sm text-muted-foreground">Keine Benutzer gefunden.</p>
       )}
+
+      {deleting && <DeleteAccountDialog user={deleting} onClose={() => setDeleting(null)} />}
 
       <ConfirmDialog
         open={!!pendingRole}
