@@ -1,3 +1,4 @@
+import { ReportLinksBlock } from "@/features/plan/components/report-links";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -23,7 +24,6 @@ import { ReopenSheet } from "@/features/review/reopen-sheet";
 import { CommentsCard, COMMENT_SECTIONS } from "@/features/review/comments-card";
 import { SignaturesCard } from "@/features/review/signatures-card";
 import { actingPrincipal, canReviewReport, listComments, type CommentSection } from "@/features/review/api";
-import { ReportLinksBlock } from "@/features/plan/components/report-links";
 
 export const Route = createFileRoute("/_authenticated/reports/$id")({
   head: ({ params }) => ({

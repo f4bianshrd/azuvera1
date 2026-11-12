@@ -1,3 +1,4 @@
+import { ReportLinksBlock } from "@/features/plan/components/report-links";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -13,7 +14,6 @@ import { readPunctuationPreference, writePunctuationPreference } from "@/feature
 import { AiTextButton } from "@/features/ai/ai-text-button";
 import type { AiField } from "@/features/ai/api";
 import {
-import { ReportLinksBlock } from "@/features/plan/components/report-links";
   createDraft,
   saveReportDraft,
   ReportConflictError,
