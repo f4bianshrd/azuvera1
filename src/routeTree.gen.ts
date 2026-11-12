@@ -28,6 +28,8 @@ import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/sync'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as ApiEmailTestRouteImport } from './routes/api/email-test'
+import { Route as ApiNotificationStatusRouteImport } from './routes/api/notification-status'
+import { Route as ApiPushTestRouteImport } from './routes/api/push-test'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin_.einstellungen'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
@@ -36,6 +38,7 @@ import { Route as AuthenticatedStammdatenBerufeRouteImport } from './routes/_aut
 import { Route as AuthenticatedStammdatenBetriebeRouteImport } from './routes/_authenticated/stammdaten.betriebe'
 import { Route as AuthenticatedTeamIndexRouteImport } from './routes/_authenticated/team.index'
 import { Route as AuthenticatedTeamAzubiIdRouteImport } from './routes/_authenticated/team.$azubiId'
+import { Route as ApiPublicDispatchNotificationsRouteImport } from './routes/api/public/dispatch-notifications'
 import { Route as ApiPublicPushConfigRouteImport } from './routes/api/public/push-config'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -139,6 +142,16 @@ const ApiEmailTestRoute = ApiEmailTestRouteImport.update({
   path: '/api/email-test',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiNotificationStatusRoute = ApiNotificationStatusRouteImport.update({
+  id: '/api/notification-status',
+  path: '/api/notification-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPushTestRoute = ApiPushTestRouteImport.update({
+  id: '/api/push-test',
+  path: '/api/push-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminEinstellungenRoute =
   AuthenticatedAdminEinstellungenRouteImport.update({
     id: '/admin_/einstellungen',
@@ -184,6 +197,12 @@ const AuthenticatedTeamAzubiIdRoute =
     path: '/$azubiId',
     getParentRoute: () => AuthenticatedTeamRoute,
   } as any)
+const ApiPublicDispatchNotificationsRoute =
+  ApiPublicDispatchNotificationsRouteImport.update({
+    id: '/api/public/dispatch-notifications',
+    path: '/api/public/dispatch-notifications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPushConfigRoute = ApiPublicPushConfigRouteImport.update({
   id: '/api/public/push-config',
   path: '/api/public/push-config',
@@ -225,12 +244,15 @@ export interface FileRoutesByFullPath {
   '/sync': typeof AuthenticatedSyncRoute
   '/team': typeof AuthenticatedTeamRouteWithChildren
   '/api/email-test': typeof ApiEmailTestRoute
+  '/api/notification-status': typeof ApiNotificationStatusRoute
+  '/api/push-test': typeof ApiPushTestRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
+  '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/reports/': typeof AuthenticatedReportsIndexRoute
   '/team/': typeof AuthenticatedTeamIndexRoute
@@ -255,12 +277,15 @@ export interface FileRoutesByTo {
   '/profil': typeof AuthenticatedProfilRoute
   '/sync': typeof AuthenticatedSyncRoute
   '/api/email-test': typeof ApiEmailTestRoute
+  '/api/notification-status': typeof ApiNotificationStatusRoute
+  '/api/push-test': typeof ApiPushTestRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
+  '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/team': typeof AuthenticatedTeamIndexRoute
@@ -289,12 +314,15 @@ export interface FileRoutesById {
   '/_authenticated/sync': typeof AuthenticatedSyncRoute
   '/_authenticated/team': typeof AuthenticatedTeamRouteWithChildren
   '/api/email-test': typeof ApiEmailTestRoute
+  '/api/notification-status': typeof ApiNotificationStatusRoute
+  '/api/push-test': typeof ApiPushTestRoute
   '/_authenticated/admin_/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/reports/new': typeof AuthenticatedReportsNewRoute
   '/_authenticated/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/_authenticated/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/_authenticated/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
+  '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/_authenticated/team/': typeof AuthenticatedTeamIndexRoute
@@ -323,12 +351,15 @@ export interface FileRouteTypes {
     | '/sync'
     | '/team'
     | '/api/email-test'
+    | '/api/notification-status'
+    | '/api/push-test'
     | '/admin/einstellungen'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
     | '/team/$azubiId'
+    | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
     | '/reports/'
     | '/team/'
@@ -353,12 +384,15 @@ export interface FileRouteTypes {
     | '/profil'
     | '/sync'
     | '/api/email-test'
+    | '/api/notification-status'
+    | '/api/push-test'
     | '/admin/einstellungen'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
     | '/team/$azubiId'
+    | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
     | '/reports'
     | '/team'
@@ -386,12 +420,15 @@ export interface FileRouteTypes {
     | '/_authenticated/sync'
     | '/_authenticated/team'
     | '/api/email-test'
+    | '/api/notification-status'
+    | '/api/push-test'
     | '/_authenticated/admin_/einstellungen'
     | '/_authenticated/reports/$id'
     | '/_authenticated/reports/new'
     | '/_authenticated/stammdaten/berufe'
     | '/_authenticated/stammdaten/betriebe'
     | '/_authenticated/team/$azubiId'
+    | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
     | '/_authenticated/reports/'
     | '/_authenticated/team/'
@@ -408,6 +445,9 @@ export interface RootRouteChildren {
   ImpressumRoute: typeof ImpressumRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiEmailTestRoute: typeof ApiEmailTestRoute
+  ApiNotificationStatusRoute: typeof ApiNotificationStatusRoute
+  ApiPushTestRoute: typeof ApiPushTestRoute
+  ApiPublicDispatchNotificationsRoute: typeof ApiPublicDispatchNotificationsRoute
   ApiPublicPushConfigRoute: typeof ApiPublicPushConfigRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -549,6 +589,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEmailTestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/notification-status': {
+      id: '/api/notification-status'
+      path: '/api/notification-status'
+      fullPath: '/api/notification-status'
+      preLoaderRoute: typeof ApiNotificationStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/push-test': {
+      id: '/api/push-test'
+      path: '/api/push-test'
+      fullPath: '/api/push-test'
+      preLoaderRoute: typeof ApiPushTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin_/einstellungen': {
       id: '/_authenticated/admin_/einstellungen'
       path: '/admin/einstellungen'
@@ -604,6 +658,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/team/$azubiId'
       preLoaderRoute: typeof AuthenticatedTeamAzubiIdRouteImport
       parentRoute: typeof AuthenticatedTeamRoute
+    }
+    '/api/public/dispatch-notifications': {
+      id: '/api/public/dispatch-notifications'
+      path: '/api/public/dispatch-notifications'
+      fullPath: '/api/public/dispatch-notifications'
+      preLoaderRoute: typeof ApiPublicDispatchNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/push-config': {
       id: '/api/public/push-config'
@@ -711,6 +772,9 @@ const rootRouteChildren: RootRouteChildren = {
   ImpressumRoute: ImpressumRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ApiEmailTestRoute: ApiEmailTestRoute,
+  ApiNotificationStatusRoute: ApiNotificationStatusRoute,
+  ApiPushTestRoute: ApiPushTestRoute,
+  ApiPublicDispatchNotificationsRoute: ApiPublicDispatchNotificationsRoute,
   ApiPublicPushConfigRoute: ApiPublicPushConfigRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
