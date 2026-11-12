@@ -1926,6 +1926,13 @@ export type Database = {
       is_leitung: { Args: { _user_id: string }; Returns: boolean }
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
       kw_list: { Args: { weeks: string[] }; Returns: string }
+      list_company_choices: {
+        Args: never
+        Returns: {
+          id: string
+          name: string
+        }[]
+      }
       list_possible_deputies: {
         Args: never
         Returns: {
@@ -2077,6 +2084,15 @@ export type Database = {
       }
       set_my_profession: {
         Args: { _profession_id: string }
+        Returns: undefined
+      }
+      set_my_training: {
+        Args: {
+          p_company: string
+          p_new_company_address?: string
+          p_new_company_name?: string
+          p_profession: string
+        }
         Returns: undefined
       }
       submit_report: {
