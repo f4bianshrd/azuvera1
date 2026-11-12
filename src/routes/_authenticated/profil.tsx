@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,8 @@ import { PageHeader } from "@/components/shared";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ROLE_LABELS, useMyProfile, type MyProfile } from "@/features/app/session";
 import { useCompanies, useProfessions } from "@/features/app/queries";
-import { defaultPeriodForYear } from "@/lib/training-year";
+import { currentTrainingYear, defaultPeriodForYear } from "@/lib/training-year";
+import { listCompanyChoices, setMyTraining } from "@/features/profile/api";
 import { NotificationSettingsCard } from "@/features/notifications/notification-settings";
 import { ConsentSettings } from "@/features/consents/consent-settings";
 import { SavedSignatureCard } from "@/features/review/saved-signature-card";
@@ -126,6 +127,10 @@ function ProfilPage() {
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [busy, setBusy] = useState(false);
+  const isAzubi = profile?.role === "azubi";
+  const { data: companyChoices } = useQuery({ queryKey: ["company-choices"], queryFn: listCompanyChoices, enabled: isAzubi && online });
+  const [training, setTraining] = useState<{ professionId: string; companyId: string; newName: string; newAddress: string }>({ professionId: "", companyId: "", newName: "", newAddress: "" });
+  const [year, setYear] = useState("");
 
   useEffect(() => {
     if (!profile) return;
@@ -144,6 +149,8 @@ function ProfilPage() {
       ausbildungsbeginn: profile.ausbildungsbeginn ?? "",
       ausbildungsende: profile.ausbildungsende ?? "",
     });
+    setTraining({ professionId: profile.profession_id ?? "", companyId: profile.company_id ?? "", newName: "", newAddress: "" });
+    setYear(profile.ausbildungsbeginn ? String(currentTrainingYear(new Date(`${profile.ausbildungsbeginn}T00:00:00`), profile.ausbildungsende ? new Date(`${profile.ausbildungsende}T00:00:00`) : undefined)) : "");
   }, [profile]);
 
   if (isLoading || !profile) {
@@ -161,7 +168,26 @@ function ProfilPage() {
   const profession = professions?.find((p) => p.id === profile.profession_id);
 
   const save = async () => {
+    if (isAzubi && training.companyId === "__new" && training.newName.trim().length < 2) {
+      toast.error("Bitte den Namen deines Ausbildungsbetriebs eintragen.");
+      return;
+    }
     setBusy(true);
+    if (isAzubi && (training.professionId !== (profile.profession_id ?? "") || training.companyId !== (profile.company_id ?? ""))) {
+      try {
+        await setMyTraining({
+          professionId: training.professionId || null,
+          companyId: training.companyId && training.companyId !== "__new" ? training.companyId : null,
+          ...(training.companyId === "__new" ? { newCompanyName: training.newName, newCompanyAddress: training.newAddress } : {}),
+        });
+        await queryClient.invalidateQueries({ queryKey: ["company-choices"] });
+        await queryClient.invalidateQueries({ queryKey: ["plan"] });
+      } catch (e) {
+        setBusy(false);
+        toast.error(e instanceof Error ? e.message : "Beruf und Betrieb konnten nicht gespeichert werden.");
+        return;
+      }
+    }
     const { error } = await supabase
       .from("profiles")
       .update({
@@ -219,6 +245,7 @@ function ProfilPage() {
   };
 
   const applyYear = (year: string) => {
+    setYear(year);
     const { start, end } = defaultPeriodForYear(Number(year));
     setForm((f) => ({
       ...f,
@@ -283,21 +310,54 @@ function ProfilPage() {
 
       <Card title="Ausbildung">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label>Betrieb</Label>
-            <p className="flex h-11 items-center rounded-md border bg-muted px-3 text-sm text-muted-foreground">
-              {company?.name ?? "Wird von der Ausbildungsleitung zugewiesen"}
-            </p>
-          </div>
-          <div className="space-y-1.5">
-            <Label>Beruf</Label>
-            <p className="flex h-11 items-center rounded-md border bg-muted px-3 text-sm text-muted-foreground">
-              {profession?.name ?? "Wird von der Ausbildungsleitung zugewiesen"}
-            </p>
-          </div>
+          {isAzubi ? (
+            <>
+              <div className="space-y-1.5">
+                <Label htmlFor="beruf">Ausbildungsberuf</Label>
+                <Select value={training.professionId} onValueChange={(v) => setTraining((t) => ({ ...t, professionId: v }))} disabled={!online}>
+                  <SelectTrigger id="beruf" className="h-11"><SelectValue placeholder="Beruf wählen" /></SelectTrigger>
+                  <SelectContent>
+                    {(professions ?? []).map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="betrieb">Ausbildungsbetrieb</Label>
+                <Select value={training.companyId} onValueChange={(v) => setTraining((t) => ({ ...t, companyId: v }))} disabled={!online}>
+                  <SelectTrigger id="betrieb" className="h-11"><SelectValue placeholder={company?.name ?? "Betrieb wählen"} /></SelectTrigger>
+                  <SelectContent>
+                    {(companyChoices ?? []).map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                    <SelectItem value="__new">Mein Betrieb fehlt – neu eintragen</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {training.companyId === "__new" && (
+                <>
+                  <Field id="betrieb-name" label="Name des Betriebs" value={training.newName} onChange={(v) => setTraining((t) => ({ ...t, newName: v }))} />
+                  <Field id="betrieb-adresse" label="Anschrift des Betriebs" value={training.newAddress} onChange={(v) => setTraining((t) => ({ ...t, newAddress: v }))} />
+                </>
+              )}
+              {!online && <p className="text-xs text-muted-foreground sm:col-span-2">{OFFLINE_ACTION_HINT}</p>}
+            </>
+          ) : (
+            <>
+              <div className="space-y-1.5">
+                <Label>Betrieb</Label>
+                <p className="flex h-11 items-center rounded-md border bg-muted px-3 text-sm text-muted-foreground">
+                  {company?.name ?? "Wird von der Ausbildungsleitung zugewiesen"}
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Beruf</Label>
+                <p className="flex h-11 items-center rounded-md border bg-muted px-3 text-sm text-muted-foreground">
+                  {profession?.name ?? "Wird von der Ausbildungsleitung zugewiesen"}
+                </p>
+              </div>
+            </>
+          )}
           <div className="space-y-1.5 sm:col-span-2">
             <Label>Aktuelles Ausbildungsjahr</Label>
-            <Select onValueChange={applyYear}>
+            <Select value={year} onValueChange={applyYear}>
               <SelectTrigger className="h-11">
                 <SelectValue placeholder="Lehrjahr wählen" />
               </SelectTrigger>
