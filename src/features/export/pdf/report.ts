@@ -17,6 +17,13 @@ export const REPORT_SECTIONS: ReportSectionDef[] = [
   { title: "Berufsschule – Inhalte", text: (b) => b.report.school_content },
   { title: "Unterweisungen", text: (b) => b.report.instructions },
   { title: "Zusammenfassung & Reflexion", text: (b) => b.report.summary },
+  {
+    title: "Ausbildungsinhalte",
+    text: (b) => [
+      ...(b.links?.items ?? []).map((i) => `• ${i.group ? `${i.group}: ` : ""}${i.label}`),
+      ...(b.links?.topics ?? []).map((t) => `• Thema ${t.code ? `${t.code} ` : ""}${t.title}`),
+    ].join("\n") || null,
+  },
 ];
 
 export const belegNr = (id: string) => `Beleg-Nr. AZV-${id.slice(0, 8).toUpperCase()}`;

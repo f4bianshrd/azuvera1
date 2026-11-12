@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { ExportAttachment, ExportHeader, ExportReport, ExportSignature, ReportBundle } from "./types";
+import { reportLinksForPdf } from "@/features/plan/api";
 
 type Status = ExportReport["status"];
 type Kind = ExportReport["report_type"];
@@ -61,13 +62,14 @@ async function toPng(bytes: Uint8Array, mime: string): Promise<Uint8Array | null
 
 /** Alle Daten eines Berichts für die PDF-Vorlage laden. */
 export async function loadBundle(report: ExportReport, opts: { embedImages: boolean; withFiles: boolean; blankSignatures: boolean }): Promise<ReportBundle> {
-  const [att, sig, com, ver] = await Promise.all([
+  const [att, sig, com, ver, links] = await Promise.all([
     supabase.from("report_attachments").select("*").eq("report_id", report.id).order("sort_order"),
     supabase.from("report_signatures").select("*").eq("report_id", report.id).order("signed_at"),
     report.status === "approved"
       ? supabase.from("report_comments").select("body, created_at").eq("report_id", report.id).eq("kind", "approval").order("created_at", { ascending: false }).limit(1)
       : Promise.resolve({ data: [] as { body: string }[] }),
     supabase.rpc("verify_report", { p_report: report.id }),
+    reportLinksForPdf(report.id).catch(() => ({ items: [], topics: [] })),
   ]);
   const attachments: ExportAttachment[] = att.data ?? [];
   const all: ExportSignature[] = (sig.data ?? []).filter((s) => s.report_version === report.version);
@@ -102,6 +104,7 @@ export async function loadBundle(report: ExportReport, opts: { embedImages: bool
     report, attachments, signatures, names, signatureImages, attachmentPng, attachmentFiles,
     approvalNote: (com.data?.[0] as { body?: string } | undefined)?.body ?? (report.status === "approved" ? report.review_note : null) ?? null,
     verify: ver.data?.[0] ?? null,
+    links,
   };
 }
 
