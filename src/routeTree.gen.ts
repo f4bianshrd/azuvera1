@@ -29,6 +29,7 @@ import { Route as AuthenticatedProtokollRouteImport } from './routes/_authentica
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/sync'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
+import { Route as ApiDeleteAccountRouteImport } from './routes/api/delete-account'
 import { Route as ApiEmailTestRouteImport } from './routes/api/email-test'
 import { Route as ApiNotificationStatusRouteImport } from './routes/api/notification-status'
 import { Route as ApiPushTestRouteImport } from './routes/api/push-test'
@@ -151,6 +152,11 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiDeleteAccountRoute = ApiDeleteAccountRouteImport.update({
+  id: '/api/delete-account',
+  path: '/api/delete-account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiEmailTestRoute = ApiEmailTestRouteImport.update({
   id: '/api/email-test',
   path: '/api/email-test',
@@ -264,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/sync': typeof AuthenticatedSyncRoute
   '/team': typeof AuthenticatedTeamRouteWithChildren
+  '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
@@ -300,6 +307,7 @@ export interface FileRoutesByTo {
   '/profil': typeof AuthenticatedProfilRoute
   '/protokoll': typeof AuthenticatedProtokollRoute
   '/sync': typeof AuthenticatedSyncRoute
+  '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
@@ -340,6 +348,7 @@ export interface FileRoutesById {
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
   '/_authenticated/sync': typeof AuthenticatedSyncRoute
   '/_authenticated/team': typeof AuthenticatedTeamRouteWithChildren
+  '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
@@ -380,6 +389,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/sync'
     | '/team'
+    | '/api/delete-account'
     | '/api/email-test'
     | '/api/notification-status'
     | '/api/push-test'
@@ -416,6 +426,7 @@ export interface FileRouteTypes {
     | '/profil'
     | '/protokoll'
     | '/sync'
+    | '/api/delete-account'
     | '/api/email-test'
     | '/api/notification-status'
     | '/api/push-test'
@@ -455,6 +466,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports'
     | '/_authenticated/sync'
     | '/_authenticated/team'
+    | '/api/delete-account'
     | '/api/email-test'
     | '/api/notification-status'
     | '/api/push-test'
@@ -481,6 +493,7 @@ export interface RootRouteChildren {
   DatenschutzRoute: typeof DatenschutzRoute
   ImpressumRoute: typeof ImpressumRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiDeleteAccountRoute: typeof ApiDeleteAccountRoute
   ApiEmailTestRoute: typeof ApiEmailTestRoute
   ApiNotificationStatusRoute: typeof ApiNotificationStatusRoute
   ApiPushTestRoute: typeof ApiPushTestRoute
@@ -633,6 +646,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/team'
       preLoaderRoute: typeof AuthenticatedTeamRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/delete-account': {
+      id: '/api/delete-account'
+      path: '/api/delete-account'
+      fullPath: '/api/delete-account'
+      preLoaderRoute: typeof ApiDeleteAccountRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/email-test': {
       id: '/api/email-test'
@@ -834,6 +854,7 @@ const rootRouteChildren: RootRouteChildren = {
   DatenschutzRoute: DatenschutzRoute,
   ImpressumRoute: ImpressumRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ApiDeleteAccountRoute: ApiDeleteAccountRoute,
   ApiEmailTestRoute: ApiEmailTestRoute,
   ApiNotificationStatusRoute: ApiNotificationStatusRoute,
   ApiPushTestRoute: ApiPushTestRoute,

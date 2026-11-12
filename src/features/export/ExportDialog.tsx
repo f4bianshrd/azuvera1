@@ -19,12 +19,12 @@ import { dateDe } from "./pdf/text";
 
 const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-export function ExportButton({ azubiId, isSelf }: { azubiId: string; isSelf: boolean }) {
+export function ExportButton({ azubiId, isSelf, label = "Berichtsheft exportieren" }: { azubiId: string; isSelf: boolean; label?: string }) {
   const online = useOnline();
   const [open, setOpen] = useState(false);
   return <>
     <Button variant="outline" onClick={() => setOpen(true)} disabled={!online} title={online ? undefined : OFFLINE_ACTION_HINT}>
-      <BookDown className="size-4" aria-hidden /> Berichtsheft exportieren
+      <BookDown className="size-4" aria-hidden /> {label}
     </Button>
     {!online && <span className="sr-only">{OFFLINE_ACTION_HINT}</span>}
     {open && <ExportDialog azubiId={azubiId} isSelf={isSelf} onClose={() => setOpen(false)} />}

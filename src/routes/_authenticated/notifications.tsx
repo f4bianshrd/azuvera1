@@ -73,7 +73,7 @@ function NotificationsPage() {
   const open = async (n: Notification) => {
     if (online && !n.read_at) { try { await markRead(n.id); await refresh(); } catch { /* weiter öffnen */ } }
     const t = internalTarget(n.link);
-    if (t) void navigate({ to: t.to, search: t.search });
+    if (t) void navigate({ to: t.to, search: t.search, ...(t.hash ? { hash: t.hash } : {}) });
   };
   const readAll = async () => {
     try { await markAllRead(); await refresh(); } catch { toast.error("Konnte nicht als gelesen markiert werden."); }

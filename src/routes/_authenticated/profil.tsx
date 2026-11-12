@@ -19,6 +19,7 @@ import { SavedSignatureCard } from "@/features/review/saved-signature-card";
 import { format } from "date-fns";
 import { AppOfflineCard } from "@/features/sync/app-offline-card";
 import { useSignOut } from "@/features/sync/sign-out";
+import { MyDataCard } from "@/features/account/my-data-card";
 import { OFFLINE_ACTION_HINT, useOnline } from "@/lib/sync/status";
 
 const TITLE = "Mein Profil – Azuvera";
@@ -324,6 +325,8 @@ function ProfilPage() {
       <Card title="Datenschutz-Einwilligungen">
         <ConsentSettings />
       </Card>
+
+      <MyDataCard profile={profile} />
 
       <Card title="Sicherheit">
         <div className="grid gap-4 sm:grid-cols-2">
