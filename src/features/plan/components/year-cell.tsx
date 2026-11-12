@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Check, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -29,7 +29,7 @@ export function YearCell({ year, state, readOnly, withMastery = true, onChange }
       setBusy(false);
     }
   };
-  const id = `yc-${year}-${Math.random().toString(36).slice(2, 8)}`;
+  const id = useId();
   return (
     <div className="flex min-w-0 items-center gap-1.5 rounded-lg border bg-background/60 px-2 py-1.5">
       <Checkbox
