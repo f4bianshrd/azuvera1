@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LinksPage } from "@/features/links/components/links-page";
 
 export const Route = createFileRoute("/_authenticated/verknuepfungen")({
-  validateSearch: (s: Record<string, unknown>): { code?: string } => (typeof s.code === "string" && s.code.length <= 20 ? { code: s.code } : {}),
+  validateSearch: (s: Record<string, unknown>): { code?: string } => (typeof s["code"] === "string" && s["code"].length <= 20 ? { code: s["code"] } : {}),
   head: () => ({
     meta: [
       { title: "Verknüpfungen – Azuvera" },
