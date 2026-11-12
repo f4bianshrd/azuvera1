@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertTriangle, CheckCircle2, Circle, FileMinus, FilePlus2, Info, MessageSquare, Paperclip, Pencil,
@@ -122,7 +122,7 @@ function IntegrityBox({ result }: { result: ReportIntegrity | "draft" | "error" 
   </Box>;
 }
 
-export function Box({ tone, icon: Icon, children }: { tone: "ok" | "bad" | "info"; icon: LucideIcon; children: React.ReactNode }) {
+export function Box({ tone, icon: Icon, children }: { tone: "ok" | "bad" | "info"; icon: LucideIcon; children: ReactNode }) {
   return <div role="status" className={cn("mt-3 flex gap-2 rounded-xl border p-3 text-sm",
     tone === "ok" && "border-success/40 bg-success/10", tone === "bad" && "border-destructive/40 bg-destructive/10", tone === "info" && "bg-muted/40")}>
     <Icon className={cn("mt-0.5 size-4 shrink-0", tone === "bad" && "text-destructive")} aria-hidden />
@@ -134,7 +134,6 @@ function VersionsCard({ reportId }: { reportId: string }) {
   const { data: versions, isLoading } = useQuery({ queryKey: ["audit", "versions", reportId], queryFn: () => listReportVersions(reportId) });
   const [open, setOpen] = useState<number | null>(null);
   const list = versions ?? [];
-  const idx = open === null ? -1 : list.findIndex((v) => v.id === list[open]?.id);
   return <div className="mt-4 rounded-xl border p-3">
     <h3 className="text-sm font-semibold">Versionen</h3>
     {isLoading ? <div className="mt-2"><ListSkeleton rows={2} /></div>
@@ -150,7 +149,7 @@ function VersionsCard({ reportId }: { reportId: string }) {
           </button></li>;
         })}
       </ul>}
-    <VersionDialog version={idx >= 0 ? list[idx]! : null} previous={idx > 0 ? list[idx - 1]! : null} onClose={() => setOpen(null)} />
+    <VersionDialog version={open !== null ? list[open] ?? null : null} previous={open !== null && open > 0 ? list[open - 1] ?? null : null} onClose={() => setOpen(null)} />
   </div>;
 }
 
