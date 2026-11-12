@@ -88,7 +88,7 @@ export async function pullPlanData(db: AzuveraDB, userId: string): Promise<void>
   const [rt, ri, waiting] = await Promise.all([
     supabase.from("report_topics").select("*").limit(20000),
     supabase.from("report_plan_items").select("*").limit(20000),
-    db.outbox.where("op").equals("report.links").toArray().catch(async () => (await db.outbox.toArray()).filter((e) => e.op === "report.links")),
+    db.outbox.toArray().then((all) => all.filter((x) => x.op === "report.links")),
   ]);
   if (rt.error) fail(rt.error, rt.status);
   if (ri.error) fail(ri.error, ri.status);
