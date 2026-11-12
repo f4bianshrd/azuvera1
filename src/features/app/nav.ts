@@ -46,7 +46,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Abwesenheiten", icon: CalendarOff, section: "arbeit", to: "/abwesenheiten" },
   { label: "Schulnoten", icon: GraduationCap, section: "arbeit", to: "/noten" },
   { label: "Erinnerungen", icon: Bell, section: "arbeit", to: "/erinnerungen", roles: REVIEWER_ROLES },
-  { label: "Benachrichtigungen", icon: Bell, section: "konto", to: "/benachrichtigungen" },
+  { label: "Benachrichtigungen", icon: Bell, section: "konto", to: "/notifications" },
   { label: "Änderungsprotokoll", icon: History, section: "konto", to: "/aenderungsprotokoll" },
   { label: "Mein Profil", icon: UserRound, section: "konto", to: "/profil" },
   { label: "Synchronisation", icon: RefreshCw, section: "konto", to: "/sync" },
