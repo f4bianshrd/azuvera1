@@ -25,7 +25,7 @@ export function mayUseNetworkFor(op: OutboxOp, net: NetworkStatus, prefs: NetPre
 }
 
 /** Ops, deren wartende Einträge je Datensatz zusammengefasst werden. */
-const COALESCE: OutboxOp[] = ["report.upsert", "absence.upsert", "grade.upsert", "attachment.update", "profile.update"];
+const COALESCE: OutboxOp[] = ["report.upsert", "absence.upsert", "grade.upsert", "attachment.update", "profile.update", "progress.upsert", "report.links"];
 
 /**
  * Wartende Änderung zusammenfassen: gibt es für denselben Datensatz schon einen wartenden

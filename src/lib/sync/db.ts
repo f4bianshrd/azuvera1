@@ -21,6 +21,17 @@ export type LocalAbsence = Row<"absences"> & SyncFields;
 export type LocalGrade = Row<"school_grades"> & SyncFields;
 export type LocalComment = Row<"report_comments"> & SyncFields;
 
+type PlanRow<T extends "training_plans" | "plan_sections" | "plan_groups" | "plan_items"> = Row<T>;
+export interface PlanGroupNode extends PlanRow<"plan_groups"> { items: PlanRow<"plan_items">[] }
+export interface PlanSectionNode extends PlanRow<"plan_sections"> { groups: PlanGroupNode[] }
+/** Aufgelöster Plan mit Abschnitten, Gruppen und Punkten (sortiert). */
+export interface PlanTree { plan: PlanRow<"training_plans">; sections: PlanSectionNode[] }
+export interface LocalPlan { id: string; tree: PlanTree; fetched_at: string }
+export type LocalProgress = Pick<Row<"plan_progress">, "azubi_id" | "item_id" | "year" | "planned" | "mastered" | "updated_at"> & { _sync: SyncState };
+export type LocalTopic = Row<"training_topics">;
+export type LocalReportTopic = Row<"report_topics">;
+export type LocalReportPlanItem = Row<"report_plan_items">;
+
 export interface LookupRow { key: string; value: unknown; updated_at: string }
 export interface FileRow { key: string; blob: Blob; kind: "original" | "thumb" | "signature"; synced: boolean; size: number; last_used_at: number }
 export interface LocalSignature { id: string; report_id: string; blob: Blob; created_at: string }
@@ -30,7 +41,8 @@ export type OutboxOp =
   | "attachment.upload" | "attachment.update" | "attachment.delete"
   | "absence.upsert" | "absence.delete"
   | "grade.upsert" | "grade.delete"
-  | "comment.insert" | "profile.update";
+  | "comment.insert" | "profile.update"
+  | "progress.upsert" | "report.links";
 
 export interface OutboxPayload {
   id?: string | undefined;
@@ -72,6 +84,11 @@ export class AzuveraDB extends Dexie {
   outbox!: Table<OutboxEntry, number>;
   meta!: Table<MetaRow, string>;
   sync_log!: Table<SyncLogRow, number>;
+  plans!: Table<LocalPlan, string>;
+  plan_progress!: Table<LocalProgress, [string, string, number]>;
+  training_topics!: Table<LocalTopic, string>;
+  report_topics!: Table<LocalReportTopic, [string, string]>;
+  report_plan_items!: Table<LocalReportPlanItem, [string, string]>;
 
   constructor(name: string) {
     super(name);
@@ -88,6 +105,14 @@ export class AzuveraDB extends Dexie {
       outbox: "++id, record, status, next_at",
       meta: "key",
       sync_log: "++id, at",
+    });
+    // Version 2 (Daten-Prompt A1): Ausbildungsplan, Fortschritt, Themen, Berichtsverknüpfungen.
+    this.version(2).stores({
+      plans: "id",
+      plan_progress: "[azubi_id+item_id+year], azubi_id, item_id, _sync",
+      training_topics: "id, profession_id",
+      report_topics: "[report_id+topic_id], report_id, topic_id",
+      report_plan_items: "[report_id+item_id], report_id, item_id",
     });
   }
 }

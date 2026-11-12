@@ -1,3 +1,4 @@
+import { AzubiPlanSelect } from "@/features/plan/components/azubi-plan-select";
 import { useMemo, useState } from "react";
 import { copyText } from "@/lib/platform";
 import { createFileRoute } from "@tanstack/react-router";
@@ -349,6 +350,7 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
                 </button>
               </TableHead>
               <TableHead>Zuordnung (Azubis)</TableHead>
+              <TableHead>Ausbildungsplan</TableHead>
               <TableHead className="text-right">Konto</TableHead>
             </TableRow>
           </TableHeader>
@@ -359,6 +361,7 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
                 <TableCell>{u.email}</TableCell>
                 <TableCell>{roleSelect(u)}</TableCell>
                 <TableCell className="min-w-72">{azubiControls(u)}</TableCell>
+                <TableCell>{u.role === "azubi" ? <AzubiPlanSelect azubiId={u.id} professionId={u.profession_id} /> : "—"}</TableCell>
                 <TableCell className="text-right">{accountAction(u)}</TableCell>
               </TableRow>
             ))}
@@ -376,6 +379,7 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
             </div>
             {roleSelect(u)}
             {azubiControls(u)}
+            {u.role === "azubi" && <div className="space-y-1"><p className="text-xs font-medium text-muted-foreground">Ausbildungsplan</p><AzubiPlanSelect azubiId={u.id} professionId={u.profession_id} /></div>}
             {accountAction(u)}
           </div>
         ))}

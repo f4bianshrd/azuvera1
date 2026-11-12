@@ -1,3 +1,4 @@
+import { ReportLinksBlock } from "@/features/plan/components/report-links";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -339,6 +340,8 @@ export function ReportEditor({
           </p>
         </div>
       ))}
+
+      {report && <ReportLinksBlock reportId={report.id} azubiId={azubiId} editable />}
 
       <p className="text-xs text-muted-foreground" role="status">
         {status === "saving" ? "Speichert…" : savedAt ? `Gespeichert um ${format(savedAt, "HH:mm")}` : "Änderungen werden automatisch gespeichert."}

@@ -236,6 +236,8 @@ export async function deleteReport(id: string): Promise<void> {
     await db.files.bulkDelete([`att:${a.id}:original`, `att:${a.id}:thumb`]);
   }
   await db.report_attachments.bulkDelete(atts.map((a) => a.id));
+  await db.report_plan_items.where("report_id").equals(id).delete();
+  await db.report_topics.where("report_id").equals(id).delete();
   await dropWaiting(db, `report:${id}`);
   await db.reports.delete(id);
   if (row._base_version !== null || (await hasOutbox(db, `report:${id}`))) {

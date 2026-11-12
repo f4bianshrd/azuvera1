@@ -14,6 +14,8 @@ export interface ReportBundle {
   signatures: ExportSignature[];
   approvalNote: string | null;
   verify: VerifyResult | null;
+  /** Verknüpfte Ausbildungsinhalte (nicht Teil der Prüfsumme). */
+  links: { items: { group: string; label: string }[]; topics: { code: string | null; title: string }[] };
   names: Map<string, string>;
   signatureImages: Map<string, Uint8Array>;
   /** Bild-Anhänge als PNG (nur bei „Bilder einbetten“). */
