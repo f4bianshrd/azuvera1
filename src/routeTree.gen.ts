@@ -38,6 +38,7 @@ import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_a
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
 import { Route as AuthenticatedReportsNewRouteImport } from './routes/_authenticated/reports.new'
+import { Route as AuthenticatedStammdatenAusbildungsplaeneRouteImport } from './routes/_authenticated/stammdaten.ausbildungsplaene'
 import { Route as AuthenticatedStammdatenBerufeRouteImport } from './routes/_authenticated/stammdaten.berufe'
 import { Route as AuthenticatedStammdatenBetriebeRouteImport } from './routes/_authenticated/stammdaten.betriebe'
 import { Route as AuthenticatedTeamIndexRouteImport } from './routes/_authenticated/team.index'
@@ -201,6 +202,12 @@ const AuthenticatedReportsNewRoute = AuthenticatedReportsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AuthenticatedReportsRoute,
 } as any)
+const AuthenticatedStammdatenAusbildungsplaeneRoute =
+  AuthenticatedStammdatenAusbildungsplaeneRouteImport.update({
+    id: '/stammdaten/ausbildungsplaene',
+    path: '/stammdaten/ausbildungsplaene',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedStammdatenBerufeRoute =
   AuthenticatedStammdatenBerufeRouteImport.update({
     id: '/stammdaten/berufe',
@@ -285,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
+  '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
@@ -323,6 +331,7 @@ export interface FileRoutesByTo {
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
+  '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
@@ -365,6 +374,7 @@ export interface FileRoutesById {
   '/_authenticated/admin_/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/reports/new': typeof AuthenticatedReportsNewRoute
+  '/_authenticated/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   '/_authenticated/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/_authenticated/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/_authenticated/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
@@ -407,6 +417,7 @@ export interface FileRouteTypes {
     | '/admin/einstellungen'
     | '/reports/$id'
     | '/reports/new'
+    | '/stammdaten/ausbildungsplaene'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
     | '/team/$azubiId'
@@ -445,6 +456,7 @@ export interface FileRouteTypes {
     | '/admin/einstellungen'
     | '/reports/$id'
     | '/reports/new'
+    | '/stammdaten/ausbildungsplaene'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
     | '/team/$azubiId'
@@ -486,6 +498,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin_/einstellungen'
     | '/_authenticated/reports/$id'
     | '/_authenticated/reports/new'
+    | '/_authenticated/stammdaten/ausbildungsplaene'
     | '/_authenticated/stammdaten/berufe'
     | '/_authenticated/stammdaten/betriebe'
     | '/_authenticated/team/$azubiId'
@@ -723,6 +736,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportsNewRouteImport
       parentRoute: typeof AuthenticatedReportsRoute
     }
+    '/_authenticated/stammdaten/ausbildungsplaene': {
+      id: '/_authenticated/stammdaten/ausbildungsplaene'
+      path: '/stammdaten/ausbildungsplaene'
+      fullPath: '/stammdaten/ausbildungsplaene'
+      preLoaderRoute: typeof AuthenticatedStammdatenAusbildungsplaeneRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/stammdaten/berufe': {
       id: '/_authenticated/stammdaten/berufe'
       path: '/stammdaten/berufe'
@@ -841,6 +861,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSyncRoute: typeof AuthenticatedSyncRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRouteWithChildren
   AuthenticatedAdminEinstellungenRoute: typeof AuthenticatedAdminEinstellungenRoute
+  AuthenticatedStammdatenAusbildungsplaeneRoute: typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
   AuthenticatedStammdatenBetriebeRoute: typeof AuthenticatedStammdatenBetriebeRoute
 }
@@ -862,6 +883,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSyncRoute: AuthenticatedSyncRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRouteWithChildren,
   AuthenticatedAdminEinstellungenRoute: AuthenticatedAdminEinstellungenRoute,
+  AuthenticatedStammdatenAusbildungsplaeneRoute:
+    AuthenticatedStammdatenAusbildungsplaeneRoute,
   AuthenticatedStammdatenBerufeRoute: AuthenticatedStammdatenBerufeRoute,
   AuthenticatedStammdatenBetriebeRoute: AuthenticatedStammdatenBetriebeRoute,
 }
