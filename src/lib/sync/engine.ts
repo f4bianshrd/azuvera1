@@ -8,6 +8,7 @@ import { getNetworkStatus, isVisible, onNetworkChange, onVisibilityChange, readD
 import { openUserDb, currentDb, currentUserId, type AzuveraDB, type OutboxEntry, type LocalReport } from "./db";
 import { classifyError, coalesce, friendlyError, mayUseNetworkFor, readyHeads, backoffDelayMs, type ErrorKind } from "./rules";
 import { getSyncStatus, setSyncStatus } from "./status";
+import { PlanSyncError, executePlanOp, pullPlanData } from "./plan-sync";
 
 export const PREF_WIFI_ONLY = "azuvera-sync-wifi-only";
 export const PREF_PHOTOS_WIFI = "azuvera-sync-photos-wifi";
@@ -16,7 +17,7 @@ const OVERLAP_MS = 5 * 60_000;
 const RECONCILE_MS = 10 * 60_000;
 const FILE_CACHE_LIMIT = 50 * 1024 * 1024;
 const LOG_LIMIT = 200;
-const LOCAL_QUERY_KEYS = ["reports", "absences", "absent-days", "grades", "review", "my-profile"];
+const LOCAL_QUERY_KEYS = ["reports", "absences", "absent-days", "grades", "review", "my-profile", "plan", "report-links"];
 
 class SyncError extends Error {
   constructor(public kind: ErrorKind, message: string) { super(message); }
@@ -213,7 +214,7 @@ async function runEntry(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<
     await markRecordSynced(db, e.record);
     await log("info", `${e.title}: gesendet`);
   } catch (err) {
-    const kind = err instanceof SyncError ? err.kind : "network";
+    const kind = err instanceof SyncError || err instanceof PlanSyncError ? err.kind : "network";
     const message = err instanceof Error ? err.message : String(err);
     if (kind === "network") {
       const online = getNetworkStatus().online;
@@ -265,6 +266,7 @@ const REPORT_CONTENT = ["weekly_mode", "report_date", "activities", "school_cont
 
 async function execute(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<void> {
   const id = String(e.payload.id ?? "");
+  if (await executePlanOp(db, userId, e)) return;
   switch (e.op) {
     case "report.upsert": {
       const row = await db.reports.get(id);
@@ -468,6 +470,7 @@ async function pull(db: AzuveraDB, userId: string): Promise<void> {
       if (data) await db.lookups.put({ key: "company", value: data, updated_at: now });
     }
   }
+  await pullPlanData(db, userId);
 }
 
 /** ID-Listen abgleichen: lokal entfernen, was auf dem Server nicht mehr existiert (sofern nichts wartet). */
