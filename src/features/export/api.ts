@@ -1,5 +1,6 @@
 import { reportLinksForPdf } from "@/features/plan/api";
 import { supabase } from "@/integrations/supabase/client";
+import type { FolderAbsence, FolderGrade } from "./folder-summary";
 import type { ExportAttachment, ExportHeader, ExportReport, ExportSignature, ReportBundle } from "./types";
 
 type Status = ExportReport["status"];
@@ -108,7 +109,21 @@ export async function loadBundle(report: ExportReport, opts: { embedImages: bool
   };
 }
 
-export async function logExport(azubiId: string, kind: "single" | "bulk" | "zip", count: number, from: string | null, to: string | null): Promise<void> {
+/** Noten und Abwesenheiten für die Prüfungsmappe (RLS blendet Fremdes und ggf. Krankmeldungen aus). */
+export async function loadFolderExtras(azubiId: string, from: string | null, to: string | null): Promise<{ grades: FolderGrade[]; absences: FolderAbsence[] }> {
+  let g = supabase.from("school_grades").select("subject, grade, grade_date, kind, note").eq("azubi_id", azubiId);
+  if (from) g = g.gte("grade_date", from);
+  if (to) g = g.lte("grade_date", to);
+  let a = supabase.from("absences").select("type, date_from, date_to, status").eq("azubi_id", azubiId).eq("status", "approved");
+  if (from) a = a.gte("date_to", from);
+  if (to) a = a.lte("date_from", to);
+  const [gr, ab] = await Promise.all([g.order("grade_date").limit(2000), a.order("date_from").limit(2000)]);
+  if (gr.error) throw gr.error;
+  if (ab.error) throw ab.error;
+  return { grades: (gr.data ?? []).map((x) => ({ ...x, grade: Number(x.grade) })), absences: ab.data ?? [] };
+}
+
+export async function logExport(azubiId: string, kind: "single" | "bulk" | "zip" | "folder", count: number, from: string | null, to: string | null): Promise<void> {
   const { error } = await supabase.rpc("log_export", { p_azubi: azubiId, p_kind: kind, p_count: count, p_from: from as string, p_to: to as string });
   if (error) throw error;
 }
