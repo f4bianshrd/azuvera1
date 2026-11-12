@@ -82,23 +82,90 @@ export function pickOrCapturePhoto(opts: { capture?: boolean; accept?: string; m
   });
 }
 
-/** Platzhalter für Teil 4B (Web Push). */
-export async function registerPush(): Promise<null> {
-  return null;
+// ---------- Web Push ----------
+export function pushSupported(): boolean {
+  return typeof window !== "undefined" && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+}
+export function notificationPermission(): NotificationPermission | null {
+  return pushSupported() ? Notification.permission : null;
+}
+export async function requestNotificationPermission(): Promise<NotificationPermission> {
+  return Notification.requestPermission();
+}
+export function deviceUserAgent(): string {
+  return typeof navigator === "undefined" ? "" : navigator.userAgent;
+}
+async function pushRegistration(): Promise<ServiceWorkerRegistration | null> {
+  if (!pushSupported()) return null;
+  const regs = await navigator.serviceWorker.getRegistrations();
+  return regs.find((r) => (r.active ?? r.waiting ?? r.installing)?.scriptURL.endsWith("/sw.js")) ?? null;
+}
+export interface PushKeys { endpoint: string; p256dh: string; auth: string; serverKey: string | null }
+function b64url(buf: ArrayBuffer | null): string {
+  if (!buf) return "";
+  let s = ""; for (const b of new Uint8Array(buf)) s += String.fromCharCode(b);
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function toKeys(sub: PushSubscription): PushKeys {
+  return { endpoint: sub.endpoint, p256dh: b64url(sub.getKey("p256dh")), auth: b64url(sub.getKey("auth")), serverKey: b64url(sub.options.applicationServerKey) || null };
+}
+export function urlBase64ToBytes(base64: string): Uint8Array<ArrayBuffer> {
+  const pad = "=".repeat((4 - (base64.length % 4)) % 4);
+  const raw = atob((base64 + pad).replace(/-/g, "+").replace(/_/g, "/"));
+  const out = new Uint8Array(new ArrayBuffer(raw.length));
+  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+  return out;
+}
+/** Aktuelle Push-Anmeldung dieses Geräts (ohne Berechtigungsfrage). */
+export async function currentPush(): Promise<PushKeys | null> {
+  try {
+    const sub = await (await pushRegistration())?.pushManager.getSubscription();
+    return sub ? toKeys(sub) : null;
+  } catch { return null; }
+}
+/** Gerät für Push anmelden; Berechtigung muss vorher erteilt sein. */
+export async function registerPush(publicKey: string): Promise<PushKeys> {
+  const reg = (await pushRegistration()) ?? (await navigator.serviceWorker.ready);
+  const old = await reg.pushManager.getSubscription();
+  if (old && b64url(old.options.applicationServerKey) !== publicKey) await old.unsubscribe();
+  const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToBytes(publicKey) });
+  return toKeys(sub);
 }
 
-/** Push-Anmeldung dieses Geräts entfernen (falls vorhanden). */
-export async function unregisterPush(): Promise<void> {
+/** Push-Anmeldung dieses Geräts entfernen (falls vorhanden); liefert den Endpunkt. */
+export async function unregisterPush(): Promise<string | null> {
   try {
-    if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
-    const regs = await navigator.serviceWorker.getRegistrations();
-    for (const reg of regs) {
-      const sub = await reg.pushManager?.getSubscription();
-      await sub?.unsubscribe();
-    }
+    if (!pushSupported()) return null;
+    const sub = await (await pushRegistration())?.pushManager.getSubscription();
+    if (!sub) return null;
+    const ep = sub.endpoint;
+    await sub.unsubscribe();
+    return ep;
   } catch {
-    /* kein Push vorhanden */
+    return null;
   }
+}
+
+export async function sha256Hex(text: string): Promise<string> {
+  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** Zähler am App-Symbol; fehlende Unterstützung wird still ignoriert. */
+export async function setAppBadge(count: number): Promise<void> {
+  try {
+    const n = navigator as Navigator & { setAppBadge?: (c?: number) => Promise<void>; clearAppBadge?: () => Promise<void> };
+    if (count > 0) await n.setAppBadge?.(count);
+    else await n.clearAppBadge?.();
+  } catch { /* nicht unterstützt */ }
+}
+
+/** Nachrichten des Service Workers empfangen (z. B. Navigation nach Klick auf eine Benachrichtigung). */
+export function onServiceWorkerMessage(cb: (data: unknown) => void): () => void {
+  if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return () => undefined;
+  const h = (e: MessageEvent) => cb(e.data);
+  navigator.serviceWorker.addEventListener("message", h);
+  return () => navigator.serviceWorker.removeEventListener("message", h);
 }
 
 export function openExternal(url: string): void {
