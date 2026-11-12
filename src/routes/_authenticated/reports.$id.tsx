@@ -1,3 +1,4 @@
+import { canCommentFor } from "@/features/links/api";
 import { ReportLinksBlock } from "@/features/plan/components/report-links";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -59,6 +60,7 @@ function ReportDetailPage() {
   const isOwner = profile?.id === report?.azubi_id;
   const editable = isOwner && (report?.status === "draft" || report?.status === "rejected") && !report?._submit_pending && report?._sync !== "conflict";
   const { data: canReview } = useQuery({ queryKey: ["review", "can-review", report?.azubi_id], queryFn: () => canReviewReport(report!.azubi_id), enabled: !!report && !isOwner });
+  const { data: canFeedback } = useQuery({ queryKey: ["links", "can-comment", report?.azubi_id], queryFn: () => canCommentFor(report!.azubi_id), enabled: !!report && !isOwner && canReview === false });
   const { data: principalId } = useQuery({ queryKey: ["review", "acting-principal", report?.azubi_id], queryFn: () => actingPrincipal(report!.azubi_id), enabled: !!report && !!canReview });
   const { data: comments } = useQuery({ queryKey: ["review", "comments", id], queryFn: () => listComments(id), enabled: !!report && report.status !== "draft" });
   const { data: names } = useQuery({
@@ -139,7 +141,7 @@ function ReportDetailPage() {
     {!(editing && isOwner) && <ReportLinksBlock reportId={report.id} azubiId={report.azubi_id} editable={!!editable} />}
     <AttachmentSection report={report} attachments={data.attachments} editable={!!editable && !editing} />
     <SignaturesCard signatures={data.signatures} currentVersion={report.version} />
-    <CommentsCard report={report} canComment={!!isOwner || !!canReview} sectionRequest={sectionRequest} />
+    <CommentsCard report={report} canComment={!!isOwner || !!canReview || !!canFeedback} sectionRequest={sectionRequest} />
 
     <HistoryCard reportId={report.id} isDraft={report.status === "draft"} onServer={report._server !== null} />
 

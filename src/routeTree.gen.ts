@@ -30,6 +30,7 @@ import { Route as AuthenticatedProtokollRouteImport } from './routes/_authentica
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/sync'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
+import { Route as AuthenticatedVerknuepfungenRouteImport } from './routes/_authenticated/verknuepfungen'
 import { Route as ApiDeleteAccountRouteImport } from './routes/api/delete-account'
 import { Route as ApiEmailTestRouteImport } from './routes/api/email-test'
 import { Route as ApiNotificationStatusRouteImport } from './routes/api/notification-status'
@@ -160,6 +161,12 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVerknuepfungenRoute =
+  AuthenticatedVerknuepfungenRouteImport.update({
+    id: '/verknuepfungen',
+    path: '/verknuepfungen',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiDeleteAccountRoute = ApiDeleteAccountRouteImport.update({
   id: '/api/delete-account',
   path: '/api/delete-account',
@@ -285,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/sync': typeof AuthenticatedSyncRoute
   '/team': typeof AuthenticatedTeamRouteWithChildren
+  '/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
   '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
@@ -324,6 +332,7 @@ export interface FileRoutesByTo {
   '/profil': typeof AuthenticatedProfilRoute
   '/protokoll': typeof AuthenticatedProtokollRoute
   '/sync': typeof AuthenticatedSyncRoute
+  '/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
   '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
@@ -367,6 +376,7 @@ export interface FileRoutesById {
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
   '/_authenticated/sync': typeof AuthenticatedSyncRoute
   '/_authenticated/team': typeof AuthenticatedTeamRouteWithChildren
+  '/_authenticated/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
   '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
@@ -410,6 +420,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/sync'
     | '/team'
+    | '/verknuepfungen'
     | '/api/delete-account'
     | '/api/email-test'
     | '/api/notification-status'
@@ -449,6 +460,7 @@ export interface FileRouteTypes {
     | '/profil'
     | '/protokoll'
     | '/sync'
+    | '/verknuepfungen'
     | '/api/delete-account'
     | '/api/email-test'
     | '/api/notification-status'
@@ -491,6 +503,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports'
     | '/_authenticated/sync'
     | '/_authenticated/team'
+    | '/_authenticated/verknuepfungen'
     | '/api/delete-account'
     | '/api/email-test'
     | '/api/notification-status'
@@ -680,6 +693,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTeamRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/verknuepfungen': {
+      id: '/_authenticated/verknuepfungen'
+      path: '/verknuepfungen'
+      fullPath: '/verknuepfungen'
+      preLoaderRoute: typeof AuthenticatedVerknuepfungenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/delete-account': {
       id: '/api/delete-account'
       path: '/api/delete-account'
@@ -860,6 +880,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
   AuthenticatedSyncRoute: typeof AuthenticatedSyncRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRouteWithChildren
+  AuthenticatedVerknuepfungenRoute: typeof AuthenticatedVerknuepfungenRoute
   AuthenticatedAdminEinstellungenRoute: typeof AuthenticatedAdminEinstellungenRoute
   AuthenticatedStammdatenAusbildungsplaeneRoute: typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
@@ -882,6 +903,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
   AuthenticatedSyncRoute: AuthenticatedSyncRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRouteWithChildren,
+  AuthenticatedVerknuepfungenRoute: AuthenticatedVerknuepfungenRoute,
   AuthenticatedAdminEinstellungenRoute: AuthenticatedAdminEinstellungenRoute,
   AuthenticatedStammdatenAusbildungsplaeneRoute:
     AuthenticatedStammdatenAusbildungsplaeneRoute,

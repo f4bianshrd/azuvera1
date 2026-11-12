@@ -104,5 +104,6 @@ export function titleForPath(pathname: string): string {
   if (pathname.startsWith("/stammdaten/berufe")) return "Berufe";
   if (pathname.startsWith("/stammdaten/ausbildungsplaene")) return "Ausbildungspläne";
   if (pathname.startsWith("/ausbildungsplan")) return "Ausbildungsplan";
+  if (pathname.startsWith("/verknuepfungen")) return "Verknüpfungen";
   return "Azuvera";
 }
