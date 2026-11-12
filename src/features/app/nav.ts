@@ -7,14 +7,13 @@ import {
   ClipboardCheck,
   FileText,
   GraduationCap,
-  History,
   Home,
   Settings,
   Settings2,
   ShieldCheck,
   UserRound,
   Users,
-  type LucideIcon, RefreshCw } from "lucide-react";
+  type LucideIcon, RefreshCw, ScrollText } from "lucide-react";
 import type { AppRole } from "./session";
 import { REVIEWER_ROLES, VIEWER_ROLES } from "./session";
 
@@ -47,7 +46,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Schulnoten", icon: GraduationCap, section: "arbeit", to: "/noten" },
   { label: "Erinnerungen", icon: Bell, section: "arbeit", to: "/erinnerungen", roles: REVIEWER_ROLES },
   { label: "Benachrichtigungen", icon: Bell, section: "konto", to: "/notifications" },
-  { label: "Änderungsprotokoll", icon: History, section: "konto", to: "/aenderungsprotokoll" },
+  { label: "Änderungsprotokoll", icon: ScrollText, section: "konto", to: "/protokoll" },
   { label: "Mein Profil", icon: UserRound, section: "konto", to: "/profil" },
   { label: "Synchronisation", icon: RefreshCw, section: "konto", to: "/sync" },
   { label: "Administration", icon: Settings2, section: "verwaltung", to: "/admin", roles: ["ausbildungsleitung"] },

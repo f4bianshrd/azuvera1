@@ -9,11 +9,12 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/dialogs";
 import { ListSkeleton, StatusBadge } from "@/components/shared";
 import { useMyProfile } from "@/features/app/session";
-import { deleteReport, displayNames, getReport, reportTitle, STATUS_LABELS } from "@/features/reports/api";
+import { deleteReport, displayNames, getReport, reportTitle } from "@/features/reports/api";
 import { AttachmentSection } from "@/features/reports/attachment-section";
 import { ReportEditor, stateFromReport } from "@/features/reports/report-editor";
 import { SubmitSheet } from "@/features/reports/submit-sheet";
 import { ReportPdfMenu } from "@/features/export/report-pdf-menu";
+import { HistoryCard } from "@/features/audit/history-card";
 import { SyncBadge } from "@/features/sync/sync-badge";
 import { ConflictBox } from "@/features/sync/conflict-box";
 import { ApprovalSheet } from "@/features/review/approval-sheet";
@@ -82,6 +83,7 @@ function ReportDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["reports", id] }),
       queryClient.invalidateQueries({ queryKey: ["review"] }),
       queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+      queryClient.invalidateQueries({ queryKey: ["audit"] }),
     ]);
   };
   const doDelete = async () => {
@@ -137,7 +139,7 @@ function ReportDetailPage() {
     <SignaturesCard signatures={data.signatures} currentVersion={report.version} />
     <CommentsCard report={report} canComment={!!isOwner || !!canReview} sectionRequest={sectionRequest} />
 
-    <section className="rounded-2xl border bg-card p-4 text-sm"><h2 className="font-semibold">Zeitleiste</h2><ul className="mt-2 space-y-1 text-muted-foreground"><li>Erstellt: {format(new Date(report.created_at), "dd.MM.yyyy HH:mm", { locale: de })}</li>{report.submitted_at && <li>Eingereicht: {format(new Date(report.submitted_at), "dd.MM.yyyy HH:mm", { locale: de })}</li>}{report.reviewed_at && <li>Geprüft: {format(new Date(report.reviewed_at), "dd.MM.yyyy HH:mm", { locale: de })} • {STATUS_LABELS[report.status]}</li>}</ul></section>
+    <HistoryCard reportId={report.id} isDraft={report.status === "draft"} onServer={report._server !== null} />
 
     {canReview && report.status === "submitted" && <div className="fixed inset-x-0 bottom-16 z-20 flex gap-2 border-t bg-background/95 p-3 backdrop-blur md:hidden"><Button className="flex-1" onClick={() => setApproveOpen(true)}>Freigeben</Button><Button className="flex-1" variant="destructive" onClick={() => setRejectOpen(true)}>Zurückweisen</Button></div>}
 
