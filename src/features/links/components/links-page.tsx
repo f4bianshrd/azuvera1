@@ -137,14 +137,18 @@ function AzubiLinks({ name }: { name: string }) {
         ) : (
           <ul className="divide-y rounded-2xl border bg-card shadow-sm">
             {links.data.map((l) => (
-              <li key={l.member_id} className="flex flex-wrap items-center gap-3 p-4">
-                <Avatar><AvatarFallback>{initials(l.member_name)}</AvatarFallback></Avatar>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{l.member_name || "Unbekannt"}</p>
-                  <p className="text-xs text-muted-foreground">{l.member_role ? ROLE_LABELS[l.member_role] : "—"} · seit {dateDe(l.created_at)}{l.is_primary ? " · hauptzuständig" : ""}</p>
+              <li key={l.member_id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <Avatar><AvatarFallback>{initials(l.member_name)}</AvatarFallback></Avatar>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{l.member_name || "Unbekannt"}</p>
+                    <p className="text-xs text-muted-foreground">{l.member_role ? ROLE_LABELS[l.member_role] : "—"} · seit {dateDe(l.created_at)}{l.is_primary ? " · hauptzuständig" : ""}</p>
+                  </div>
                 </div>
-                <AccessBadge access={l.access} />
-                <Button size="sm" variant="ghost" onClick={() => setRemove(l)}><UserMinus className="size-4" aria-hidden /> Entfernen</Button>
+                <div className="flex items-center justify-between gap-2 sm:justify-end">
+                  <AccessBadge access={l.access} />
+                  <Button size="sm" variant="ghost" onClick={() => setRemove(l)}><UserMinus className="size-4" aria-hidden /> Entfernen</Button>
+                </div>
               </li>
             ))}
           </ul>
@@ -213,15 +217,20 @@ function StaffLinks({ role, initialCode }: { role: AppRole; initialCode?: string
         ) : (
           <ul className="divide-y rounded-2xl border bg-card shadow-sm">
             {links.data.map((l) => (
-              <li key={l.azubi_id} className="flex flex-wrap items-center gap-3 p-4">
-                <Avatar><AvatarFallback>{initials(l.azubi_name)}</AvatarFallback></Avatar>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{l.azubi_name}</p>
-                  <p className="text-xs text-muted-foreground">seit {dateDe(l.created_at)}{l.is_primary ? " · hauptzuständig" : ""}</p>
+              <li key={l.azubi_id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <Avatar><AvatarFallback>{initials(l.azubi_name)}</AvatarFallback></Avatar>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{l.azubi_name}</p>
+                    <p className="text-xs text-muted-foreground">seit {dateDe(l.created_at)}{l.is_primary ? " · hauptzuständig" : ""}</p>
+                  </div>
                 </div>
-                <AccessBadge access={l.access} />
-                <Button size="sm" variant="outline" asChild><Link to="/team/$azubiId" params={{ azubiId: l.azubi_id }}>Öffnen</Link></Button>
-                <Button size="sm" variant="ghost" onClick={() => setRemove(l)}>Lösen</Button>
+                <div className="flex items-center gap-2">
+                  <AccessBadge access={l.access} />
+                  <span className="flex-1" />
+                  <Button size="sm" variant="outline" asChild><Link to="/team/$azubiId" params={{ azubiId: l.azubi_id }}>Öffnen</Link></Button>
+                  <Button size="sm" variant="ghost" onClick={() => setRemove(l)}>Lösen</Button>
+                </div>
               </li>
             ))}
           </ul>
