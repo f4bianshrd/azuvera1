@@ -154,7 +154,7 @@ function PlanView({ data, settings, isAzubi, isLeitung, filterTab }: {
   if (empty) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Ausbildungsplan" subtitle={subtitle} />
+        <PageHeader title="Ausbildungsplan" {...(subtitle ? { subtitle } : {})} />
         {empty}
         {!isAzubi && <Tabs defaultValue="filter"><TabsList><TabsTrigger value="filter">Filter & Konfiguration</TabsTrigger></TabsList><TabsContent value="filter" className="mt-4">{filterTab(4)}</TabsContent></Tabs>}
       </div>
@@ -206,7 +206,7 @@ function PlanView({ data, settings, isAzubi, isLeitung, filterTab }: {
     <div className="space-y-6">
       <PageHeader
         title="Ausbildungsplan"
-        subtitle={subtitle}
+        {...(subtitle ? { subtitle } : {})}
         actions={<>
           <Button variant="outline" onClick={() => doExport("pdf")} disabled={!!exporting}>{exporting === "pdf" ? <Loader2 className="size-4 animate-spin" /> : <FileDown className="size-4" aria-hidden />} PDF exportieren</Button>
           <Button variant="outline" onClick={() => doExport("odt")} disabled={!!exporting}>{exporting === "odt" ? <Loader2 className="size-4 animate-spin" /> : <FileText className="size-4" aria-hidden />} ODT exportieren</Button>
@@ -216,7 +216,7 @@ function PlanView({ data, settings, isAzubi, isLeitung, filterTab }: {
       {planPicker}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((c, i) => <StatCard key={c.label} label={c.label} value={c.value} hint={c.hint} icon={icons[i]} />)}
+        {cards.map((c, i) => <StatCard key={c.label} label={c.label} value={c.value} hint={c.hint} icon={icons[i]!} />)}
       </div>
 
       <Tabs value={tab} onValueChange={setTab}>

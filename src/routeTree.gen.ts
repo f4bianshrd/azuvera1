@@ -19,6 +19,7 @@ import { Route as AuthenticatedAbwesenheitenRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAenderungsprotokollRouteImport } from './routes/_authenticated/aenderungsprotokoll'
 import { Route as AuthenticatedAusbilderRouteImport } from './routes/_authenticated/ausbilder'
+import { Route as AuthenticatedAusbildungsplanRouteImport } from './routes/_authenticated/ausbildungsplan'
 import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_authenticated/benachrichtigungen'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedErinnerungenRouteImport } from './routes/_authenticated/erinnerungen'
@@ -99,6 +100,12 @@ const AuthenticatedAusbilderRoute = AuthenticatedAusbilderRouteImport.update({
   path: '/ausbilder',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAusbildungsplanRoute =
+  AuthenticatedAusbildungsplanRouteImport.update({
+    id: '/ausbildungsplan',
+    path: '/ausbildungsplan',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedBenachrichtigungenRoute =
   AuthenticatedBenachrichtigungenRouteImport.update({
     id: '/benachrichtigungen',
@@ -260,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/ausbilder': typeof AuthenticatedAusbilderRoute
+  '/ausbildungsplan': typeof AuthenticatedAusbildungsplanRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/erinnerungen': typeof AuthenticatedErinnerungenRoute
@@ -299,6 +307,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/ausbilder': typeof AuthenticatedAusbilderRoute
+  '/ausbildungsplan': typeof AuthenticatedAusbildungsplanRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/erinnerungen': typeof AuthenticatedErinnerungenRoute
@@ -338,6 +347,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
   '/_authenticated/ausbilder': typeof AuthenticatedAusbilderRoute
+  '/_authenticated/ausbildungsplan': typeof AuthenticatedAusbildungsplanRoute
   '/_authenticated/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/erinnerungen': typeof AuthenticatedErinnerungenRoute
@@ -379,6 +389,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/aenderungsprotokoll'
     | '/ausbilder'
+    | '/ausbildungsplan'
     | '/benachrichtigungen'
     | '/dashboard'
     | '/erinnerungen'
@@ -418,6 +429,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/aenderungsprotokoll'
     | '/ausbilder'
+    | '/ausbildungsplan'
     | '/benachrichtigungen'
     | '/dashboard'
     | '/erinnerungen'
@@ -456,6 +468,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/aenderungsprotokoll'
     | '/_authenticated/ausbilder'
+    | '/_authenticated/ausbildungsplan'
     | '/_authenticated/benachrichtigungen'
     | '/_authenticated/dashboard'
     | '/_authenticated/erinnerungen'
@@ -575,6 +588,13 @@ declare module '@tanstack/react-router' {
       path: '/ausbilder'
       fullPath: '/ausbilder'
       preLoaderRoute: typeof AuthenticatedAusbilderRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ausbildungsplan': {
+      id: '/_authenticated/ausbildungsplan'
+      path: '/ausbildungsplan'
+      fullPath: '/ausbildungsplan'
+      preLoaderRoute: typeof AuthenticatedAusbildungsplanRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/benachrichtigungen': {
@@ -809,6 +829,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAenderungsprotokollRoute: typeof AuthenticatedAenderungsprotokollRoute
   AuthenticatedAusbilderRoute: typeof AuthenticatedAusbilderRoute
+  AuthenticatedAusbildungsplanRoute: typeof AuthenticatedAusbildungsplanRoute
   AuthenticatedBenachrichtigungenRoute: typeof AuthenticatedBenachrichtigungenRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedErinnerungenRoute: typeof AuthenticatedErinnerungenRoute
@@ -829,6 +850,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAenderungsprotokollRoute: AuthenticatedAenderungsprotokollRoute,
   AuthenticatedAusbilderRoute: AuthenticatedAusbilderRoute,
+  AuthenticatedAusbildungsplanRoute: AuthenticatedAusbildungsplanRoute,
   AuthenticatedBenachrichtigungenRoute: AuthenticatedBenachrichtigungenRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedErinnerungenRoute: AuthenticatedErinnerungenRoute,
