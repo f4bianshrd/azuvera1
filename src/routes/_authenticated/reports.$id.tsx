@@ -13,6 +13,7 @@ import { deleteReport, displayNames, getReport, reportTitle, STATUS_LABELS } fro
 import { AttachmentSection } from "@/features/reports/attachment-section";
 import { ReportEditor, stateFromReport } from "@/features/reports/report-editor";
 import { SubmitSheet } from "@/features/reports/submit-sheet";
+import { ReportPdfMenu } from "@/features/export/report-pdf-menu";
 import { SyncBadge } from "@/features/sync/sync-badge";
 import { ConflictBox } from "@/features/sync/conflict-box";
 import { ApprovalSheet } from "@/features/review/approval-sheet";
@@ -102,6 +103,7 @@ function ReportDetailPage() {
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge status={report.status} />
           <SyncBadge state={report._sync} submitPending={report._submit_pending} />
+          {report._sync !== "local" && report.version > 0 && <ReportPdfMenu reportId={report.id} azubiId={report.azubi_id} />}
           {editable && !editing && <Button variant="outline" size="sm" onClick={() => setEditing(true)}>Bearbeiten</Button>}
           {editing && <Button variant="outline" size="sm" disabled={dirty} onClick={() => setEditing(false)}>Fertig</Button>}
           {isOwner && report.status === "draft" && !report._submit_pending && <Button variant="outline" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}><Trash2 className="size-4" aria-hidden /> Löschen</Button>}
