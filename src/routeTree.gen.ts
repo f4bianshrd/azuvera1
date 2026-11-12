@@ -27,6 +27,7 @@ import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/sync'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
+import { Route as ApiEmailTestRouteImport } from './routes/api/email-test'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin_.einstellungen'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
@@ -35,6 +36,7 @@ import { Route as AuthenticatedStammdatenBerufeRouteImport } from './routes/_aut
 import { Route as AuthenticatedStammdatenBetriebeRouteImport } from './routes/_authenticated/stammdaten.betriebe'
 import { Route as AuthenticatedTeamIndexRouteImport } from './routes/_authenticated/team.index'
 import { Route as AuthenticatedTeamAzubiIdRouteImport } from './routes/_authenticated/team.$azubiId'
+import { Route as ApiPublicPushConfigRouteImport } from './routes/api/public/push-config'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -132,6 +134,11 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiEmailTestRoute = ApiEmailTestRouteImport.update({
+  id: '/api/email-test',
+  path: '/api/email-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminEinstellungenRoute =
   AuthenticatedAdminEinstellungenRouteImport.update({
     id: '/admin_/einstellungen',
@@ -177,6 +184,11 @@ const AuthenticatedTeamAzubiIdRoute =
     path: '/$azubiId',
     getParentRoute: () => AuthenticatedTeamRoute,
   } as any)
+const ApiPublicPushConfigRoute = ApiPublicPushConfigRouteImport.update({
+  id: '/api/public/push-config',
+  path: '/api/public/push-config',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
@@ -212,12 +224,14 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/sync': typeof AuthenticatedSyncRoute
   '/team': typeof AuthenticatedTeamRouteWithChildren
+  '/api/email-test': typeof ApiEmailTestRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
+  '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/reports/': typeof AuthenticatedReportsIndexRoute
   '/team/': typeof AuthenticatedTeamIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -240,12 +254,14 @@ export interface FileRoutesByTo {
   '/noten': typeof AuthenticatedNotenRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/sync': typeof AuthenticatedSyncRoute
+  '/api/email-test': typeof ApiEmailTestRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
+  '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/team': typeof AuthenticatedTeamIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -272,12 +288,14 @@ export interface FileRoutesById {
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
   '/_authenticated/sync': typeof AuthenticatedSyncRoute
   '/_authenticated/team': typeof AuthenticatedTeamRouteWithChildren
+  '/api/email-test': typeof ApiEmailTestRoute
   '/_authenticated/admin_/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/reports/new': typeof AuthenticatedReportsNewRoute
   '/_authenticated/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/_authenticated/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/_authenticated/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
+  '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/_authenticated/team/': typeof AuthenticatedTeamIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -304,12 +322,14 @@ export interface FileRouteTypes {
     | '/reports'
     | '/sync'
     | '/team'
+    | '/api/email-test'
     | '/admin/einstellungen'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
     | '/team/$azubiId'
+    | '/api/public/push-config'
     | '/reports/'
     | '/team/'
     | '/lovable/email/auth/preview'
@@ -332,12 +352,14 @@ export interface FileRouteTypes {
     | '/noten'
     | '/profil'
     | '/sync'
+    | '/api/email-test'
     | '/admin/einstellungen'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
     | '/team/$azubiId'
+    | '/api/public/push-config'
     | '/reports'
     | '/team'
     | '/lovable/email/auth/preview'
@@ -363,12 +385,14 @@ export interface FileRouteTypes {
     | '/_authenticated/reports'
     | '/_authenticated/sync'
     | '/_authenticated/team'
+    | '/api/email-test'
     | '/_authenticated/admin_/einstellungen'
     | '/_authenticated/reports/$id'
     | '/_authenticated/reports/new'
     | '/_authenticated/stammdaten/berufe'
     | '/_authenticated/stammdaten/betriebe'
     | '/_authenticated/team/$azubiId'
+    | '/api/public/push-config'
     | '/_authenticated/reports/'
     | '/_authenticated/team/'
     | '/lovable/email/auth/preview'
@@ -383,6 +407,8 @@ export interface RootRouteChildren {
   DatenschutzRoute: typeof DatenschutzRoute
   ImpressumRoute: typeof ImpressumRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ApiEmailTestRoute: typeof ApiEmailTestRoute
+  ApiPublicPushConfigRoute: typeof ApiPublicPushConfigRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -516,6 +542,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTeamRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/email-test': {
+      id: '/api/email-test'
+      path: '/api/email-test'
+      fullPath: '/api/email-test'
+      preLoaderRoute: typeof ApiEmailTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin_/einstellungen': {
       id: '/_authenticated/admin_/einstellungen'
       path: '/admin/einstellungen'
@@ -571,6 +604,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/team/$azubiId'
       preLoaderRoute: typeof AuthenticatedTeamAzubiIdRouteImport
       parentRoute: typeof AuthenticatedTeamRoute
+    }
+    '/api/public/push-config': {
+      id: '/api/public/push-config'
+      path: '/api/public/push-config'
+      fullPath: '/api/public/push-config'
+      preLoaderRoute: typeof ApiPublicPushConfigRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/auth/preview': {
       id: '/lovable/email/auth/preview'
@@ -670,6 +710,8 @@ const rootRouteChildren: RootRouteChildren = {
   DatenschutzRoute: DatenschutzRoute,
   ImpressumRoute: ImpressumRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ApiEmailTestRoute: ApiEmailTestRoute,
+  ApiPublicPushConfigRoute: ApiPublicPushConfigRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
