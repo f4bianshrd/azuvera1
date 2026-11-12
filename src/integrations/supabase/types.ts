@@ -1309,6 +1309,13 @@ export type Database = {
         }
         Returns: undefined
       }
+      audit_azubi_options: {
+        Args: never
+        Returns: {
+          full_name: string
+          id: string
+        }[]
+      }
       audit_hash: {
         Args: {
           _action: string
@@ -1321,6 +1328,7 @@ export type Database = {
         }
         Returns: string
       }
+      audit_report_visible: { Args: { p_report: string }; Returns: boolean }
       can_review_for: {
         Args: { _azubi: string; _reviewer: string }
         Returns: boolean
@@ -1599,6 +1607,15 @@ export type Database = {
           can_review: boolean
           to_review: number
           week_status: string
+        }[]
+      }
+      verify_audit_chain: {
+        Args: { p_chain?: string }
+        Returns: {
+          chain_key: string
+          entries: number
+          first_bad_id: number
+          ok: boolean
         }[]
       }
       verify_report: {
