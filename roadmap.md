@@ -2,7 +2,8 @@
 
 ## Baustein 4B – Benachrichtigungsversand
 - [ ] Tabellen, Einstellungen, Geräteschutz und Zustell-Warteschlange
-- [ ] Geschützte Push-/SMTP-Testfunktionen und Versand
+- [x] push-config und email-test (SMTP 465)
+- [ ] push-test, notification-status, dispatch-notifications
 - [ ] Zeitplan, Bereinigung und Regel-/Berechtigungsprüfungen
 - [ ] Echter Push und E-Mail: wartet auf die abgelehnten Zugangsdaten und ein echtes Gerät
 
