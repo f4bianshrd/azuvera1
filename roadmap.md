@@ -1,11 +1,12 @@
 # Azuvera – Roadmap
 
 ## Baustein 4B – Benachrichtigungsversand
-- [ ] Tabellen, Einstellungen, Geräteschutz und Zustell-Warteschlange
+- [x] Tabellen, Einstellungen, Geräteschutz und Zustell-Warteschlange
 - [x] push-config und email-test (SMTP 465)
-- [ ] push-test, notification-status, dispatch-notifications
-- [ ] Zeitplan, Bereinigung und Regel-/Berechtigungsprüfungen
-- [ ] Echter Push und E-Mail: wartet auf die abgelehnten Zugangsdaten und ein echtes Gerät
+- [x] push-test, notification-status, dispatch-notifications
+- [x] Zeitplan, Bereinigung und Regel-/Berechtigungsprüfungen
+- [ ] Echter Test-Push: wartet auf Geräteanmeldung (Baustein 4C)
+- [ ] Zustell-Lauf im Live-Betrieb: wartet auf Veröffentlichen
 
 ## Baustein 4A – App-Fähigkeit und Offline
 - [x] PWA: Manifest, Icons, Service Worker (injectManifest), Update-Hinweis, Vorschau-Schutz
