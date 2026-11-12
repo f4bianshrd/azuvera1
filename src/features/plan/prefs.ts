@@ -1,6 +1,7 @@
 /** Geräte-Einstellungen des Ausbildungsplans (localStorage über platform.ts, immer in try/catch). */
 import { readDeviceString, writeDeviceString } from "@/lib/platform";
 import type { StatusFilter } from "./stats";
+import { BRAND } from "./export/color";
 
 export type TemplateId = "letterhead" | "cover" | "compact" | "analysis";
 export interface Layout { charts: boolean; weeks: boolean; contents: boolean }
@@ -16,8 +17,8 @@ export const TEMPLATES: TemplateDef[] = [
 export const templateDef = (id: TemplateId) => TEMPLATES.find((t) => t.id === id) ?? TEMPLATES[0]!;
 
 /** Standardfarben = Marken-Variablen (hell) als Hex. */
-export const DEFAULT_PRIMARY = "#0b5fbf";
-export const DEFAULT_ACCENT = "#2fb8a6";
+export const DEFAULT_PRIMARY = BRAND.primary;
+export const DEFAULT_ACCENT = BRAND.teal;
 
 export interface PlanSettings {
   professionId: string | null;
