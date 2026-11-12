@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ExportButton } from "@/features/export/ExportDialog";
+import { FolderButton } from "@/features/export/FolderDialog";
 import { EmptyState, ListSkeleton, PageHeader, StatusBadge } from "@/components/shared";
 import { SyncBadge } from "@/features/sync/sync-badge";
 import { useMyProfile } from "@/features/app/session";
@@ -127,12 +128,13 @@ function ReportsPage() {
         actions={isAzubi ?
           <div className="flex flex-wrap gap-2">
             {profile && <ExportButton azubiId={profile.id} isSelf />}
+            {profile && <FolderButton azubiId={profile.id} />}
             <Button asChild>
               <Link to="/reports/new" search={{ type: undefined, date: undefined }}>
                 <Plus className="size-4" aria-hidden /> Neuer Bericht
               </Link>
             </Button>
-          </div> : azubiFilter ? <ExportButton azubiId={azubiFilter} isSelf={azubiFilter === profile?.id} /> : undefined
+          </div> : azubiFilter ? <div className="flex flex-wrap gap-2"><ExportButton azubiId={azubiFilter} isSelf={azubiFilter === profile?.id} /><FolderButton azubiId={azubiFilter} /></div> : undefined
         }
       />
 

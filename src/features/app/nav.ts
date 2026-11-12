@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   UserRound,
   Users,
-  type LucideIcon, RefreshCw, ScrollText } from "lucide-react";
+  type LucideIcon, RefreshCw, ScrollText, QrCode } from "lucide-react";
 import type { AppRole } from "./session";
 import { REVIEWER_ROLES, VIEWER_ROLES } from "./session";
 
@@ -46,6 +46,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Abwesenheiten", icon: CalendarOff, section: "arbeit", to: "/abwesenheiten" },
   { label: "Schulnoten", icon: GraduationCap, section: "arbeit", to: "/noten" },
   { label: "Erinnerungen", icon: Bell, section: "arbeit", to: "/erinnerungen", roles: REVIEWER_ROLES },
+  { label: "Verknüpfungen", icon: QrCode, section: "konto", to: "/verknuepfungen" },
   { label: "Benachrichtigungen", icon: Bell, section: "konto", to: "/notifications" },
   { label: "Änderungsprotokoll", icon: ScrollText, section: "konto", to: "/protokoll" },
   { label: "Mein Profil", icon: UserRound, section: "konto", to: "/profil" },
@@ -103,5 +104,6 @@ export function titleForPath(pathname: string): string {
   if (pathname.startsWith("/stammdaten/berufe")) return "Berufe";
   if (pathname.startsWith("/stammdaten/ausbildungsplaene")) return "Ausbildungspläne";
   if (pathname.startsWith("/ausbildungsplan")) return "Ausbildungsplan";
+  if (pathname.startsWith("/verknuepfungen")) return "Verknüpfungen";
   return "Azuvera";
 }

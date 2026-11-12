@@ -219,3 +219,12 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
+
+/* QR-Scanner: Scanlinie läuft im Rahmen auf und ab */
+@keyframes scanline {
+  0%, 100% { transform: translateY(0); opacity: 0.9; }
+  50% { transform: translateY(calc(min(72vw, 320px) - 3rem)); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[scanline_2\.2s_ease-in-out_infinite\] { animation: none; }
+}

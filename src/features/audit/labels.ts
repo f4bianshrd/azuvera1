@@ -55,6 +55,10 @@ export const ACTION_LABELS: Record<string, string> = {
   plan_set: "Ausbildungsplan zugeordnet",
   plan_saved: "Ausbildungsplan gespeichert",
   plan_export: "Ausbildungsplan exportiert",
+  link_code_created: "Verknüpfungscode erstellt",
+  link_code_revoked: "Verknüpfungscode widerrufen",
+  link_created: "Verknüpfung hergestellt",
+  link_removed: "Verknüpfung entfernt",
 };
 
 /** Ältere Verwaltungs-Ereignisse aus Baustein 1B (nicht im Filter, aber lesbar). */
@@ -71,6 +75,7 @@ const LEGACY_LABELS: Record<string, string> = {
 export const ENTITY_LABELS: Record<string, string> = {
   report: "Bericht",
   plan: "Ausbildungsplan",
+  link: "Verknüpfung",
   absence: "Abwesenheit",
   deputy: "Vertretung",
   consent: "Einwilligung",

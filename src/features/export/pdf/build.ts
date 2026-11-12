@@ -9,16 +9,16 @@ import { berlinDateTime, dateDe, safeFileName, safeFileNameWithExt } from "./tex
 export class ExportCancelled extends Error { constructor() { super("cancelled"); } }
 
 let logoCache: Uint8Array | null = null;
-async function logo(): Promise<Uint8Array> {
+export async function logo(): Promise<Uint8Array> {
   if (!logoCache) logoCache = new Uint8Array(await (await fetch(logoUrl)).arrayBuffer());
   return logoCache;
 }
-const pause = () => new Promise<void>((r) => setTimeout(r, 0));
+export const pause = () => new Promise<void>((r) => setTimeout(r, 0));
 
 export interface Progress { done: number; total: number }
 export interface BuildOptions { embedImages: boolean; blankSignatures: boolean; signal?: AbortSignal; onProgress?: (p: Progress) => void }
 
-function check(signal?: AbortSignal) { if (signal?.aborted) throw new ExportCancelled(); }
+export function check(signal?: AbortSignal) { if (signal?.aborted) throw new ExportCancelled(); }
 
 /** Einzel-PDF mit Signaturprotokoll. */
 export async function buildSinglePdf(report: ExportReport, header: ExportHeader, o: { blankSignatures: boolean; embedImages?: boolean }, bundle?: ReportBundle): Promise<Uint8Array> {
