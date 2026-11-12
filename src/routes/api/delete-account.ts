@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { userFromRequest } from "@/lib/notify/auth.server";
-import { closedEmail, groupStoragePaths, sameEmail } from "@/features/account/rules";
+import { closedEmail, groupStoragePaths, isClosedAccount, sameEmail } from "@/features/account/rules";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -37,8 +37,12 @@ export const Route = createFileRoute("/api/delete-account")({
           if (!sameEmail(confirmEmail, target.email)) return reply({ error: "Die E-Mail-Adresse stimmt nicht." }, 400);
           if (userId === me.user.id) return reply({ error: "Das eigene Konto lässt sich hier nicht löschen." }, 400);
           if (targetRole.role === "ausbildungsleitung") {
-            const { data: leads } = await supabaseAdmin.from("user_roles").select("user_id, profiles!inner(email)").eq("role", "ausbildungsleitung");
-            const active = (leads ?? []).filter((l) => !(l.profiles as { email: string }).email.endsWith("@azuvera.invalid"));
+            const { data: leads } = await supabaseAdmin.from("user_roles").select("user_id").eq("role", "ausbildungsleitung");
+            const ids = (leads ?? []).map((l) => l.user_id);
+            const { data: leadProfiles } = ids.length
+              ? await supabaseAdmin.from("profiles").select("id, email").in("id", ids)
+              : { data: [] as { id: string; email: string }[] };
+            const active = (leadProfiles ?? []).filter((p) => !isClosedAccount(p.email));
             if (active.length <= 1) return reply({ error: "Die letzte Ausbildungsleitung kann nicht gelöscht werden." }, 400);
           }
 
