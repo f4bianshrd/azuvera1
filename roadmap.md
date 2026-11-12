@@ -81,5 +81,6 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [ ] Azubis legen Ausbildungsberuf, Ausbildungsbetrieb und Lehrjahr im Profil selbst fest
 - [ ] Azubis erstellen Verknüpfungscodes für Prüfer:innen (nur lesen), Ausbilder/Betriebsleitung (einsehen, freigeben, zurückweisen, Rückmeldung), Ausbildungsberatung (lesen, Rückmeldung); Teilen per gestaltetem QR-Code und Scannen in der App
 - [ ] Prüfungsmappe als PDF: Ausbilder:innen stellen Prüfungen und Berichte einer Person in einem Dokument zusammen
+- [ ] Prüfen, ob automatische Erinnerungen per Push auf dem Handy ankommen; Push-Ruhezeiten korrigieren
 - [ ] Daten-Prompt A2a: Landwirt/in
 - [ ] Daten-Prompt A2b: Landwirt/in (neue Fassung)
