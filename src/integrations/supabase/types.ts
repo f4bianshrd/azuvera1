@@ -184,6 +184,49 @@ export type Database = {
         }
         Relationships: []
       }
+      azubi_plans: {
+        Row: {
+          azubi_id: string
+          plan_id: string
+          set_at: string
+          set_by: string | null
+        }
+        Insert: {
+          azubi_id: string
+          plan_id: string
+          set_at?: string
+          set_by?: string | null
+        }
+        Update: {
+          azubi_id?: string
+          plan_id?: string
+          set_at?: string
+          set_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "azubi_plans_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "azubi_plans_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "training_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "azubi_plans_set_by_fkey"
+            columns: ["set_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       azubi_viewers: {
         Row: {
           azubi_id: string
@@ -652,6 +695,175 @@ export type Database = {
           },
         ]
       }
+      plan_groups: {
+        Row: {
+          hint: string | null
+          id: string
+          key: string
+          reference: string | null
+          section_id: string
+          sort_order: number
+          title: string
+          weeks_text: string | null
+        }
+        Insert: {
+          hint?: string | null
+          id?: string
+          key: string
+          reference?: string | null
+          section_id: string
+          sort_order?: number
+          title: string
+          weeks_text?: string | null
+        }
+        Update: {
+          hint?: string | null
+          id?: string
+          key?: string
+          reference?: string | null
+          section_id?: string
+          sort_order?: number
+          title?: string
+          weeks_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_groups_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "plan_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_items: {
+        Row: {
+          group_id: string
+          id: string
+          is_active: boolean
+          key: string
+          label: string
+          plan_id: string
+          reference: string | null
+          sort_order: number
+        }
+        Insert: {
+          group_id: string
+          id?: string
+          is_active?: boolean
+          key: string
+          label: string
+          plan_id: string
+          reference?: string | null
+          sort_order?: number
+        }
+        Update: {
+          group_id?: string
+          id?: string
+          is_active?: boolean
+          key?: string
+          label?: string
+          plan_id?: string
+          reference?: string | null
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_items_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "plan_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_items_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "training_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_progress: {
+        Row: {
+          azubi_id: string
+          item_id: string
+          mastered: string
+          planned: boolean
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          azubi_id: string
+          item_id: string
+          mastered?: string
+          planned?: boolean
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          azubi_id?: string
+          item_id?: string
+          mastered?: string
+          planned?: boolean
+          updated_at?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_progress_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_progress_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "plan_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_sections: {
+        Row: {
+          hint: string | null
+          id: string
+          key: string
+          kind: string
+          plan_id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          hint?: string | null
+          id?: string
+          key: string
+          kind?: string
+          plan_id: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          hint?: string | null
+          id?: string
+          key?: string
+          kind?: string
+          plan_id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_sections_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "training_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       professions: {
         Row: {
           ai_hints: string
@@ -982,6 +1194,39 @@ export type Database = {
           },
         ]
       }
+      report_plan_items: {
+        Row: {
+          created_at: string
+          item_id: string
+          report_id: string
+        }
+        Insert: {
+          created_at?: string
+          item_id: string
+          report_id: string
+        }
+        Update: {
+          created_at?: string
+          item_id?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_plan_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "plan_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_plan_items_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_reminders: {
         Row: {
           azubi_id: string
@@ -1093,6 +1338,39 @@ export type Database = {
             columns: ["signer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_topics: {
+        Row: {
+          created_at: string
+          report_id: string
+          topic_id: string
+        }
+        Insert: {
+          created_at?: string
+          report_id: string
+          topic_id: string
+        }
+        Update: {
+          created_at?: string
+          report_id?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_topics_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_topics_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "training_topics"
             referencedColumns: ["id"]
           },
         ]
@@ -1266,6 +1544,109 @@ export type Database = {
           },
         ]
       }
+      training_plans: {
+        Row: {
+          code: string
+          created_at: string
+          duration_years: number
+          id: string
+          is_template: boolean
+          profession_id: string
+          sort_order: number
+          source: string | null
+          status: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          duration_years?: number
+          id?: string
+          is_template?: boolean
+          profession_id: string
+          sort_order?: number
+          source?: string | null
+          status?: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          duration_years?: number
+          id?: string
+          is_template?: boolean
+          profession_id?: string
+          sort_order?: number
+          source?: string | null
+          status?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_plans_profession_id_fkey"
+            columns: ["profession_id"]
+            isOneToOne: false
+            referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      training_topics: {
+        Row: {
+          code: string | null
+          created_at: string
+          description: string | null
+          id: string
+          profession_id: string
+          sort_order: number
+          target_year: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          profession_id: string
+          sort_order?: number
+          target_year?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          profession_id?: string
+          sort_order?: number
+          target_year?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_topics_profession_id_fkey"
+            columns: ["profession_id"]
+            isOneToOne: false
+            referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1336,6 +1717,10 @@ export type Database = {
         Args: { p_actor?: string; p_user: string }
         Returns: undefined
       }
+      admin_duplicate_plan: {
+        Args: { p_code: string; p_plan: string; p_title: string }
+        Returns: string
+      }
       admin_list_users: {
         Args: never
         Returns: {
@@ -1348,6 +1733,18 @@ export type Database = {
           profession_id: string
           role: Database["public"]["Enums"]["app_role"]
         }[]
+      }
+      admin_plan_item_usage: {
+        Args: { p_plan: string }
+        Returns: {
+          item_key: string
+          used: boolean
+        }[]
+      }
+      admin_save_plan: { Args: { p_plan: Json }; Returns: string }
+      admin_set_plan_status: {
+        Args: { p_plan: string; p_status: string }
+        Returns: undefined
       }
       admin_set_user_role: {
         Args: {
@@ -1486,6 +1883,7 @@ export type Database = {
         }[]
       }
       export_my_data: { Args: never; Returns: Json }
+      export_plan_json: { Args: { p_plan: string }; Returns: Json }
       finish_delivery: {
         Args: { p_error: string; p_id: number; p_ok: boolean; p_skip: boolean }
         Returns: undefined
@@ -1536,6 +1934,19 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"]
         }[]
       }
+      list_selectable_plans: {
+        Args: { p_azubi: string }
+        Returns: {
+          code: string
+          duration_years: number
+          id: string
+          source: string
+          subtitle: string
+          title: string
+          valid_from: string
+          valid_until: string
+        }[]
+      }
       log_ai_assist: {
         Args: { _field: string; _report_id: string }
         Returns: undefined
@@ -1569,6 +1980,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      plan_visible: { Args: { p_plan: string }; Returns: boolean }
       redeem_invite_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -1603,6 +2015,7 @@ export type Database = {
       report_hash: { Args: { _report_id: string }; Returns: string }
       report_title: { Args: { _report_id: string }; Returns: string }
       request_account_deletion: { Args: { p_note: string }; Returns: string }
+      resolve_plan: { Args: { p_azubi: string }; Returns: string }
       review_absence: {
         Args: {
           _absence_id: string
@@ -1642,6 +2055,10 @@ export type Database = {
       send_report_reminder: {
         Args: { azubi_id: string; message: string; period_label: string }
         Returns: string
+      }
+      set_azubi_plan: {
+        Args: { p_azubi: string; p_plan: string }
+        Returns: undefined
       }
       set_deputy: {
         Args: {

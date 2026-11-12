@@ -183,6 +183,13 @@
       "when": 1794515679557,
       "tag": "0025_baustein_5d_privacy_provider_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1794516813158,
+      "tag": "0026_a1_training_plan",
+      "breakpoints": true
     }
   ]
 }
