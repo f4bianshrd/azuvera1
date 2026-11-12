@@ -75,6 +75,7 @@ const LEGACY_LABELS: Record<string, string> = {
 export const ENTITY_LABELS: Record<string, string> = {
   report: "Bericht",
   plan: "Ausbildungsplan",
+  link: "Verknüpfung",
   absence: "Abwesenheit",
   deputy: "Vertretung",
   consent: "Einwilligung",
