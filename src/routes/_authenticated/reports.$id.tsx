@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/dialogs";
 import { ListSkeleton, StatusBadge } from "@/components/shared";
 import { useMyProfile } from "@/features/app/session";
-import { deleteReport, displayNames, getReport, reportTitle, STATUS_LABELS } from "@/features/reports/api";
+import { deleteReport, displayNames, getReport, reportTitle } from "@/features/reports/api";
 import { AttachmentSection } from "@/features/reports/attachment-section";
 import { ReportEditor, stateFromReport } from "@/features/reports/report-editor";
 import { SubmitSheet } from "@/features/reports/submit-sheet";
@@ -139,7 +139,7 @@ function ReportDetailPage() {
     <SignaturesCard signatures={data.signatures} currentVersion={report.version} />
     <CommentsCard report={report} canComment={!!isOwner || !!canReview} sectionRequest={sectionRequest} />
 
-    <HistoryCard reportId={report.id} isDraft={report.status === "draft"} onServer={report._server !== null && report._server !== undefined} />
+    <HistoryCard reportId={report.id} isDraft={report.status === "draft"} onServer={report._server !== null} />
 
     {canReview && report.status === "submitted" && <div className="fixed inset-x-0 bottom-16 z-20 flex gap-2 border-t bg-background/95 p-3 backdrop-blur md:hidden"><Button className="flex-1" onClick={() => setApproveOpen(true)}>Freigeben</Button><Button className="flex-1" variant="destructive" onClick={() => setRejectOpen(true)}>Zurückweisen</Button></div>}
 
