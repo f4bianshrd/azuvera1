@@ -96,11 +96,11 @@ function AzubiLinks({ name }: { name: string }) {
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-1.5">
-              <Label id="validity-label">Gültig für</Label>
+              <Label id="validity-label" className="block">Gültig für</Label>
               <div role="radiogroup" aria-labelledby="validity-label" className="inline-flex rounded-xl border bg-muted/40 p-1">
                 {VALIDITY_OPTIONS.map((v) => (
                   <button key={v.hours} type="button" role="radio" aria-checked={hours === v.hours} onClick={() => setHours(v.hours)}
-                    className={cn("rounded-lg px-3 py-1.5 text-sm transition-colors", hours === v.hours ? "bg-card font-medium shadow-sm" : "text-muted-foreground hover:text-foreground")}>{v.label}</button>
+                    className={cn("rounded-lg px-3 py-1.5 text-sm transition-colors", hours === v.hours ? "bg-primary font-medium text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}>{v.label}</button>
                 ))}
               </div>
             </div>
