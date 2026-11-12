@@ -32,7 +32,7 @@ use the editor.
 ## Project rules
 - Client-only SPA (TanStack Start `spa.enabled`); no SSR so the app can be wrapped with Capacitor and run offline.
 - Features live in `src/features/<module>`; shared UI (PageHeader, StatusBadge, dialogs…) in `src/components` for reuse across modules.
-- Privacy policy sections are a data list (`privacySections`) so later modules append sections instead of editing markup.
+- Privacy policy sections are a data list (`privacySections(texts)`) so later modules append sections instead of editing markup; location/provider wording comes only from public app_settings via `src/features/public/api.ts` and the "Stand" date from `PRIVACY_UPDATED_AT` in `src/lib/legal.ts`, so legal text changes need no code edits for providers.
 - No web fonts (offline + privacy); colors only via oklch tokens in `src/styles.css`.
 - Lovable Cloud backend: schema changes only via the migration tool (drizzle/migrations is managed); RLS + tight GRANTs on every public table, privileged writes only through SECURITY DEFINER functions in `public`.
 - Signed-in pages live under `src/routes/_authenticated/` behind the client-side auth gate and the shared `AppShell` (mobile tab bar / collapsible sidebar); nav items in `src/features/app/nav.ts` appear only when their route exists, so later Bausteine append entries there.

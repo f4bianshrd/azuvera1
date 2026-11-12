@@ -10,7 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { EmptyState, PageHeader } from "@/components/shared";
 import { useMyProfile } from "@/features/app/session";
-import { deputySelfService, saveDeputySetting, hostingLocation, saveHostingLocation } from "@/features/deputies/api";
+import { deputySelfService, saveDeputySetting } from "@/features/deputies/api";
+import { fetchPrivacyTexts, savePrivacyTexts } from "@/features/public/api";
+import { PROVIDER_TEXT_MAX, validProviderText } from "@/lib/legal";
 import { NotificationStatusBlock } from "@/features/notifications/notification-status-block";
 import { ReminderRulesBlock } from "@/features/reminders/reminder-rules-block";
 import { getAdminAiSettings, saveAdminAiSettings } from "@/features/ai/api";
@@ -35,6 +37,8 @@ function EinstellungenPage() {
   const { data: me } = useMyProfile();
   const queryClient = useQueryClient();
   const [value, setValue] = useState("");
+  const [aiProvider, setAiProvider] = useState("");
+  const [emailProvider, setEmailProvider] = useState("");
   const [aiEnabled, setAiEnabled] = useState(true);
   const [dailyLimit, setDailyLimit] = useState("500");
   const [busy, setBusy] = useState(false);
@@ -42,9 +46,9 @@ function EinstellungenPage() {
   const isLeitung = me?.role === "ausbildungsleitung";
 
   const { data: setting } = useQuery({
-    queryKey: ["app-settings", "hosting_location_text"],
+    queryKey: ["app-settings", "privacy-texts"],
     enabled: isLeitung,
-    queryFn: hostingLocation,
+    queryFn: fetchPrivacyTexts,
   });
   const { data: aiSettings } = useQuery({
     queryKey: ["app-settings", "ai"],
@@ -53,7 +57,10 @@ function EinstellungenPage() {
   });
 
   useEffect(() => {
-    if (setting !== undefined) setValue(setting);
+    if (!setting) return;
+    setValue(setting.hostingLocation);
+    setAiProvider(setting.aiProvider);
+    setEmailProvider(setting.emailProvider);
   }, [setting]);
   useEffect(() => {
     if (!aiSettings) return;
@@ -66,12 +73,17 @@ function EinstellungenPage() {
   }
 
   const save = async () => {
+    if (!value.trim()) { toast.error("Bitte einen Speicherort eintragen."); return; }
+    if (!validProviderText(aiProvider) || !validProviderText(emailProvider)) {
+      toast.error("KI-Anbieter und E-Mail-Dienstleister müssen 3 bis 200 Zeichen lang sein.");
+      return;
+    }
     setBusy(true);
-    try { await saveHostingLocation(value, me?.id ?? null); }
+    try { await savePrivacyTexts({ hostingLocation: value, aiProvider, emailProvider }, me?.id ?? null); }
     catch { toast.error("Einstellung konnte nicht gespeichert werden."); setBusy(false); return; }
     setBusy(false);
     await queryClient.invalidateQueries({ queryKey: ["app-settings"] });
-    toast.success("Einstellung gespeichert");
+    toast.success("Gespeichert");
   };
 
   const saveAi = async () => {
@@ -103,6 +115,20 @@ function EinstellungenPage() {
           <Label htmlFor="hosting-location">Speicherort in der Datenschutzerklärung</Label>
           <Input id="hosting-location" value={value} onChange={(e) => setValue(e.target.value)} placeholder="in Frankfurt am Main (Deutschland)" className="h-11 max-w-lg text-base" />
           <p className="text-xs text-muted-foreground">Wird in Abschnitt 4 der Datenschutzerklärung angezeigt, z. B. „in Frankfurt am Main (Deutschland)“.</p>
+        </div>
+        <div className="mt-6 space-y-4 border-t pt-5">
+          <div>
+            <h2 className="text-base font-semibold">Anbieter in der Datenschutzerklärung</h2>
+            <p className="mt-1 text-xs text-muted-foreground">Trage hier die tatsächlich genutzten Anbieter ein. Der Text erscheint wörtlich in der Datenschutzerklärung und muss grammatisch in den Satz passen, zum Beispiel ‚einen KI-Modellanbieter (über das KI-Gateway von Lovable)‘.</p>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="ai-provider">KI-Anbieter</Label>
+            <Input id="ai-provider" required minLength={3} maxLength={PROVIDER_TEXT_MAX} value={aiProvider} onChange={(e) => setAiProvider(e.target.value)} aria-invalid={!validProviderText(aiProvider)} className="h-11 max-w-lg text-base" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="email-provider">E-Mail-Dienstleister</Label>
+            <Input id="email-provider" required minLength={3} maxLength={PROVIDER_TEXT_MAX} value={emailProvider} onChange={(e) => setEmailProvider(e.target.value)} aria-invalid={!validProviderText(emailProvider)} className="h-11 max-w-lg text-base" />
+          </div>
         </div>
         <Button className="mt-4 h-11" onClick={() => void save()} disabled={busy}>Speichern</Button>
       </section>

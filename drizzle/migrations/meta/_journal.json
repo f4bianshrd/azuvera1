@@ -176,6 +176,13 @@
       "when": 1794514709094,
       "tag": "0024_fix_azubi_deletion_order",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1794515679557,
+      "tag": "0025_baustein_5d_privacy_provider_settings",
+      "breakpoints": true
     }
   ]
 }

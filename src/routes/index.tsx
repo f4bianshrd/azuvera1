@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CheckCircle2, FileSignature, Users } from "lucide-react";
+import { BellRing, Camera, CheckCircle2, FileDown, FileSignature, Mic, PenLine, Users, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Chip, PublicLayout } from "@/features/public/public-layout";
 
@@ -25,6 +25,15 @@ const features = [
   { icon: FileSignature, title: "Strukturierte Berichte", text: "Tages- und Wochenberichte mit allen wichtigen Feldern – Tätigkeiten, Berufsschule, Unterweisungen." },
   { icon: CheckCircle2, title: "Freigabe-Workflow", text: "Einreichen, prüfen, freigeben oder zurückweisen – mit klarem Status und Kommentaren." },
   { icon: Users, title: "Rollen für alle", text: "Azubis, Ausbilder und Ausbildungsleitung arbeiten in einem System zusammen." },
+];
+
+const overview = [
+  { icon: Mic, title: "Diktieren statt tippen", text: "Berichte per Spracheingabe erfassen, sofern der Browser sie unterstützt." },
+  { icon: Camera, title: "Fotos und Dateien", text: "Fotos, Skizzen und PDF-Dateien direkt an den Bericht anhängen." },
+  { icon: WifiOff, title: "Auch offline arbeiten", text: "Berichte ohne Internet schreiben; sie werden gesendet, sobald wieder eine Verbindung besteht." },
+  { icon: BellRing, title: "Erinnerungen", text: "Hinweise per Push oder E-Mail bei fehlenden Berichten und nahenden Fristen." },
+  { icon: PenLine, title: "Digitale Freigabe", text: "Prüfen, kommentieren und per Unterschrift oder Klick freigeben oder mit Korrekturhinweis zurückweisen." },
+  { icon: FileDown, title: "PDF für die Kammer", text: "Das ganze Berichtsheft als PDF mit Signaturprotokoll exportieren." },
 ];
 
 function Home() {
@@ -65,6 +74,28 @@ function Home() {
             <p className="mt-2 text-sm text-muted-foreground">{f.text}</p>
           </div>
         ))}
+      </section>
+      <section aria-labelledby="overview-title" className="border-t bg-muted/40">
+        <div className="mx-auto max-w-6xl px-4 py-16">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 id="overview-title" className="text-3xl font-bold tracking-tight">Funktionen im Überblick</h2>
+            <p className="mt-3 text-muted-foreground">Alles, was Sie für ein vollständiges Berichtsheft brauchen – am Handy, Tablet und PC.</p>
+          </div>
+          <ul className="mt-10 flex flex-wrap justify-center gap-5">
+            {overview.map((f) => (
+              <li key={f.title} className="w-full rounded-2xl border bg-card p-6 shadow-sm sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]">
+                <div className="inline-flex size-11 items-center justify-center rounded-xl bg-accent text-accent-foreground">
+                  <f.icon className="size-5" aria-hidden />
+                </div>
+                <h3 className="mt-4 text-base font-semibold">{f.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{f.text}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="mx-auto mt-8 max-w-2xl text-center text-xs text-muted-foreground">
+            Hinweis: Die Freigabe ist eine einfache elektronische Bestätigung mit Zeitstempel und Prüfsumme, keine qualifizierte elektronische Signatur.
+          </p>
+        </div>
       </section>
     </PublicLayout>
   );
