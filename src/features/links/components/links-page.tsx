@@ -118,7 +118,7 @@ function AzubiLinks({ name }: { name: string }) {
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted"><KeyRound className="size-4.5" aria-hidden /></span>
                 <div className="min-w-0 flex-1">
                   <p className="font-mono text-base font-semibold tracking-wider">{formatCode(c.code)}</p>
-                  <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><AccessBadge access={c.access} />{expiresInText(c.expires_at)}</p>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><AccessBadge access={c.access} />{expiresInText(c.expires_at)}</div>
                 </div>
                 <div className="flex shrink-0 flex-col gap-1 sm:flex-row">
                   <Button size="sm" variant="outline" onClick={() => setShown(c)}><QrCode className="size-4" aria-hidden /> QR</Button>
