@@ -1,6 +1,8 @@
 /** Reine Berechnungen für den Ausbildungsplan (Zellen, Filter, Kennzahlen, Diagramme, Kalender). */
 import { addDays, addWeeks, format, getISOWeek, getISOWeekYear, isAfter, startOfISOWeek } from "date-fns";
 import type { PlanTree } from "@/lib/sync/db";
+import { addYears, parseISO } from "date-fns";
+import { trainingYears, type TrainingYear } from "@/lib/training-year";
 
 export type Mastered = "" | "yes" | "no";
 export type StatusFilter = "all" | "planned" | "mastered" | "open" | "unplanned";
@@ -231,4 +233,12 @@ export function slugify(name: string): string {
     .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "plan";
+}
+
+/** Ausbildungsjahre der Person (Beginn/Ende aus dem Profil; ohne Ende = Dauer des Plans). */
+export function personTrainingYears(beginn: string | null, ende: string | null, duration: number): TrainingYear[] {
+  if (!beginn) return [];
+  const start = parseISO(beginn);
+  const end = ende ? parseISO(ende) : addDays(addYears(start, duration), -1);
+  return trainingYears(start, end);
 }

@@ -3,9 +3,8 @@ import type { PlanData } from "../api";
 import type { Layout, TemplateId, Branding } from "../prefs";
 import {
   STATUS_FILTER_LABELS, WEEK_STATUS_LABELS, calendarWeeks, cellExportWord, dateDe, plannedPerSection, reportedWeeks,
-  skillsPerYear, topicsPerYear, type Cell, type Kpis, type Selection,
+  personTrainingYears, skillsPerYear, topicsPerYear, type Cell, type Kpis, type Selection,
 } from "../stats";
-import { trainingYears } from "@/lib/training-year";
 
 export interface ExportRow { label: string; cells: string[] }
 export interface ExportGroup { title: string; reference: string | null; weeks_text: string | null; rows: ExportRow[] }
@@ -90,7 +89,7 @@ export function buildModel(args: {
   const weeks: ExportWeeks[] = [];
   const start = data.azubi.ausbildungsbeginn;
   if (start) {
-    for (const ty of trainingYears(start, data.azubi.ausbildungsende)) {
+    for (const ty of personTrainingYears(start, data.azubi.ausbildungsende, duration)) {
       if (!years.includes(ty.year)) continue;
       const w = calendarWeeks(ty.start, ty.end, data.reports);
       weeks.push({
