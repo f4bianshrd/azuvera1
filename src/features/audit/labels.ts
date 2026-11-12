@@ -52,6 +52,9 @@ export const ACTION_LABELS: Record<string, string> = {
   deletion_requested: "Löschantrag gestellt",
   deletion_rejected: "Löschantrag abgelehnt",
   account_deleted: "Konto gelöscht oder geschlossen",
+  plan_set: "Ausbildungsplan zugeordnet",
+  plan_saved: "Ausbildungsplan gespeichert",
+  plan_export: "Ausbildungsplan exportiert",
 };
 
 /** Ältere Verwaltungs-Ereignisse aus Baustein 1B (nicht im Filter, aber lesbar). */
@@ -67,6 +70,7 @@ const LEGACY_LABELS: Record<string, string> = {
 
 export const ENTITY_LABELS: Record<string, string> = {
   report: "Bericht",
+  plan: "Ausbildungsplan",
   absence: "Abwesenheit",
   deputy: "Vertretung",
   consent: "Einwilligung",
@@ -188,6 +192,8 @@ export function describeEntry(entry: Pick<AuditEntry, "action" | "details">, nam
       const count = typeof d.count === "number" ? `${d.count} Bericht${d.count === 1 ? "" : "e"}` : null;
       return { title: "PDF exportiert", details: [[kind, count].filter(Boolean).join(" · ")].filter(Boolean) };
     }
+    case "plan_export":
+      return { title: "Ausbildungsplan exportiert", details: [d.kind === "plan_odt" ? "ODT" : "PDF"] };
     case "account_deleted": {
       const d2 = entry.details as { mode?: unknown } | null;
       return { title: d2 && typeof d2 === "object" && d2.mode === "anonymized" ? "Konto geschlossen" : "Konto gelöscht", details: [] };
