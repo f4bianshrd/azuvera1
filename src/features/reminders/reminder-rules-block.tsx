@@ -47,7 +47,7 @@ export function ReminderRulesBlock() {
   const save = async () => {
     setBusy(true);
     try { await saveReminderRules(r); await qc.invalidateQueries({ queryKey: ["app-settings", "reminder_rules"] }); toast.success("Einstellungen gespeichert"); }
-    catch (e) { toast.error(e instanceof Error ? e.message : "Einstellungen konnten nicht gespeichert werden."); }
+    catch (e) { toast.error((e as { message?: string })?.message || "Einstellungen konnten nicht gespeichert werden."); }
     finally { setBusy(false); }
   };
 
