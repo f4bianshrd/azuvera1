@@ -81,6 +81,7 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [x] Azubis legen Ausbildungsberuf, Ausbildungsbetrieb und Lehrjahr im Profil selbst fest
 - [x] Azubis erstellen Verknüpfungscodes für Prüfer:innen (nur lesen), Ausbilder/Betriebsleitung (einsehen, freigeben, zurückweisen, Rückmeldung), Ausbildungsberatung (lesen, Rückmeldung); Teilen per gestaltetem QR-Code und Scannen in der App
 - [x] Prüfungsmappe als PDF: Ausbilder:innen stellen Prüfungen und Berichte einer Person in einem Dokument zusammen
-- [ ] Prüfen, ob automatische Erinnerungen per Push auf dem Handy ankommen; Push-Ruhezeiten korrigieren
+- [x] Push-Ruhezeiten auch beim Versand prüfen (Wiederholungen, Rückstau)
+- [ ] Echter Push-Test auf dem Handy – braucht ein Gerät, auf dem Push in der veröffentlichten App eingeschaltet ist (derzeit keins)
 - [ ] Daten-Prompt A2a: Landwirt/in
 - [ ] Daten-Prompt A2b: Landwirt/in (neue Fassung)
