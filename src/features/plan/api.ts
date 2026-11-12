@@ -383,3 +383,18 @@ export interface PlanJson {
   plan: { code: string; profession_code: string; title: string; subtitle?: string | null; source?: string | null; valid_from?: string | null; valid_until?: string | null; duration_years?: number; is_template?: boolean; status?: "draft" | "published" };
   sections: PlanJsonSection[];
 }
+
+/** Themen eines Berufs (online, z. B. für die Leitung ohne gewählte Person). */
+export async function listTopics(professionId: string): Promise<Topic[]> {
+  return cachedOnline(`plan:topics:${professionId}`, async () => {
+    const { data, error } = await supabase.from("training_topics").select("*").eq("profession_id", professionId).order("sort_order");
+    if (error) throw error;
+    return data ?? [];
+  });
+}
+
+/** Export im Änderungsprotokoll vermerken (offline ohne Eintrag). */
+export async function logPlanExport(azubiId: string, kind: "plan_pdf" | "plan_odt"): Promise<void> {
+  if (!online()) return;
+  await supabase.rpc("log_export", { p_azubi: azubiId, p_kind: kind, p_count: 1, p_from: null as unknown as string, p_to: null as unknown as string });
+}
