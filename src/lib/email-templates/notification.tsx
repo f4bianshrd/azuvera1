@@ -9,7 +9,7 @@ export function notificationTemplate(cfg: {
   subject: string; label: string; tone: Tone; title: string; lines: string[]; cta: string; defaultLink: string; preview?: string
 }): TemplateEntry {
   const Component = ({ link }: NotificationEmailProps) => (
-    <AzuveraEmail preview={cfg.preview ?? cfg.lines[0]} label={cfg.label} tone={cfg.tone} title={cfg.title}
+    <AzuveraEmail preview={cfg.preview ?? cfg.lines[0] ?? cfg.title} label={cfg.label} tone={cfg.tone} title={cfg.title}
       cta={{ href: `${APP_URL}${link || cfg.defaultLink}`, label: cfg.cta }}
       note="Aus Datenschutzgründen stehen die Einzelheiten nur in der App, nach deiner Anmeldung."
       footer={<NotifyFooter />}>

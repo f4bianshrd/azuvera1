@@ -26,7 +26,7 @@ export const Route = createFileRoute("/api/email-test")({
           const React = await import("react");
           const { render } = await import("@react-email/render");
           const { TEMPLATES } = await import("@/lib/email-templates/registry");
-          const tpl = TEMPLATES["email_test"];
+          const tpl = TEMPLATES["email_test"]!;
           const el = React.createElement(tpl.component, { link: "/notifications" });
           await sendEmail({
             to: user.email,
