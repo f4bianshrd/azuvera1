@@ -31,7 +31,7 @@ describe("Speicherpfade", () => {
 
 describe("Datenexport-Dateien", () => {
   it("heißt Azuvera_Datenexport_JJJJ-MM-TT.zip", () => expect(dataExportFileName(new Date(2026, 10, 3))).toBe("Azuvera_Datenexport_2026-11-03.zip"));
-  it("entfernt Pfadtrenner aus Dateinamen", () => expect(zipSafeName("../../etc/passwd")).toBe("_.._etc_passwd".replace(/^\.+/, "")));
+  it("entfernt Pfadtrenner aus Dateinamen", () => expect(zipSafeName("../../etc/passwd")).toBe("_.._etc_passwd"));
   it("vergibt eindeutige Namen", () => {
     const used = new Set<string>();
     expect([uniqueName(used, "a.png"), uniqueName(used, "a.png"), uniqueName(used, "a.png")]).toEqual(["a.png", "a (2).png", "a (3).png"]);
