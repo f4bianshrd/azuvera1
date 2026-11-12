@@ -204,6 +204,13 @@
       "when": 1794519000825,
       "tag": "0028_azubi_self_service_training",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1794519487383,
+      "tag": "0029_resolve_plan_prefers_progress",
+      "breakpoints": true
     }
   ]
 }

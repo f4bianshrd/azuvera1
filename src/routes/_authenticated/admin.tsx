@@ -243,7 +243,7 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
     if (u.role !== "azubi") return null;
     const assigned = (viewers ?? []).filter((v) => v.azubi_id === u.id).map((v) => v.viewer_id);
     return (
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-2 sm:grid-cols-2">
         <Select
           value={u.ausbilder_id ?? "none"}
           onValueChange={(v) => void updateAzubi(u.id, { ausbilder_id: v === "none" ? null : v }, "Zugewiesen")}
@@ -360,8 +360,8 @@ function UsersCard({ users, myId }: { users: AdminUser[]; myId: string }) {
                 <TableCell className="font-medium">{u.full_name || "—"}</TableCell>
                 <TableCell>{u.email}</TableCell>
                 <TableCell>{roleSelect(u)}</TableCell>
-                <TableCell className="min-w-72">{azubiControls(u)}</TableCell>
-                <TableCell>{u.role === "azubi" ? <AzubiPlanSelect azubiId={u.id} professionId={u.profession_id} /> : "—"}</TableCell>
+                <TableCell className="min-w-[22rem]">{azubiControls(u)}</TableCell>
+                <TableCell className="min-w-48">{u.role === "azubi" ? <AzubiPlanSelect azubiId={u.id} professionId={u.profession_id} /> : "—"}</TableCell>
                 <TableCell className="text-right">{accountAction(u)}</TableCell>
               </TableRow>
             ))}
