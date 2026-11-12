@@ -105,7 +105,7 @@ function ProtokollPage() {
     <PageHeader title="Änderungsprotokoll" subtitle={DESC}
       actions={<Button variant="outline" disabled={csvBusy || !me} onClick={() => void exportCsv()}><Download className="size-4" aria-hidden /> {csvBusy ? "Wird erstellt …" : "Als CSV exportieren"}</Button>} />
 
-    <section className="grid gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Filter">
+    <section className="grid gap-3 rounded-2xl border bg-card p-4 sm:grid-cols-2 xl:grid-cols-[1fr_minmax(18rem,1.3fr)_1fr_1fr]" aria-label="Filter">
       {!isAzubi && <div className="space-y-1.5">
         <Label htmlFor="f-azubi">Azubi</Label>
         <Select value={azubi} onValueChange={setAzubi}>

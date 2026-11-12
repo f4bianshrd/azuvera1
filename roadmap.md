@@ -65,7 +65,8 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [x] Baustein 4D: automatische Erinnerungen (Regeln, Zeitplan alle 15 Min., Ersatzweg, Admin-Block, Badge „Automatisch“)
 - [x] Baustein 5A: PDF-Export und Unterschriften-Nachweis
 - [ ] 5A Abnahme 4 (120 Testberichte) und 2 (Manipulation per SQL) noch nicht durchgespielt
-- [ ] Baustein 5B: Änderungshistorie
+- [x] Baustein 5B: Änderungshistorie (Verlauf, Versionen mit Wortvergleich, /protokoll, CSV, Kettenprüfung)
+- [ ] 5B „Mehr laden“ erst ab 100 Einträgen im Browser prüfbar (derzeit 54)
 - [ ] Baustein 5C: Meine Daten
 - [ ] Baustein 5D
 - [ ] Daten-Prompt A1: Ausbildungsplan
