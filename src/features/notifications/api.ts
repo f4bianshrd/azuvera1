@@ -88,7 +88,7 @@ async function authed(path: string, init: RequestInit = {}) {
   if (init.body) h.set('Content-Type', 'application/json');
   const res = await fetch(path, { ...init, headers: h });
   const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-  if (!res.ok) throw new Error(typeof body.error === 'string' ? body.error : 'Das hat nicht geklappt.');
+  if (!res.ok) throw new Error(typeof body['error'] === 'string' ? body['error'] : 'Das hat nicht geklappt.');
   return body;
 }
 export async function getPushConfig(): Promise<{ configured: boolean; publicKey: string | null }> {
