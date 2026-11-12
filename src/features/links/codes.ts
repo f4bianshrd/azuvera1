@@ -47,7 +47,7 @@ export function canRedeem(role: AppRole, access: LinkAccess): boolean {
 
 /** Großschreibung, nur gültige Zeichen; Bindestriche und Leerzeichen fallen weg. */
 export function normalizeCode(input: string): string {
-  return input.toUpperCase().replace(/[^A-Z0-9]/g, "").replace(/O/g, "0").replace(/[01I]/g, (c) => (c === "1" || c === "I" ? "1" : c));
+  return input.toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
 export function isValidCode(code: string): boolean {
