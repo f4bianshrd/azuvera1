@@ -225,6 +225,13 @@
       "when": 1794520212679,
       "tag": "0031_log_export_exam_folder",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1794520532510,
+      "tag": "0032_push_quiet_hours_at_send",
+      "breakpoints": true
     }
   ]
 }

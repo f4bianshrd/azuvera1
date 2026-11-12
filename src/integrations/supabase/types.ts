@@ -2130,6 +2130,10 @@ export type Database = {
           expires_at: string
         }[]
       }
+      push_quiet_until: {
+        Args: { _at?: string; _uid: string }
+        Returns: string
+      }
       redeem_invite_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
