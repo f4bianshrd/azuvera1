@@ -86,7 +86,7 @@ export function TopicsTab({ topics, professionId, canEdit, linksByTopic, reports
                 <li key={t.id} className="rounded-2xl border bg-card p-4 shadow-sm">
                   <div className="flex flex-wrap items-start gap-2">
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium">{t.code && <span className="mr-1.5 text-primary">{t.code}</span>}{t.title}{t.target_year && <Badge variant="secondary" className="ml-2">J{t.target_year}</Badge>}</p>
+                      <div className="font-medium">{t.code && <span className="mr-1.5 text-primary">{t.code}</span>}{t.title}{t.target_year && <Badge variant="secondary" className="ml-2">J{t.target_year}</Badge>}</div>
                       {t.description && <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{t.description}</p>}
                     </div>
                     <Button variant="outline" size="sm" onClick={() => setDrill(t)} disabled={!n}>{n === 1 ? "1 Bericht" : `${n} Berichte`}</Button>
