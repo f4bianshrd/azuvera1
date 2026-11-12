@@ -35,7 +35,7 @@ export function NotificationBell({ userId }: { userId: string }) {
   useEffect(() => onServiceWorkerMessage((d) => {
     const m = d as { type?: string; url?: string } | null;
     const t = m?.type === 'NAVIGATE' ? internalTarget(m.url) : null;
-    if (t) void navigate({ to: t.to, search: t.search });
+    if (t) void navigate({ to: t.to, search: t.search, ...(t.hash ? { hash: t.hash } : {}) });
   }), [navigate]);
 
   async function read(id?: string, link?: string | null) {
@@ -43,7 +43,7 @@ export function NotificationBell({ userId }: { userId: string }) {
       await markRead(id);
       await refresh();
       const t = internalTarget(link);
-      if (t) { setOpen(false); void navigate({ to: t.to, search: t.search }); }
+      if (t) { setOpen(false); void navigate({ to: t.to, search: t.search, ...(t.hash ? { hash: t.hash } : {}) }); }
     } catch { toast.error('Benachrichtigung konnte nicht geöffnet werden.'); }
   }
   return (

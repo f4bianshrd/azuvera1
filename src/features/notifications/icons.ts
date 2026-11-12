@@ -10,8 +10,9 @@ export const NOTIFICATION_ICONS: Record<string, LucideIcon> = {
 export const iconFor = (type: string): LucideIcon => NOTIFICATION_ICONS[type] ?? Bell;
 
 /** Nur interne Pfade öffnen. */
-export function internalTarget(link: string | null | undefined): { to: string; search: Record<string, string> } | null {
+export function internalTarget(link: string | null | undefined): { to: string; search: Record<string, string>; hash?: string } | null {
   if (!link || !link.startsWith('/') || link.startsWith('//')) return null;
   const url = new URL(link, 'https://x.invalid');
-  return { to: url.pathname, search: Object.fromEntries(url.searchParams) };
+  const hash = url.hash.replace(/^#/, '');
+  return { to: url.pathname, search: Object.fromEntries(url.searchParams), ...(hash ? { hash } : {}) };
 }
