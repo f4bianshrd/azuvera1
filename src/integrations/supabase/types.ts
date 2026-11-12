@@ -1398,6 +1398,19 @@ export type Database = {
           quiet_to: string
         }[]
       }
+      export_header: {
+        Args: { p_azubi: string }
+        Returns: {
+          ausbilder_name: string
+          azubi_name: string
+          company_address: string
+          company_name: string
+          personalnummer: string
+          profession_name: string
+          training_end: string
+          training_start: string
+        }[]
+      }
       finish_delivery: {
         Args: { p_error: string; p_id: number; p_ok: boolean; p_skip: boolean }
         Returns: undefined
@@ -1450,6 +1463,16 @@ export type Database = {
       }
       log_ai_assist: {
         Args: { _field: string; _report_id: string }
+        Returns: undefined
+      }
+      log_export: {
+        Args: {
+          p_azubi: string
+          p_count: number
+          p_from: string
+          p_kind: string
+          p_to: string
+        }
         Returns: undefined
       }
       missing_weeks: {
@@ -1576,6 +1599,17 @@ export type Database = {
           can_review: boolean
           to_review: number
           week_status: string
+        }[]
+      }
+      verify_report: {
+        Args: { p_report: string }
+        Returns: {
+          computed_hash: string
+          hash_ok: boolean
+          report_id: string
+          signatures_ok: boolean
+          stored_hash: string
+          version: number
         }[]
       }
       week_deadline_at: {

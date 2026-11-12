@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ExportButton } from "@/features/export/ExportDialog";
 import { EmptyState, ListSkeleton, PageHeader, StatusBadge } from "@/components/shared";
 import { SyncBadge } from "@/features/sync/sync-badge";
 import { useMyProfile } from "@/features/app/session";
@@ -124,11 +125,14 @@ function ReportsPage() {
         title="Berichte"
         subtitle="Alle Tages- und Wochenberichte – inklusive gespeicherter Entwürfe"
         actions={isAzubi ?
-          <Button asChild>
-            <Link to="/reports/new" search={{ type: undefined, date: undefined }}>
-              <Plus className="size-4" aria-hidden /> Neuer Bericht
-            </Link>
-          </Button> : undefined
+          <div className="flex flex-wrap gap-2">
+            {profile && <ExportButton azubiId={profile.id} isSelf />}
+            <Button asChild>
+              <Link to="/reports/new" search={{ type: undefined, date: undefined }}>
+                <Plus className="size-4" aria-hidden /> Neuer Bericht
+              </Link>
+            </Button>
+          </div> : azubiFilter ? <ExportButton azubiId={azubiFilter} isSelf={azubiFilter === profile?.id} /> : undefined
         }
       />
 

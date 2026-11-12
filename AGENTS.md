@@ -50,3 +50,4 @@ use the editor.
 - Push/e-mail delivery: the notifications AFTER INSERT trigger fills delivery_queue; /api/public/dispatch-notifications (managed cron each minute, or x-cron-secret) is the only sender, using src/lib/notify/* (WebCrypto push lib, nodemailer SMTP) — keeps one auditable send path that runs on Workers.
 - Push device logic lives in src/features/notifications/push.ts on top of platform.ts push helpers; the notification center route is /notifications (/benachrichtigungen only redirects) so push links and email links share one target.
 - Automatic reminders are generated only by the SQL function generate_reminders (pg_cron every 15 min, /api/public/run-reminders as fallback); reminder_log dedupes so reruns are safe.
+- PDF/ZIP exports are generated in the browser only (pdf-lib + fflate in src/features/export); report content never leaves the device except via existing storage reads, and every export calls log_export for the audit trail.
