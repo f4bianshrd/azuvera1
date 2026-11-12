@@ -155,6 +155,13 @@
       "when": 1794511846520,
       "tag": "0021_baustein_5b_audit_trail",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1794512249700,
+      "tag": "0022_fix_audit_edit_fields_array",
+      "breakpoints": true
     }
   ]
 }
