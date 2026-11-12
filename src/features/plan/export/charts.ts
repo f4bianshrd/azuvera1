@@ -64,6 +64,7 @@ function drawDonut(ctx: CanvasRenderingContext2D, spec: ChartSpec) {
 
 function legend(ctx: CanvasRenderingContext2D, entries: [string, string][], y: number) {
   ctx.font = "20px Helvetica, Arial, sans-serif";
+  entries = entries.map(([t, c]) => [t.length > 30 ? `${t.slice(0, 29)}…` : t, c]);
   const widths = entries.map(([t]) => ctx.measureText(t).width + 44);
   let x = Math.max(10, (W - widths.reduce((a, b) => a + b, 0)) / 2);
   entries.forEach(([t, c], i) => {
