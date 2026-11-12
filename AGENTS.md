@@ -51,3 +51,4 @@ use the editor.
 - Push device logic lives in src/features/notifications/push.ts on top of platform.ts push helpers; the notification center route is /notifications (/benachrichtigungen only redirects) so push links and email links share one target.
 - Automatic reminders are generated only by the SQL function generate_reminders (pg_cron every 15 min, /api/public/run-reminders as fallback); reminder_log dedupes so reruns are safe.
 - PDF/ZIP exports are generated in the browser only (pdf-lib + fflate in src/features/export); report content never leaves the device except via existing storage reads, and every export calls log_export for the audit trail.
+- Report/attachment audit events are written only by DB triggers via write_audit, and draft privacy is enforced in the audit_log SELECT policy; the audit UI (src/features/audit, page /protokoll, /aenderungsprotokoll redirects) only reads, so the log stays complete regardless of client path.
