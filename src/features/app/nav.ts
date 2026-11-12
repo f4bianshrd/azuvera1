@@ -40,7 +40,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Berichte", icon: FileText, section: "arbeit", to: "/reports" },
   { label: "Ausbilderportal", icon: ClipboardCheck, section: "arbeit", to: "/ausbilder", roles: TEAM_ROLES },
   { label: "Team", icon: Users, section: "arbeit", to: "/team", roles: TEAM_ROLES },
-  { label: "Ausbildungsplan", icon: CalendarDays, section: "arbeit" },
+  { label: "Ausbildungsplan", icon: CalendarDays, section: "arbeit", to: "/ausbildungsplan" },
   { label: "Unterweisungen", icon: ShieldCheck, section: "arbeit" },
   { label: "Abwesenheiten", icon: CalendarOff, section: "arbeit", to: "/abwesenheiten" },
   { label: "Schulnoten", icon: GraduationCap, section: "arbeit", to: "/noten" },
@@ -52,6 +52,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Administration", icon: Settings2, section: "verwaltung", to: "/admin", roles: ["ausbildungsleitung"] },
   { label: "Betriebe", icon: Building2, section: "verwaltung", to: "/stammdaten/betriebe", roles: ["ausbildungsleitung"] },
   { label: "Berufe", icon: BookOpen, section: "verwaltung", to: "/stammdaten/berufe", roles: ["ausbildungsleitung"] },
+  { label: "Ausbildungspläne", icon: ListTree, section: "verwaltung", to: "/stammdaten/ausbildungsplaene", roles: ["ausbildungsleitung"] },
   { label: "Einstellungen", icon: Settings, section: "verwaltung", to: "/admin/einstellungen", roles: ["ausbildungsleitung"] },
 ];
 
@@ -80,7 +81,7 @@ export function mobileTabs(role: AppRole): (TabItem | null)[] {
       { label: "Start", icon: Home, to: "/dashboard" },
       { label: "Berichte", icon: FileText, to: "/reports" },
       { label: "Neuer Bericht", icon: ClipboardCheck, accent: true, to: "/reports/new" },
-      { label: "Plan", icon: CalendarDays },
+      { label: "Plan", icon: CalendarDays, to: "/ausbildungsplan" },
       null, // „Mehr“ wird vom Shell angehängt
     ];
   }
@@ -88,7 +89,7 @@ export function mobileTabs(role: AppRole): (TabItem | null)[] {
     { label: "Start", icon: Home, to: "/dashboard" },
     { label: "Prüfung", icon: ClipboardCheck, to: "/ausbilder" },
     { label: "Team", icon: Users, to: "/team" },
-    { label: "Plan", icon: CalendarDays },
+    { label: "Plan", icon: CalendarDays, to: "/ausbildungsplan" },
     null,
   ];
 }
@@ -99,5 +100,7 @@ export function titleForPath(pathname: string): string {
   if (item) return item.label;
   if (pathname.startsWith("/stammdaten/betriebe")) return "Betriebe";
   if (pathname.startsWith("/stammdaten/berufe")) return "Berufe";
+  if (pathname.startsWith("/stammdaten/ausbildungsplaene")) return "Ausbildungspläne";
+  if (pathname.startsWith("/ausbildungsplan")) return "Ausbildungsplan";
   return "Azuvera";
 }
