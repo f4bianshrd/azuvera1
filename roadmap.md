@@ -59,3 +59,6 @@
 - [x] 33 Tests bestanden; Testrollen, Zeitraum und Zuständigkeit wiederhergestellt.
 
 Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erhalten. Automatische Erinnerungen und optionale Push-/E-Mail-Zustellung gehören zu Baustein 4.
+
+- [x] Baustein 4C: Service-Worker-Push, Geräteanmeldung, /notifications, Profil-Karte, Leitungs-Status
+- [ ] 4C Abnahme auf echtem Gerät (Test-Push, Klick-Ziel) – braucht veröffentlichte App und ein Handy
