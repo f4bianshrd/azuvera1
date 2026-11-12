@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   UserRound,
   Users,
-  type LucideIcon, RefreshCw } from "lucide-react";
+  type LucideIcon, RefreshCw, ScrollText } from "lucide-react";
 import type { AppRole } from "./session";
 import { REVIEWER_ROLES, VIEWER_ROLES } from "./session";
 
