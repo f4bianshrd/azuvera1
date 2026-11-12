@@ -69,10 +69,59 @@ sw.addEventListener("message", (event: { data?: { type?: string } }) => {
   if (event.data?.type === "SKIP_WAITING") void sw.skipWaiting();
 });
 
-// ---------- Platzhalter für Teil 4B (Push) ----------
-// sw.addEventListener("push", (event) => {
-//   // Teil 4B: Benachrichtigung aus event.data anzeigen (self.registration.showNotification).
-// });
-// sw.addEventListener("notificationclick", (event) => {
-//   // Teil 4B: Ziel-URL der Benachrichtigung öffnen bzw. vorhandenes Fenster fokussieren.
-// });
+// ---------- Push (Teil 4C) – arbeitet ohne Backend-Aufrufe, auch bei geschlossener App ----------
+interface PushScope {
+  registration: { showNotification: (title: string, opts: Record<string, unknown>) => Promise<void> };
+  clients: {
+    matchAll: (o: { type: "window"; includeUncontrolled: boolean }) => Promise<Array<{ url: string; focus: () => Promise<unknown>; navigate?: (u: string) => Promise<unknown>; postMessage: (m: unknown) => void }>>;
+    openWindow: (u: string) => Promise<unknown>;
+  };
+}
+const psw = self as unknown as PushScope;
+type WaitEvent = { waitUntil: (p: Promise<unknown>) => void };
+
+function safePath(u: unknown): string {
+  return typeof u === "string" && u.startsWith("/") && !u.startsWith("//") ? u : "/notifications";
+}
+
+sw.addEventListener("push", (event: WaitEvent & { data?: { json: () => unknown } | null }) => {
+  let title = "Neue Benachrichtigung";
+  let body = "Öffne Azuvera, um sie zu lesen.";
+  let url = "/notifications";
+  let tag: string | undefined;
+  try {
+    const p = (event.data?.json() ?? {}) as { title?: unknown; body?: unknown; url?: unknown; tag?: unknown };
+    if (typeof p.title === "string" && p.title) title = p.title;
+    if (typeof p.body === "string") body = p.body;
+    url = safePath(p.url);
+    if (typeof p.tag === "string") tag = p.tag;
+  } catch {
+    /* Standardtext */
+  }
+  event.waitUntil(
+    psw.registration.showNotification(title, { body, icon: "/icons/icon-192.png", badge: "/icons/badge-96.png", tag, data: { url }, lang: "de" }),
+  );
+});
+
+sw.addEventListener("notificationclick", (event: WaitEvent & { notification: { close: () => void; data?: { url?: unknown } } }) => {
+  event.notification.close();
+  const url = safePath(event.notification.data?.url);
+  event.waitUntil(
+    (async () => {
+      const wins = await psw.clients.matchAll({ type: "window", includeUncontrolled: true });
+      const win = wins.find((c) => new URL(c.url).origin === sw.location.origin);
+      if (win) {
+        await win.focus();
+        if (win.navigate) {
+          try { await win.navigate(url); return; } catch { /* unkontrolliertes Fenster */ }
+        }
+        win.postMessage({ type: "NAVIGATE", url });
+        return;
+      }
+      await psw.clients.openWindow(url);
+    })(),
+  );
+});
+
+// Kein Upload hier (keine Sitzung im Service Worker); die App meldet das Gerät beim nächsten Start neu an.
+sw.addEventListener("pushsubscriptionchange", () => undefined);

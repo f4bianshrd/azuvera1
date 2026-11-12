@@ -3,7 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { currentDb, currentUserId, deleteUserDb, openUserDb } from "@/lib/sync/db";
 import { stopSync } from "@/lib/sync/engine";
-import { clearCacheStorage, getNetworkStatus, unregisterPush } from "@/lib/platform";
+import { clearCacheStorage, getNetworkStatus, setAppBadge } from "@/lib/platform";
+import { disablePush } from "@/features/notifications/push";
 
 export type AppRole = Database["public"]["Enums"]["app_role"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -85,7 +86,8 @@ export async function signOutAndLeave(
 ) {
   await queryClient.cancelQueries();
   queryClient.clear();
-  await unregisterPush();
+  await disablePush();
+  await setAppBadge(0);
   await clearLocalData();
   await supabase.auth.signOut(global ? { scope: "global" } : undefined);
   navigate({ to: "/auth", replace: true });

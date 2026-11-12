@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { OFFLINE_ACTION_HINT, useOnline } from "@/lib/sync/status";
 import { latestCacheAt } from "@/lib/sync/online-cache";
 
-const ONLINE_ONLY = ["/admin", "/stammdaten", "/erinnerungen", "/benachrichtigungen", "/aenderungsprotokoll"];
+const ONLINE_ONLY = ["/admin", "/stammdaten", "/erinnerungen", "/aenderungsprotokoll"];
 const SNAPSHOT: Record<string, string[]> = { "/team": ["team:"], "/ausbilder": ["review-queue:", "visible-reports:", "review-people"] };
 
 /** Offline: Hinweis auf Online-only-Seiten bzw. „Stand: …“ bei Team und Ausbilderportal. */
