@@ -68,7 +68,7 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [x] Baustein 5B: Änderungshistorie (Verlauf, Versionen mit Wortvergleich, /protokoll, CSV, Kettenprüfung)
 - [ ] 5B „Mehr laden“ erst ab 100 Einträgen im Browser prüfbar (derzeit 54)
 - [x] Baustein 5C: Meine Daten (Export, Löschanträge, Konto löschen/schließen)
-- [ ] Baustein 5D
+- [x] Baustein 5D: Datenschutzerklärung (14 Abschnitte, Anbieter-Einstellungen, festes Stand-Datum), Startseiten-Block, HTTPS-Prüfung
 - [ ] Daten-Prompt A1: Ausbildungsplan
 - [ ] Daten-Prompt A2a: Landwirt/in
 - [ ] Daten-Prompt A2b: Landwirt/in (neue Fassung)
