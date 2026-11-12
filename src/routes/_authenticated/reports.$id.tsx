@@ -23,6 +23,7 @@ import { ReopenSheet } from "@/features/review/reopen-sheet";
 import { CommentsCard, COMMENT_SECTIONS } from "@/features/review/comments-card";
 import { SignaturesCard } from "@/features/review/signatures-card";
 import { actingPrincipal, canReviewReport, listComments, type CommentSection } from "@/features/review/api";
+import { ReportLinksBlock } from "@/features/plan/components/report-links";
 
 export const Route = createFileRoute("/_authenticated/reports/$id")({
   head: ({ params }) => ({
@@ -135,6 +136,7 @@ function ReportDetailPage() {
     {canReview && report.status === "submitted" && <section className="hidden rounded-2xl border bg-card p-4 md:block"><h2 className="font-semibold">Prüfung</h2><p className="mt-1 text-sm text-muted-foreground">Prüfe Inhalt und Anhänge und dokumentiere deine Entscheidung.</p><div className="mt-3 flex gap-2"><Button onClick={() => setApproveOpen(true)}>Freigeben</Button><Button variant="destructive" onClick={() => setRejectOpen(true)}>Zurückweisen</Button></div></section>}
     {profile?.role === "ausbildungsleitung" && report.status === "approved" && <section className="rounded-2xl border bg-card p-4"><h2 className="font-semibold">Prüfung</h2><Button variant="outline" className="mt-3" onClick={() => setReopenOpen(true)}>Wieder öffnen</Button></section>}
 
+    {!(editing && isOwner) && <ReportLinksBlock reportId={report.id} azubiId={report.azubi_id} editable={!!editable} />}
     <AttachmentSection report={report} attachments={data.attachments} editable={!!editable && !editing} />
     <SignaturesCard signatures={data.signatures} currentVersion={report.version} />
     <CommentsCard report={report} canComment={!!isOwner || !!canReview} sectionRequest={sectionRequest} />

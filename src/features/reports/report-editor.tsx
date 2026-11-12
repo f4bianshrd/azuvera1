@@ -13,6 +13,7 @@ import { readPunctuationPreference, writePunctuationPreference } from "@/feature
 import { AiTextButton } from "@/features/ai/ai-text-button";
 import type { AiField } from "@/features/ai/api";
 import {
+import { ReportLinksBlock } from "@/features/plan/components/report-links";
   createDraft,
   saveReportDraft,
   ReportConflictError,
@@ -339,6 +340,8 @@ export function ReportEditor({
           </p>
         </div>
       ))}
+
+      {report && <ReportLinksBlock reportId={report.id} azubiId={azubiId} editable />}
 
       <p className="text-xs text-muted-foreground" role="status">
         {status === "saving" ? "Speichert…" : savedAt ? `Gespeichert um ${format(savedAt, "HH:mm")}` : "Änderungen werden automatisch gespeichert."}
