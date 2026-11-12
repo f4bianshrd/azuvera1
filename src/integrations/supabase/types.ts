@@ -184,6 +184,55 @@ export type Database = {
         }
         Relationships: []
       }
+      azubi_links: {
+        Row: {
+          access: string
+          azubi_id: string
+          code_id: string | null
+          created_at: string
+          is_primary: boolean
+          member_id: string
+        }
+        Insert: {
+          access: string
+          azubi_id: string
+          code_id?: string | null
+          created_at?: string
+          is_primary?: boolean
+          member_id: string
+        }
+        Update: {
+          access?: string
+          azubi_id?: string
+          code_id?: string | null
+          created_at?: string
+          is_primary?: boolean
+          member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "azubi_links_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "azubi_links_code_id_fkey"
+            columns: ["code_id"]
+            isOneToOne: false
+            referencedRelation: "link_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "azubi_links_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       azubi_plans: {
         Row: {
           azubi_id: string
@@ -606,6 +655,57 @@ export type Database = {
           used_by?: string | null
         }
         Relationships: []
+      }
+      link_codes: {
+        Row: {
+          access: string
+          azubi_id: string
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          revoked_at: string | null
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          access: string
+          azubi_id: string
+          code: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          revoked_at?: string | null
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          access?: string
+          azubi_id?: string
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          revoked_at?: string | null
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_codes_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "link_codes_used_by_fkey"
+            columns: ["used_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notification_prefs: {
         Row: {
@@ -1792,6 +1892,10 @@ export type Database = {
         Returns: string
       }
       audit_report_visible: { Args: { p_report: string }; Returns: boolean }
+      can_comment_for: {
+        Args: { _azubi: string; _user: string }
+        Returns: boolean
+      }
       can_review_for: {
         Args: { _azubi: string; _reviewer: string }
         Returns: boolean
@@ -1833,6 +1937,15 @@ export type Database = {
           _valid_days?: number
         }
         Returns: string
+      }
+      create_link_code: {
+        Args: { p_access: string; p_hours?: number }
+        Returns: {
+          access: string
+          code: string
+          expires_at: string
+          id: string
+        }[]
       }
       default_notification_groups: { Args: never; Returns: Json }
       default_reminder_rules: { Args: never; Returns: Json }
@@ -1908,6 +2021,10 @@ export type Database = {
         }
         Returns: string
       }
+      has_link: {
+        Args: { _azubi: string; _member: string; _min: string }
+        Returns: boolean
+      }
       has_my_consent: {
         Args: { _kind: Database["public"]["Enums"]["consent_kind"] }
         Returns: boolean
@@ -1926,11 +2043,27 @@ export type Database = {
       is_leitung: { Args: { _user_id: string }; Returns: boolean }
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
       kw_list: { Args: { weeks: string[] }; Returns: string }
+      link_access_rank: { Args: { _access: string }; Returns: number }
+      link_code_new: { Args: never; Returns: string }
+      link_role_max: { Args: { _user: string }; Returns: number }
       list_company_choices: {
         Args: never
         Returns: {
           id: string
           name: string
+        }[]
+      }
+      list_links: {
+        Args: never
+        Returns: {
+          access: string
+          azubi_id: string
+          azubi_name: string
+          created_at: string
+          is_primary: boolean
+          member_id: string
+          member_name: string
+          member_role: Database["public"]["Enums"]["app_role"]
         }[]
       }
       list_possible_deputies: {
@@ -1988,9 +2121,26 @@ export type Database = {
         }[]
       }
       plan_visible: { Args: { p_plan: string }; Returns: boolean }
+      preview_link_code: {
+        Args: { p_code: string }
+        Returns: {
+          access: string
+          allowed: boolean
+          azubi_name: string
+          expires_at: string
+        }[]
+      }
       redeem_invite_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      redeem_link_code: {
+        Args: { p_code: string }
+        Returns: {
+          access: string
+          azubi_id: string
+          azubi_name: string
+        }[]
       }
       register_push_subscription: {
         Args: {
@@ -2007,6 +2157,10 @@ export type Database = {
       }
       reject_report: {
         Args: { _expected_version: number; _note: string; _report_id: string }
+        Returns: undefined
+      }
+      remove_link: {
+        Args: { p_azubi: string; p_member: string }
         Returns: undefined
       }
       remove_push_device: { Args: { p_id: string }; Returns: undefined }
@@ -2047,6 +2201,7 @@ export type Database = {
       }
       revoke_deputy: { Args: { _id: string }; Returns: undefined }
       revoke_invite_code: { Args: { _code: string }; Returns: undefined }
+      revoke_link_code: { Args: { p_id: string }; Returns: undefined }
       save_my_notification_prefs: {
         Args: {
           p_groups: Json
