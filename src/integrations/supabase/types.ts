@@ -333,6 +333,56 @@ export type Database = {
           },
         ]
       }
+      delivery_queue: {
+        Row: {
+          attempts: number
+          channel: string
+          claimed_at: string | null
+          created_at: string
+          id: number
+          last_error: string | null
+          notification_id: string
+          scheduled_at: string
+          sent_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          channel: string
+          claimed_at?: string | null
+          created_at?: string
+          id?: never
+          last_error?: string | null
+          notification_id: string
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          channel?: string
+          claimed_at?: string | null
+          created_at?: string
+          id?: never
+          last_error?: string | null
+          notification_id?: string
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_queue_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deputies: {
         Row: {
           created_at: string
@@ -394,6 +444,42 @@ export type Database = {
           },
         ]
       }
+      function_calls: {
+        Row: {
+          created_at: string
+          fn: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fn: string
+          id?: never
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fn?: string
+          id?: never
+          user_id?: string
+        }
+        Relationships: []
+      }
+      internal_config: {
+        Row: {
+          key: string
+          value: string
+        }
+        Insert: {
+          key: string
+          value: string
+        }
+        Update: {
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       invite_codes: {
         Row: {
           code: string
@@ -429,6 +515,47 @@ export type Database = {
           used_by?: string | null
         }
         Relationships: []
+      }
+      notification_prefs: {
+        Row: {
+          daily_nudge_enabled: boolean
+          daily_nudge_time: string
+          groups: Json
+          quiet_from: string
+          quiet_hours_enabled: boolean
+          quiet_to: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          daily_nudge_enabled?: boolean
+          daily_nudge_time?: string
+          groups: Json
+          quiet_from?: string
+          quiet_hours_enabled?: boolean
+          quiet_to?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          daily_nudge_enabled?: boolean
+          daily_nudge_time?: string
+          groups?: Json
+          quiet_from?: string
+          quiet_hours_enabled?: boolean
+          quiet_to?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_prefs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -595,6 +722,53 @@ export type Database = {
             columns: ["profession_id"]
             isOneToOne: false
             referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          device_label: string | null
+          endpoint: string
+          endpoint_hash: string | null
+          failure_count: number
+          id: string
+          last_used_at: string | null
+          p256dh: string
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          device_label?: string | null
+          endpoint: string
+          endpoint_hash?: string | null
+          failure_count?: number
+          id?: string
+          last_used_at?: string | null
+          p256dh: string
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          device_label?: string | null
+          endpoint?: string
+          endpoint_hash?: string | null
+          failure_count?: number
+          id?: string
+          last_used_at?: string | null
+          p256dh?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1123,6 +1297,22 @@ export type Database = {
         Args: { _azubi: string; _viewer: string }
         Returns: boolean
       }
+      check_call_limit: {
+        Args: { p_fn: string; p_max: number; p_user: string; p_window: string }
+        Returns: boolean
+      }
+      claim_deliveries: {
+        Args: { p_limit: number }
+        Returns: {
+          attempts: number
+          channel: string
+          id: number
+          link: string
+          notification_id: string
+          type: string
+          user_id: string
+        }[]
+      }
       compute_missing_weeks: {
         Args: { p_as_of: string; p_azubi: string }
         Returns: {
@@ -1141,6 +1331,15 @@ export type Database = {
         }
         Returns: string
       }
+      default_notification_groups: { Args: never; Returns: Json }
+      delivery_health: {
+        Args: never
+        Returns: {
+          failed_7d: number
+          last_sent_at: string
+          pending: number
+        }[]
+      }
       display_names: {
         Args: { _ids: string[] }
         Returns: {
@@ -1153,6 +1352,32 @@ export type Database = {
         Returns: {
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
+        }[]
+      }
+      effective_prefs: {
+        Args: { _uid: string }
+        Returns: {
+          daily_nudge_enabled: boolean
+          daily_nudge_time: string
+          groups: Json
+          quiet_from: string
+          quiet_hours_enabled: boolean
+          quiet_to: string
+        }[]
+      }
+      finish_delivery: {
+        Args: { p_error: string; p_id: number; p_ok: boolean; p_skip: boolean }
+        Returns: undefined
+      }
+      get_my_notification_prefs: {
+        Args: never
+        Returns: {
+          daily_nudge_enabled: boolean
+          daily_nudge_time: string
+          groups: Json
+          quiet_from: string
+          quiet_hours_enabled: boolean
+          quiet_to: string
         }[]
       }
       grant_consent: {
@@ -1201,6 +1426,7 @@ export type Database = {
           week_start: string
         }[]
       }
+      notification_group: { Args: { _type: string }; Returns: string }
       notification_recipients: {
         Args: { _azubi: string }
         Returns: {
@@ -1212,8 +1438,22 @@ export type Database = {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      register_push_subscription: {
+        Args: {
+          p_auth: string
+          p_endpoint: string
+          p_label: string
+          p_p256dh: string
+        }
+        Returns: string
+      }
       reject_report: {
         Args: { _expected_version: number; _note: string; _report_id: string }
+        Returns: undefined
+      }
+      remove_push_device: { Args: { p_id: string }; Returns: undefined }
+      remove_push_subscription: {
+        Args: { p_endpoint: string }
         Returns: undefined
       }
       reopen_report: {
@@ -1247,6 +1487,17 @@ export type Database = {
       }
       revoke_deputy: { Args: { _id: string }; Returns: undefined }
       revoke_invite_code: { Args: { _code: string }; Returns: undefined }
+      save_my_notification_prefs: {
+        Args: {
+          p_groups: Json
+          p_nudge_enabled: boolean
+          p_nudge_time: string
+          p_quiet_enabled: boolean
+          p_quiet_from: string
+          p_quiet_to: string
+        }
+        Returns: undefined
+      }
       send_report_reminder: {
         Args: { azubi_id: string; message: string; period_label: string }
         Returns: string
