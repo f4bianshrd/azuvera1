@@ -22,13 +22,17 @@ export const Route = createFileRoute("/api/email-test")({
         recent.set(user.id, [...hits, now]);
 
         const { sendEmail, EmailNotConfigured } = await import("@/lib/notify/email.server");
-        const base = process.env["APP_BASE_URL"] ?? "https://get.azuvera.de";
         try {
+          const React = await import("react");
+          const { render } = await import("@react-email/render");
+          const { TEMPLATES } = await import("@/lib/email-templates/registry");
+          const tpl = TEMPLATES["email_test"]!;
+          const el = React.createElement(tpl.component, { link: "/notifications" });
           await sendEmail({
             to: user.email,
-            subject: "Azuvera – Test-E-Mail",
-            text: `Test erfolgreich. E-Mail-Benachrichtigungen kommen bei dir an.\n\nÖffnen: ${base}/notifications`,
-            html: `<div style="font-family:Arial,sans-serif;color:#13254a"><p>Test erfolgreich. E-Mail-Benachrichtigungen kommen bei dir an.</p><p><a href="${base}/notifications" style="display:inline-block;background:#0056c5;color:#ffffff;padding:10px 16px;border-radius:6px;text-decoration:none">In Azuvera öffnen</a></p></div>`,
+            subject: typeof tpl.subject === "string" ? tpl.subject : tpl.subject({}),
+            html: await render(el),
+            text: await render(el, { plainText: true }),
           });
           return Response.json({ ok: true });
         } catch (e) {
