@@ -41,6 +41,7 @@ import { Route as AuthenticatedTeamIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedTeamAzubiIdRouteImport } from './routes/_authenticated/team.$azubiId'
 import { Route as ApiPublicDispatchNotificationsRouteImport } from './routes/api/public/dispatch-notifications'
 import { Route as ApiPublicPushConfigRouteImport } from './routes/api/public/push-config'
+import { Route as ApiPublicRunRemindersRouteImport } from './routes/api/public/run-reminders'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -215,6 +216,11 @@ const ApiPublicPushConfigRoute = ApiPublicPushConfigRouteImport.update({
   path: '/api/public/push-config',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicRunRemindersRoute = ApiPublicRunRemindersRouteImport.update({
+  id: '/api/public/run-reminders',
+  path: '/api/public/run-reminders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
@@ -262,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
+  '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
   '/reports/': typeof AuthenticatedReportsIndexRoute
   '/team/': typeof AuthenticatedTeamIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByTo {
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
+  '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/team': typeof AuthenticatedTeamIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -334,6 +342,7 @@ export interface FileRoutesById {
   '/_authenticated/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
+  '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/_authenticated/team/': typeof AuthenticatedTeamIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -372,6 +381,7 @@ export interface FileRouteTypes {
     | '/team/$azubiId'
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
+    | '/api/public/run-reminders'
     | '/reports/'
     | '/team/'
     | '/lovable/email/auth/preview'
@@ -406,6 +416,7 @@ export interface FileRouteTypes {
     | '/team/$azubiId'
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
+    | '/api/public/run-reminders'
     | '/reports'
     | '/team'
     | '/lovable/email/auth/preview'
@@ -443,6 +454,7 @@ export interface FileRouteTypes {
     | '/_authenticated/team/$azubiId'
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
+    | '/api/public/run-reminders'
     | '/_authenticated/reports/'
     | '/_authenticated/team/'
     | '/lovable/email/auth/preview'
@@ -462,6 +474,7 @@ export interface RootRouteChildren {
   ApiPushTestRoute: typeof ApiPushTestRoute
   ApiPublicDispatchNotificationsRoute: typeof ApiPublicDispatchNotificationsRoute
   ApiPublicPushConfigRoute: typeof ApiPublicPushConfigRoute
+  ApiPublicRunRemindersRoute: typeof ApiPublicRunRemindersRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -693,6 +706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPushConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/run-reminders': {
+      id: '/api/public/run-reminders'
+      path: '/api/public/run-reminders'
+      fullPath: '/api/public/run-reminders'
+      preLoaderRoute: typeof ApiPublicRunRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/auth/preview': {
       id: '/lovable/email/auth/preview'
       path: '/lovable/email/auth/preview'
@@ -798,6 +818,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPushTestRoute: ApiPushTestRoute,
   ApiPublicDispatchNotificationsRoute: ApiPublicDispatchNotificationsRoute,
   ApiPublicPushConfigRoute: ApiPublicPushConfigRoute,
+  ApiPublicRunRemindersRoute: ApiPublicRunRemindersRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,

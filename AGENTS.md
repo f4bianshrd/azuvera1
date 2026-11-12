@@ -49,3 +49,4 @@ use the editor.
 - The service worker is built from src/sw.ts (vite-plugin-pwa injectManifest, manifest static in public/) and registered only via src/features/sync/pwa-update.ts, never in previews/iframes/dev; it never caches backend requests.
 - Push/e-mail delivery: the notifications AFTER INSERT trigger fills delivery_queue; /api/public/dispatch-notifications (managed cron each minute, or x-cron-secret) is the only sender, using src/lib/notify/* (WebCrypto push lib, nodemailer SMTP) — keeps one auditable send path that runs on Workers.
 - Push device logic lives in src/features/notifications/push.ts on top of platform.ts push helpers; the notification center route is /notifications (/benachrichtigungen only redirects) so push links and email links share one target.
+- Automatic reminders are generated only by the SQL function generate_reminders (pg_cron every 15 min, /api/public/run-reminders as fallback); reminder_log dedupes so reruns are safe.
