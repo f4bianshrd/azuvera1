@@ -19,7 +19,7 @@ export async function listReportHistory(reportId: string): Promise<AuditEntry[]>
 }
 
 export async function listReportVersions(reportId: string): Promise<ReportVersion[]> {
-  const { data, error } = await supabase.from("report_versions").select("*").eq("report_id", reportId).order("version", { ascending: true });
+  const { data, error } = await supabase.from("report_versions").select("*").eq("report_id", reportId).order("version", { ascending: true }).order("created_at", { ascending: true });
   if (error) throw error;
   return data ?? [];
 }

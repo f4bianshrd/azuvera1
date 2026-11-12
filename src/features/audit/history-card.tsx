@@ -149,8 +149,16 @@ function VersionsCard({ reportId }: { reportId: string }) {
           </button></li>;
         })}
       </ul>}
-    <VersionDialog version={open !== null ? list[open] ?? null : null} previous={open !== null && open > 0 ? list[open - 1] ?? null : null} onClose={() => setOpen(null)} />
+    <VersionDialog version={open !== null ? list[open] ?? null : null} previous={open !== null ? previousVersion(list, open) : null} onClose={() => setOpen(null)} />
   </div>;
+}
+
+/** Vorherige Version = neuester Schnappschuss mit kleinerer Versionsnummer. */
+function previousVersion(list: ReportVersion[], index: number): ReportVersion | null {
+  const current = list[index];
+  if (!current) return null;
+  for (let i = index - 1; i >= 0; i--) if (list[i]!.version < current.version) return list[i]!;
+  return null;
 }
 
 function VersionDialog({ version, previous, onClose }: { version: ReportVersion | null; previous: ReportVersion | null; onClose: () => void }) {
