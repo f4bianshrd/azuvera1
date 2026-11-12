@@ -175,13 +175,13 @@ function weeksBlock(d: PlanDoc, details: boolean) {
 
 function contentsBlock(d: PlanDoc) {
   d.heading("Inhalte");
-  const years = d.m.years, yw = 64, lw = A4.w - 2 * MARGIN - yw * years.length;
+  const years = d.m.years, yw = years.length >= 4 ? 70 : 78, lw = A4.w - 2 * MARGIN - yw * years.length;
   const head = () => {
-    d.ensure(16);
-    d.page.drawRectangle({ x: MARGIN, y: d.y - 4, width: A4.w - 2 * MARGIN, height: 14, color: C.surface });
-    d.t("Fertigkeit", MARGIN + 4, d.y, 8, d.bold, C.muted);
-    years.forEach((y, i) => d.t(`${y}. Jahr`, MARGIN + lw + i * yw + 4, d.y, 8, d.bold, C.muted));
-    d.y -= 16;
+    d.ensure(18);
+    d.page.drawRectangle({ x: MARGIN, y: d.y - 14, width: A4.w - 2 * MARGIN, height: 14, color: C.surface });
+    d.t("Fertigkeit", MARGIN + 4, d.y - 10, 8, d.bold, C.muted);
+    years.forEach((y, i) => d.t(`${y}. Jahr`, MARGIN + lw + i * yw + 4, d.y - 10, 8, d.bold, C.muted));
+    d.y -= 14;
   };
   if (!d.m.sections.length) { d.para("Keine Inhalte in der aktuellen Auswahl.", 9, d.reg, C.muted); return; }
   for (const s of d.m.sections) {
@@ -192,22 +192,24 @@ function contentsBlock(d: PlanDoc) {
       d.ensure(44);
       const meta = [g.reference, g.weeks_text].filter(Boolean).join(" · ");
       d.t(g.title, MARGIN, d.y, 9.5, d.bold, C.text, A4.w - 2 * MARGIN);
-      d.y -= 11;
-      if (meta) { d.t(meta, MARGIN, d.y, 7.5, d.reg, C.muted, A4.w - 2 * MARGIN); d.y -= 11; }
+      d.y -= 6;
+      if (meta) { d.y -= 9; d.t(meta, MARGIN, d.y, 7.5, d.reg, C.muted, A4.w - 2 * MARGIN); d.y -= 4; }
+      d.y -= 4;
       head();
       for (const r of g.rows) {
         const lines = wrapText(sanitizeForPdf(r.label), d.reg, 8.5, lw - 8);
-        const h = lines.length * 11 + 3;
+        const h = lines.length * 11 + 6;
         if (d.y - h < BOTTOM) { d.newPage(d.full); head(); }
-        lines.forEach((l, i) => d.page.drawText(l, { x: MARGIN + 4, y: d.y - i * 11, size: 8.5, font: d.reg, color: C.text }));
+        const top = d.y;
+        lines.forEach((l, i) => d.page.drawText(l, { x: MARGIN + 4, y: top - 11 - i * 11, size: 8.5, font: d.reg, color: C.text }));
         r.cells.forEach((c, i) => {
           const col = c === "beherrscht" ? rgb(0.06, 0.5, 0.3) : c === "nicht beherrscht" ? C.warn : c === "geplant" ? d.primary : C.muted;
-          d.t(c, MARGIN + lw + i * yw + 4, d.y, 8, c === "–" ? d.reg : d.bold, col, yw - 6);
+          d.t(c, MARGIN + lw + i * yw + 4, top - 11, 7.5, c === "–" ? d.reg : d.bold, col, yw - 6);
         });
-        d.y -= h;
-        d.page.drawLine({ start: { x: MARGIN, y: d.y + 7 }, end: { x: A4.w - MARGIN, y: d.y + 7 }, thickness: 0.3, color: C.line });
+        d.y = top - h;
+        d.page.drawLine({ start: { x: MARGIN, y: d.y }, end: { x: A4.w - MARGIN, y: d.y }, thickness: 0.3, color: C.line });
       }
-      d.y -= 8;
+      d.y -= 14;
     }
   }
 }

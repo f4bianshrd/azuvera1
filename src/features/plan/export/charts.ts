@@ -29,12 +29,13 @@ export async function chartPng(spec: ChartSpec): Promise<Uint8Array | null> {
 
 function drawBars(ctx: CanvasRenderingContext2D, spec: ChartSpec) {
   const left = 60, right = W - 20, top = 30, bottom = H - 80;
-  const max = Math.max(1, ...spec.series.flatMap((s) => s.values));
+  const step = Math.max(1, Math.ceil(Math.max(1, ...spec.series.flatMap((s) => s.values)) / 4));
+  const max = step * 4;
   ctx.strokeStyle = "#d9dee6"; ctx.fillStyle = "#5b6472"; ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = bottom - ((bottom - top) * i) / 4;
     ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
-    ctx.textAlign = "right"; ctx.fillText(String(Math.round((max * i) / 4)), left - 8, y);
+    ctx.textAlign = "right"; ctx.fillText(String(step * i), left - 8, y);
   }
   const n = spec.labels.length, groupW = (right - left) / Math.max(1, n), barW = Math.min(60, (groupW * 0.7) / spec.series.length);
   spec.labels.forEach((label, gi) => {
