@@ -39,7 +39,7 @@ export const AzuveraEmail = ({ preview, label, tone = 'info', title, children, c
           <Text style={s.brand}>azuvera</Text>
         </Section>
         <Section style={s.accent} />
-        <Section style={s.card}>
+        <Section style={{ padding: '20px' }}><Section style={s.card}>
           <Text style={{ ...s.chip, backgroundColor: TONES[tone].bg, color: TONES[tone].fg }}>{label}</Text>
           <Heading style={s.h1}>{title}</Heading>
           {children}
@@ -49,7 +49,7 @@ export const AzuveraEmail = ({ preview, label, tone = 'info', title, children, c
             </Section>
           )}
           {note && <Text style={s.note}>{note}</Text>}
-        </Section>
+        </Section></Section>
         <Section style={s.foot}>
           {footer && <Text style={s.footText}>{footer}</Text>}
           <Hr style={s.hr} />
@@ -77,7 +77,7 @@ const s = {
   logo: { display: 'inline-block', verticalAlign: 'middle', borderRadius: '9px' },
   brand: { display: 'inline-block', verticalAlign: 'middle', margin: '0 0 0 10px', color: '#ffffff', fontSize: '20px', fontWeight: 700, letterSpacing: '-0.3px' },
   accent: { height: '4px', background: `linear-gradient(90deg, ${BRAND.blue}, ${BRAND.teal})`, backgroundColor: BRAND.blue },
-  card: { backgroundColor: BRAND.card, margin: '20px', padding: '28px', borderRadius: '14px', border: `1px solid ${BRAND.line}` },
+  card: { backgroundColor: BRAND.card, padding: '28px', borderRadius: '14px', border: `1px solid ${BRAND.line}` },
   chip: { display: 'inline-block', margin: '0 0 14px', padding: '4px 10px', borderRadius: '999px', fontSize: '12px', fontWeight: 600, letterSpacing: '0.2px' },
   h1: { margin: '0 0 14px', color: BRAND.ink, fontSize: '24px', lineHeight: '1.25', fontWeight: 700, letterSpacing: '-0.4px' },
   text: { margin: '0 0 12px', color: BRAND.muted, fontSize: '15px', lineHeight: '1.6' },
