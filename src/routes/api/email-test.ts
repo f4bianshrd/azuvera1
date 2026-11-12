@@ -9,7 +9,7 @@ export const Route = createFileRoute("/api/email-test")({
       POST: async ({ request }) => {
         const token = (request.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
         if (!token) return Response.json({ error: "Nicht angemeldet." }, { status: 401 });
-        const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+        const sb = createClient(process.env["SUPABASE_URL"]!, process.env["SUPABASE_PUBLISHABLE_KEY"]!, {
           auth: { persistSession: false, autoRefreshToken: false },
         });
         const { data, error } = await sb.auth.getUser(token);
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/api/email-test")({
         recent.set(user.id, [...hits, now]);
 
         const { sendEmail, EmailNotConfigured } = await import("@/lib/notify/email.server");
-        const base = process.env.APP_BASE_URL ?? "https://get.azuvera.de";
+        const base = process.env["APP_BASE_URL"] ?? "https://get.azuvera.de";
         try {
           await sendEmail({
             to: user.email,
