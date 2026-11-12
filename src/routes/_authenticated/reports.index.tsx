@@ -132,7 +132,7 @@ function ReportsPage() {
                 <Plus className="size-4" aria-hidden /> Neuer Bericht
               </Link>
             </Button>
-          </div> : azubiFilter ? <ExportButton azubiId={azubiFilter} isSelf={false} /> : undefined
+          </div> : azubiFilter ? <ExportButton azubiId={azubiFilter} isSelf={azubiFilter === profile?.id} /> : undefined
         }
       />
 
