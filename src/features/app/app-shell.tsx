@@ -10,7 +10,7 @@ import {
   Menu,
   Plus,
 } from "lucide-react";
-import { NotificationBell } from "@/features/notifications/notification-bell";
+import { NotificationBell, useUnreadCount } from "@/features/notifications/notification-bell";
 import { SyncChip } from "@/features/sync/sync-chip";
 import { SyncRuntime } from "@/features/sync/sync-runtime";
 import { useSignOut } from "@/features/sync/sign-out";
@@ -69,6 +69,8 @@ function AccountBlock({ profile, onSignOut }: { profile: MyProfile; onSignOut: (
 }
 
 function SidebarNav({ role, collapsed, reviewCount = 0 }: { role: AppRole; collapsed: boolean; reviewCount?: number }) {
+  const { data: me } = useMyProfile();
+  const { data: unread = 0 } = useUnreadCount(me?.id);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const items = visibleNav(role);
   const sections: NavSection[] = ["arbeit", "konto", "verwaltung"];
@@ -101,6 +103,7 @@ function SidebarNav({ role, collapsed, reviewCount = 0 }: { role: AppRole; colla
                       <item.icon className="size-5 shrink-0" aria-hidden />
                       {!collapsed && <span className="truncate">{item.label}</span>}
                       {!collapsed && item.to === "/ausbilder" && reviewCount > 0 && <Badge variant="secondary" className="ml-auto">{reviewCount}</Badge>}
+                      {item.to === "/notifications" && unread > 0 && <span className={cn("grid min-w-5 place-items-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground", collapsed ? "absolute ml-6 -mt-5" : "ml-auto")} aria-label={`${unread} ungelesen`}>{unread > 99 ? "99+" : unread}</span>}
                     </Link>
                   </li>
                 );

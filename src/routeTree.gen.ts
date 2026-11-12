@@ -23,6 +23,7 @@ import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_a
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedErinnerungenRouteImport } from './routes/_authenticated/erinnerungen'
 import { Route as AuthenticatedNotenRouteImport } from './routes/_authenticated/noten'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/sync'
@@ -117,6 +118,12 @@ const AuthenticatedNotenRoute = AuthenticatedNotenRouteImport.update({
   path: '/noten',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfilRoute = AuthenticatedProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
@@ -239,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/erinnerungen': typeof AuthenticatedErinnerungenRoute
   '/noten': typeof AuthenticatedNotenRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/sync': typeof AuthenticatedSyncRoute
@@ -274,6 +282,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/erinnerungen': typeof AuthenticatedErinnerungenRoute
   '/noten': typeof AuthenticatedNotenRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/sync': typeof AuthenticatedSyncRoute
   '/api/email-test': typeof ApiEmailTestRoute
@@ -309,6 +318,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/erinnerungen': typeof AuthenticatedErinnerungenRoute
   '/_authenticated/noten': typeof AuthenticatedNotenRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
   '/_authenticated/sync': typeof AuthenticatedSyncRoute
@@ -346,6 +356,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/erinnerungen'
     | '/noten'
+    | '/notifications'
     | '/profil'
     | '/reports'
     | '/sync'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/erinnerungen'
     | '/noten'
+    | '/notifications'
     | '/profil'
     | '/sync'
     | '/api/email-test'
@@ -415,6 +427,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/erinnerungen'
     | '/_authenticated/noten'
+    | '/_authenticated/notifications'
     | '/_authenticated/profil'
     | '/_authenticated/reports'
     | '/_authenticated/sync'
@@ -552,6 +565,13 @@ declare module '@tanstack/react-router' {
       path: '/noten'
       fullPath: '/noten'
       preLoaderRoute: typeof AuthenticatedNotenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profil': {
@@ -734,6 +754,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedErinnerungenRoute: typeof AuthenticatedErinnerungenRoute
   AuthenticatedNotenRoute: typeof AuthenticatedNotenRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
   AuthenticatedSyncRoute: typeof AuthenticatedSyncRoute
@@ -752,6 +773,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedErinnerungenRoute: AuthenticatedErinnerungenRoute,
   AuthenticatedNotenRoute: AuthenticatedNotenRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
   AuthenticatedSyncRoute: AuthenticatedSyncRoute,
