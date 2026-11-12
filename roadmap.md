@@ -62,3 +62,4 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 
 - [x] Baustein 4C: Service-Worker-Push, Geräteanmeldung, /notifications, Profil-Karte, Leitungs-Status
 - [ ] 4C Abnahme auf echtem Gerät (Test-Push, Klick-Ziel) – braucht veröffentlichte App und ein Handy
+- [x] Baustein 4D: automatische Erinnerungen (Regeln, Zeitplan alle 15 Min., Ersatzweg, Admin-Block, Badge „Automatisch“)

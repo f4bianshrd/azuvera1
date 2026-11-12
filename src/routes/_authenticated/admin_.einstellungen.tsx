@@ -12,6 +12,7 @@ import { EmptyState, PageHeader } from "@/components/shared";
 import { useMyProfile } from "@/features/app/session";
 import { deputySelfService, saveDeputySetting, hostingLocation, saveHostingLocation } from "@/features/deputies/api";
 import { NotificationStatusBlock } from "@/features/notifications/notification-status-block";
+import { ReminderRulesBlock } from "@/features/reminders/reminder-rules-block";
 import { getAdminAiSettings, saveAdminAiSettings } from "@/features/ai/api";
 
 const TITLE = "Einstellungen – Azuvera";
@@ -120,6 +121,7 @@ function EinstellungenPage() {
         </div>
         <Button className="mt-4 h-11" onClick={() => void saveAi()} disabled={busy}>KI-Einstellungen speichern</Button>
       </section>
+      <ReminderRulesBlock />
       <NotificationStatusBlock />
     </div>
   );
