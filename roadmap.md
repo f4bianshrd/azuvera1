@@ -79,5 +79,6 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
   - [ ] Plan-Editor und JSON-Import unter /stammdaten/ausbildungsplaene, Spalte in Benutzertabelle, Navigation
   - [ ] Abnahme 1–7
 - [ ] Azubis legen Ausbildungsberuf, Ausbildungsbetrieb und Lehrjahr im Profil selbst fest
+- [ ] Azubis erstellen Verknüpfungscodes für Prüfer:innen (nur lesen), Ausbilder/Betriebsleitung (einsehen, freigeben, zurückweisen, Rückmeldung), Ausbildungsberatung (lesen, Rückmeldung); Teilen per gestaltetem QR-Code und Scannen in der App
 - [ ] Daten-Prompt A2a: Landwirt/in
 - [ ] Daten-Prompt A2b: Landwirt/in (neue Fassung)
