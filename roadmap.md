@@ -1,5 +1,11 @@
 # Azuvera – Roadmap
 
+## Baustein 4B – Benachrichtigungsversand
+- [ ] Tabellen, Einstellungen, Geräteschutz und Zustell-Warteschlange
+- [ ] Geschützte Push-/SMTP-Testfunktionen und Versand
+- [ ] Zeitplan, Bereinigung und Regel-/Berechtigungsprüfungen
+- [ ] Echter Push und E-Mail: wartet auf die abgelehnten Zugangsdaten und ein echtes Gerät
+
 ## Baustein 4A – App-Fähigkeit und Offline
 - [x] PWA: Manifest, Icons, Service Worker (injectManifest), Update-Hinweis, Vorschau-Schutz
 - [x] Lokaler Speicher je Konto (Dexie) und outbox mit Zusammenfassung
