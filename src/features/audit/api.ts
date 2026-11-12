@@ -85,9 +85,10 @@ export async function listAuditForCsv(f: AuditFilters): Promise<AuditEntry[]> {
   const all: AuditEntry[] = [];
   let before: number | null = null;
   while (all.length < CSV_LIMIT) {
-    const page = await listAudit(f, before, Math.min(1000, CSV_LIMIT - all.length));
+    const size = Math.min(1000, CSV_LIMIT - all.length);
+    const page = await listAudit(f, before, size);
     all.push(...page);
-    if (page.length < Math.min(1000, CSV_LIMIT - all.length + page.length)) break;
+    if (page.length < size) break;
     before = page[page.length - 1]!.id;
   }
   return all;
