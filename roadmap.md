@@ -70,13 +70,14 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [x] Baustein 5C: Meine Daten (Export, Löschanträge, Konto löschen/schließen)
 - [x] Baustein 5D: Datenschutzerklärung (14 Abschnitte, Anbieter-Einstellungen, festes Stand-Datum), Startseiten-Block, HTTPS-Prüfung
 - [ ] Daten-Prompt A1: Ausbildungsplan
-  - [ ] Datenbank: Pläne, Abschnitte, Gruppen, Punkte, Zuordnung, Fortschritt, Themen, Berichtsverknüpfungen, Berufe
-  - [ ] Funktionen: resolve_plan, list_selectable_plans, set_azubi_plan, admin_save_plan, Status, Duplizieren, JSON-Export
+  - [x] Datenbank: Pläne, Abschnitte, Gruppen, Punkte, Zuordnung, Fortschritt, Themen, Berichtsverknüpfungen, Berufe
+  - [x] Funktionen: resolve_plan, list_selectable_plans, set_azubi_plan, admin_save_plan, Status, Duplizieren, JSON-Export
   - [ ] Offline-Speicher und Sync für Fortschritt und Verknüpfungen
   - [ ] Seite /ausbildungsplan (Kennzahlen, 7 Tabs, Drill-Down, Filter, gespeicherte Einstellungen)
   - [ ] Export PDF (4 Vorlagen, Branding) und ODT
   - [ ] Berichtseditor „Ausbildungsinhalte“, Chips in Detail/Prüfung, Abschnitt im Berichts-PDF
   - [ ] Plan-Editor und JSON-Import unter /stammdaten/ausbildungsplaene, Spalte in Benutzertabelle, Navigation
   - [ ] Abnahme 1–7
+- [ ] Azubis legen Ausbildungsberuf, Ausbildungsbetrieb und Lehrjahr im Profil selbst fest
 - [ ] Daten-Prompt A2a: Landwirt/in
 - [ ] Daten-Prompt A2b: Landwirt/in (neue Fassung)
