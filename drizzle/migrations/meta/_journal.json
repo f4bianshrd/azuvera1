@@ -162,6 +162,13 @@
       "when": 1794512249700,
       "tag": "0022_fix_audit_edit_fields_array",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794514203381,
+      "tag": "0023_baustein_5c_my_data_deletion",
+      "breakpoints": true
     }
   ]
 }

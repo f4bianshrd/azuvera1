@@ -333,6 +333,54 @@ export type Database = {
           },
         ]
       }
+      deletion_requests: {
+        Row: {
+          created_at: string
+          handled_at: string | null
+          handled_by: string | null
+          handled_note: string | null
+          id: string
+          note: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          handled_at?: string | null
+          handled_by?: string | null
+          handled_note?: string | null
+          id?: string
+          note?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          handled_at?: string | null
+          handled_by?: string | null
+          handled_note?: string | null
+          id?: string
+          note?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deletion_requests_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deletion_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       delivery_queue: {
         Row: {
           attempts: number
@@ -594,7 +642,15 @@ export type Database = {
           type?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       professions: {
         Row: {
@@ -1266,9 +1322,19 @@ export type Database = {
         Args: { _azubi: string; _from_date: string; _to_date: string }
         Returns: string[]
       }
+      account_removal_active: { Args: never; Returns: boolean }
+      account_removal_paths: { Args: { p_user: string }; Returns: string[] }
       acting_principal: {
         Args: { _azubi: string; _reviewer: string }
         Returns: string
+      }
+      admin_anonymize_user: {
+        Args: { p_actor?: string; p_user: string }
+        Returns: undefined
+      }
+      admin_delete_azubi_data: {
+        Args: { p_actor?: string; p_user: string }
+        Returns: undefined
       }
       admin_list_users: {
         Args: never
@@ -1419,6 +1485,7 @@ export type Database = {
           training_start: string
         }[]
       }
+      export_my_data: { Args: never; Returns: Json }
       finish_delivery: {
         Args: { p_error: string; p_id: number; p_ok: boolean; p_skip: boolean }
         Returns: undefined
@@ -1473,6 +1540,7 @@ export type Database = {
         Args: { _field: string; _report_id: string }
         Returns: undefined
       }
+      log_data_export: { Args: never; Returns: undefined }
       log_export: {
         Args: {
           p_azubi: string
@@ -1514,6 +1582,10 @@ export type Database = {
         }
         Returns: string
       }
+      reject_account_deletion: {
+        Args: { p_id: string; p_note: string }
+        Returns: undefined
+      }
       reject_report: {
         Args: { _expected_version: number; _note: string; _report_id: string }
         Returns: undefined
@@ -1530,6 +1602,7 @@ export type Database = {
       report_canonical: { Args: { _report_id: string }; Returns: string }
       report_hash: { Args: { _report_id: string }; Returns: string }
       report_title: { Args: { _report_id: string }; Returns: string }
+      request_account_deletion: { Args: { p_note: string }; Returns: string }
       review_absence: {
         Args: {
           _absence_id: string
@@ -1633,6 +1706,7 @@ export type Database = {
         Args: { rules: Json; week_end: string }
         Returns: string
       }
+      withdraw_account_deletion: { Args: { p_id: string }; Returns: undefined }
       write_audit: {
         Args: {
           _action: string
