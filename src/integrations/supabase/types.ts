@@ -773,6 +773,38 @@ export type Database = {
           },
         ]
       }
+      reminder_log: {
+        Row: {
+          created_at: string
+          id: string
+          period_key: string
+          rule: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          period_key: string
+          rule: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          period_key?: string
+          rule?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminder_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_attachments: {
         Row: {
           azubi_id: string
@@ -1332,6 +1364,7 @@ export type Database = {
         Returns: string
       }
       default_notification_groups: { Args: never; Returns: Json }
+      default_reminder_rules: { Args: never; Returns: Json }
       delivery_health: {
         Args: never
         Returns: {
@@ -1369,6 +1402,7 @@ export type Database = {
         Args: { p_error: string; p_id: number; p_ok: boolean; p_skip: boolean }
         Returns: undefined
       }
+      generate_reminders: { Args: { p_now?: string }; Returns: number }
       get_my_notification_prefs: {
         Args: never
         Returns: {
@@ -1380,6 +1414,7 @@ export type Database = {
           quiet_to: string
         }[]
       }
+      get_reminder_rules: { Args: never; Returns: Json }
       grant_consent: {
         Args: {
           _kind: Database["public"]["Enums"]["consent_kind"]
@@ -1404,6 +1439,7 @@ export type Database = {
       }
       is_leitung: { Args: { _user_id: string }; Returns: boolean }
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
+      kw_list: { Args: { weeks: string[] }; Returns: string }
       list_possible_deputies: {
         Args: never
         Returns: {
@@ -1498,6 +1534,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_reminder_rules: { Args: { p_rules: Json }; Returns: undefined }
       send_report_reminder: {
         Args: { azubi_id: string; message: string; period_label: string }
         Returns: string
@@ -1540,6 +1577,10 @@ export type Database = {
           to_review: number
           week_status: string
         }[]
+      }
+      week_deadline_at: {
+        Args: { rules: Json; week_end: string }
+        Returns: string
       }
       write_audit: {
         Args: {

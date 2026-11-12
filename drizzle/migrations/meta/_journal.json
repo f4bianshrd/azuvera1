@@ -134,6 +134,13 @@
       "when": 1794506506368,
       "tag": "0018_baustein_4b_delivery_queue",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794510484855,
+      "tag": "0019_baustein_4d_reminders",
+      "breakpoints": true
     }
   ]
 }
