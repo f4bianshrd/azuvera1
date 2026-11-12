@@ -13,6 +13,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { ROLE_LABELS, useMyProfile, type MyProfile } from "@/features/app/session";
 import { useCompanies, useProfessions } from "@/features/app/queries";
 import { defaultPeriodForYear } from "@/lib/training-year";
+import { NotificationSettingsCard } from "@/features/notifications/notification-settings";
 import { ConsentSettings } from "@/features/consents/consent-settings";
 import { SavedSignatureCard } from "@/features/review/saved-signature-card";
 import { format } from "date-fns";
@@ -315,6 +316,8 @@ function ProfilPage() {
           <Field id="ausbildungsende" label="Ausbildungsende" type="date" value={form.ausbildungsende ?? ""} onChange={set("ausbildungsende")} />
         </div>
       </Card>
+
+      <NotificationSettingsCard email={profile.email} role={profile.role} />
 
       <SavedSignatureCard />
 
