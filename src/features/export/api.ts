@@ -100,7 +100,7 @@ export async function loadBundle(report: ExportReport, opts: { embedImages: bool
   }
   return {
     report, attachments, signatures, names, signatureImages, attachmentPng, attachmentFiles,
-    approvalNote: (com.data?.[0] as { body?: string } | undefined)?.body ?? report.review_note ?? null,
+    approvalNote: (com.data?.[0] as { body?: string } | undefined)?.body ?? (report.status === "approved" ? report.review_note : null) ?? null,
     verify: ver.data?.[0] ?? null,
   };
 }
