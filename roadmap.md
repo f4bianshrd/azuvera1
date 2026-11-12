@@ -69,16 +69,16 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [ ] 5B „Mehr laden“ erst ab 100 Einträgen im Browser prüfbar (derzeit 54)
 - [x] Baustein 5C: Meine Daten (Export, Löschanträge, Konto löschen/schließen)
 - [x] Baustein 5D: Datenschutzerklärung (14 Abschnitte, Anbieter-Einstellungen, festes Stand-Datum), Startseiten-Block, HTTPS-Prüfung
-- [ ] Daten-Prompt A1: Ausbildungsplan
+- [x] Daten-Prompt A1: Ausbildungsplan
   - [x] Datenbank: Pläne, Abschnitte, Gruppen, Punkte, Zuordnung, Fortschritt, Themen, Berichtsverknüpfungen, Berufe
   - [x] Funktionen: resolve_plan, list_selectable_plans, set_azubi_plan, admin_save_plan, Status, Duplizieren, JSON-Export
-  - [ ] Offline-Speicher und Sync für Fortschritt und Verknüpfungen
-  - [ ] Seite /ausbildungsplan (Kennzahlen, 7 Tabs, Drill-Down, Filter, gespeicherte Einstellungen)
-  - [ ] Export PDF (4 Vorlagen, Branding) und ODT
-  - [ ] Berichtseditor „Ausbildungsinhalte“, Chips in Detail/Prüfung, Abschnitt im Berichts-PDF
-  - [ ] Plan-Editor und JSON-Import unter /stammdaten/ausbildungsplaene, Spalte in Benutzertabelle, Navigation
-  - [ ] Abnahme 1–7
-- [ ] Azubis legen Ausbildungsberuf, Ausbildungsbetrieb und Lehrjahr im Profil selbst fest
+  - [x] Offline-Speicher und Sync für Fortschritt und Verknüpfungen
+  - [x] Seite /ausbildungsplan (Kennzahlen, 7 Tabs, Drill-Down, Filter, gespeicherte Einstellungen)
+  - [x] Export PDF (4 Vorlagen, Branding) und ODT
+  - [x] Berichtseditor „Ausbildungsinhalte“, Chips in Detail/Prüfung, Abschnitt im Berichts-PDF
+  - [x] Plan-Editor und JSON-Import unter /stammdaten/ausbildungsplaene, Spalte in Benutzertabelle, Navigation
+  - [x] Abnahme 1–7
+- [x] Azubis legen Ausbildungsberuf, Ausbildungsbetrieb und Lehrjahr im Profil selbst fest
 - [ ] Azubis erstellen Verknüpfungscodes für Prüfer:innen (nur lesen), Ausbilder/Betriebsleitung (einsehen, freigeben, zurückweisen, Rückmeldung), Ausbildungsberatung (lesen, Rückmeldung); Teilen per gestaltetem QR-Code und Scannen in der App
 - [ ] Prüfungsmappe als PDF: Ausbilder:innen stellen Prüfungen und Berichte einer Person in einem Dokument zusammen
 - [ ] Prüfen, ob automatische Erinnerungen per Push auf dem Handy ankommen; Push-Ruhezeiten korrigieren
