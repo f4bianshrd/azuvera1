@@ -14,7 +14,7 @@ export async function sendPush(
   const e = process.env;
   const vapid = { subject: e["VAPID_SUBJECT"]!, publicKey: e["VAPID_PUBLIC_KEY"]!, privateKey: e["VAPID_PRIVATE_KEY"]! };
   const req = await buildPushPayload(
-    { data: JSON.stringify(payload), options: { ttl, urgency: "normal", topic: undefined } },
+    { data: JSON.stringify(payload), options: { ttl, urgency: "normal" } },
     { endpoint: sub.endpoint, expirationTime: null, keys: { p256dh: sub.p256dh, auth: sub.auth } },
     vapid,
   );
