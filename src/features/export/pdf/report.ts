@@ -219,6 +219,6 @@ function renderProtocol(doc: Doc, b: ReportBundle, beleg: string, wm: string | n
 }
 
 export function integrityOk(b: ReportBundle): boolean | null {
-  if (!b.verify || b.verify.hash_ok === null) return null;
+  if (!b.verify || b.verify.hash_ok === null || (b.report.status !== "approved" && b.report.status !== "submitted")) return null;
   return b.verify.hash_ok === true && b.verify.signatures_ok === true;
 }
