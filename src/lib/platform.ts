@@ -176,6 +176,38 @@ export async function copyText(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
 }
 
+/** Teilen-Menü des Geräts; liefert false, wenn es keins gibt (dann kopiert der Aufrufer). */
+export async function shareContent(data: { title?: string; text?: string; url?: string; files?: File[] }): Promise<boolean> {
+  if (typeof navigator === "undefined" || typeof navigator.share !== "function") return false;
+  const payload: ShareData = { ...data };
+  if (data.files?.length && !(navigator.canShare?.({ files: data.files }) ?? false)) delete payload.files;
+  try {
+    await navigator.share(payload);
+    return true;
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "AbortError") return true;
+    return false;
+  }
+}
+
+// ---------- Kamera (QR-Scanner) ----------
+export function cameraSupported(): boolean {
+  return typeof navigator !== "undefined" && !!navigator.mediaDevices?.getUserMedia;
+}
+/** Rückkamera öffnen; wirft DOMException (NotAllowedError, NotFoundError …). */
+export async function openCamera(): Promise<MediaStream> {
+  return navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } } });
+}
+export function stopCamera(stream: MediaStream | null): void {
+  stream?.getTracks().forEach((t) => t.stop());
+}
+/** Öffentliche Adresse der App für Links in QR-Codes (in Capacitor gibt es keinen http-Origin). */
+export function publicAppOrigin(): string {
+  if (typeof window === "undefined") return "https://get.azuvera.de";
+  const o = window.location.origin;
+  return /^https?:/.test(o) ? o : "https://get.azuvera.de";
+}
+
 // ---------- Speicher ----------
 export async function requestPersistentStorage(): Promise<boolean> {
   try {
