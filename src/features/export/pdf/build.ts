@@ -5,6 +5,7 @@ import type { ExportHeader, ExportReport, ReportBundle } from "../types";
 import { A4, C, CONTENT_BOTTOM, Doc, MARGIN } from "./doc";
 import { METHOD_DE, STATUS_DE, belegNr, integrityOk, renderReport, reportPdfTitle, reportPeriodLabel } from "./report";
 import { berlinDateTime, dateDe, safeFileName, safeFileNameWithExt } from "./text";
+import { buildInstructionPdf, instructionCsv, renderInstructions, type InstructionPdfInput } from "./instructions";
 
 export class ExportCancelled extends Error { constructor() { super("cancelled"); } }
 
@@ -44,7 +45,7 @@ export function exportBaseName(header: ExportHeader, periodLabel: string): strin
 const SAMMEL = { beleg: "Sammelexport" };
 
 /** Sammel-PDF: Deckblatt, Verzeichnis, Berichte, Sammelprotokoll. */
-async function buildBulkPart(reports: ExportReport[], header: ExportHeader, period: string, o: BuildOptions, part: { i: number; n: number }, progress: { done: number; total: number }): Promise<Uint8Array> {
+async function buildBulkPart(reports: ExportReport[], header: ExportHeader, period: string, o: BuildOptions, part: { i: number; n: number }, progress: { done: number; total: number }, instr?: InstructionPdfInput | null): Promise<Uint8Array> {
   const doc = await Doc.create(await logo(), "Berichtsheft");
   const W = A4.w - 2 * MARGIN;
   // Deckblatt
@@ -70,7 +71,7 @@ async function buildBulkPart(reports: ExportReport[], header: ExportHeader, peri
 
   // Verzeichnis – Seiten reservieren, Seitenzahlen danach eintragen
   const perPage = 32;
-  const tocPages = Math.max(1, Math.ceil(reports.length / perPage));
+  const tocPages = Math.max(1, Math.ceil((reports.length + (instr ? 1 : 0)) / perPage));
   const tocStart = doc.pages.length;
   for (let i = 0; i < tocPages; i++) doc.newPage(SAMMEL);
 
@@ -89,6 +90,9 @@ async function buildBulkPart(reports: ExportReport[], header: ExportHeader, peri
     if ((i + 1) % 5 === 0) await pause();
   }
 
+  // Unterweisungsnachweise (nach den Berichten, vor dem Sammel-Signaturprotokoll)
+  const instrPage = instr ? renderInstructions(doc, instr, { full: false, meta: SAMMEL }) : null;
+
   // Verzeichnis füllen
   for (let p = 0; p < tocPages; p++) {
     doc.page = doc.pages[tocStart + p]!.page;
@@ -106,6 +110,12 @@ async function buildBulkPart(reports: ExportReport[], header: ExportHeader, peri
       doc.text(reportPdfTitle(b), cols[1]!, doc.y, 9.5, doc.f.reg, C.text, 175);
       doc.text(STATUS_DE[b.report.status] ?? "", cols[2]!, doc.y, 9.5);
       doc.textRight(String(startPages[i]), cols[3]!, doc.y, 9.5, doc.f.bold);
+      doc.page.drawLine({ start: { x: MARGIN, y: doc.y - 5 }, end: { x: A4.w - MARGIN, y: doc.y - 5 }, thickness: 0.3, color: C.line });
+    }
+    if (instrPage && p === tocPages - 1) {
+      doc.y -= 18;
+      doc.text("Unterweisungsnachweise", cols[0]!, doc.y, 9.5, doc.f.bold);
+      doc.textRight(String(instrPage), cols[3]!, doc.y, 9.5, doc.f.bold);
       doc.page.drawLine({ start: { x: MARGIN, y: doc.y - 5 }, end: { x: A4.w - MARGIN, y: doc.y - 5 }, thickness: 0.3, color: C.line });
     }
   }
@@ -147,17 +157,17 @@ async function buildBulkPart(reports: ExportReport[], header: ExportHeader, peri
 }
 
 /** Sammel-PDF; über 100 Berichte → mehrere Teile im ZIP. */
-export async function buildBulk(reports: ExportReport[], header: ExportHeader, period: string, base: string, o: BuildOptions): Promise<{ blob: Blob; filename: string }> {
+export async function buildBulk(reports: ExportReport[], header: ExportHeader, period: string, base: string, o: BuildOptions, instr?: InstructionPdfInput | null): Promise<{ blob: Blob; filename: string }> {
   const progress = { done: 0, total: reports.length };
   const chunks: ExportReport[][] = [];
   for (let i = 0; i < reports.length; i += 100) chunks.push(reports.slice(i, i + 100));
   if (chunks.length === 1) {
-    const bytes = await buildBulkPart(reports, header, period, o, { i: 1, n: 1 }, progress);
+    const bytes = await buildBulkPart(reports, header, period, o, { i: 1, n: 1 }, progress, instr);
     return { blob: new Blob([bytes as BlobPart], { type: "application/pdf" }), filename: `${base}.pdf` };
   }
   const files: Record<string, Uint8Array> = {};
   for (let i = 0; i < chunks.length; i++) {
-    files[`${base}_Teil${i + 1}von${chunks.length}.pdf`] = await buildBulkPart(chunks[i]!, header, period, o, { i: i + 1, n: chunks.length }, progress);
+    files[`${base}_Teil${i + 1}von${chunks.length}.pdf`] = await buildBulkPart(chunks[i]!, header, period, o, { i: i + 1, n: chunks.length }, progress, i === chunks.length - 1 ? instr : null);
     await pause();
   }
   return { blob: new Blob([zipSync(files, { level: 0 }) as BlobPart], { type: "application/zip" }), filename: `${base}.zip` };
@@ -170,7 +180,7 @@ async function sha256(bytes: Uint8Array): Promise<string> {
 const csv = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
 
 /** ZIP mit Einzel-PDFs, Anlagen, Signaturprotokoll, Prüfsummen und LIESMICH. */
-export async function buildZip(reports: ExportReport[], header: ExportHeader, period: string, base: string, o: BuildOptions): Promise<{ blob: Blob; filename: string }> {
+export async function buildZip(reports: ExportReport[], header: ExportHeader, period: string, base: string, o: BuildOptions, instr?: InstructionPdfInput | null): Promise<{ blob: Blob; filename: string }> {
   const files: Record<string, Uint8Array> = {};
   const rows = ["report_id,bericht,rolle,name,zeitpunkt,methode,version,sha256"];
   const used = new Set<string>();
@@ -187,12 +197,17 @@ export async function buildZip(reports: ExportReport[], header: ExportHeader, pe
     if ((i + 1) % 5 === 0) await pause();
   }
   files["signaturprotokoll.csv"] = strToU8(`\uFEFF${rows.join("\r\n")}\r\n`);
+  if (instr) {
+    files["unterweisungen/Unterweisungsnachweis.pdf"] = await buildInstructionPdf({ ...instr, topics: null });
+    files["unterweisungen/unterweisungen.csv"] = strToU8(instructionCsv(instr.records));
+  }
   const now = berlinDateTime(new Date());
   files["LIESMICH.txt"] = strToU8([
     "Azuvera – Berichtsheft (Export)", "",
     `Auszubildende(r): ${header.azubi_name ?? "–"}`, `Zeitraum: ${period}`, `Erstellt: ${now}`, "",
     "Inhalt:", "  berichte/            – je Bericht ein PDF mit Nachweis der elektronischen Bestätigung",
     "  anlagen/             – Original-Anhänge der Berichte", "  signaturprotokoll.csv – alle Unterschriften mit Prüfsumme",
+    ...(instr ? ["  unterweisungen/      – Unterweisungsnachweis (PDF) und unterweisungen.csv"] : []),
     "  pruefsummen.txt      – SHA-256 jeder Datei in diesem Archiv", "",
     "Hinweis: Einfache elektronische Bestätigung mit Zeitstempel und Prüfsumme – keine qualifizierte elektronische Signatur.",
     "Zeitpunkte sind Serverzeiten (Europe/Berlin).", "",

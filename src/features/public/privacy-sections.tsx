@@ -34,7 +34,7 @@ export function privacySections(texts: PrivacyTexts = PRIVACY_TEXT_DEFAULTS): Pr
       id: "erhebung", title: "Erhebung und Verarbeitung von Daten", icon: Database,
       content: (<>
         <p>Bei der Nutzung von Azuvera werden personenbezogene Daten erhoben, die für den Betrieb des digitalen Berichtshefts erforderlich sind. Dazu gehören:</p>
-        <List items={["Name und E-Mail-Adresse (zur Authentifizierung)", "Ausbildungsberuf, Ausbildungsjahr und Ausbildungsbeginn", "Berichte, Abwesenheiten und Schulnoten", "Fotos und PDF-Dateien, die an Berichte angehängt werden", "Kommentare und Freigabeinformationen", "Elektronische Unterschriften (beim Einreichen und bei der Freigabe)", "Einstellungen für Benachrichtigungen und technische Gerätekennungen für Push-Mitteilungen"]} />
+        <List items={["Name und E-Mail-Adresse (zur Authentifizierung)", "Ausbildungsberuf, Ausbildungsjahr und Ausbildungsbeginn", "Berichte, Abwesenheiten und Schulnoten", "Fotos und PDF-Dateien, die an Berichte angehängt werden", "Kommentare und Freigabeinformationen", "Unterweisungsnachweise (Thema, Datum, Dauer, unterweisende Person, Notiz)", "Elektronische Unterschriften (beim Einreichen und bei der Freigabe)", "Einstellungen für Benachrichtigungen und technische Gerätekennungen für Push-Mitteilungen"]} />
         <p>Die Daten werden ausschließlich für die Verwaltung und Dokumentation der Ausbildung verwendet.</p>
       </>),
     },

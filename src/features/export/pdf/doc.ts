@@ -16,7 +16,7 @@ export const C = {
   watermark: rgb(0.9, 0.91, 0.93),
 };
 
-export interface PageMeta { beleg: string }
+export interface PageMeta { beleg: string; /** Dokumentart rechts im Briefkopf (Standard: AUSBILDUNGSNACHWEIS). */ kind?: string }
 
 /** Ein PDF-Dokument mit Schriften, Logo und Seitenverwaltung (Briefkopf beim Anlegen, Fuß beim Abschluss). */
 export class Doc {
@@ -53,7 +53,7 @@ export class Doc {
     page.drawImage(this.logo, { x: MARGIN, y: top - 46, width: 46, height: 46 });
     page.drawText("AZUVERA", { x: MARGIN + 56, y: top - 22, size: 17, font: this.f.bold, color: C.brandDark });
     page.drawText("Digitales Berichtsheft · Ausbildungsnachweis", { x: MARGIN + 56, y: top - 36, size: 8.5, font: this.f.reg, color: C.muted });
-    this.textRight("AUSBILDUNGSNACHWEIS", A4.w - MARGIN, top - 16, 9, this.f.bold, C.text);
+    this.textRight(meta.kind ?? "AUSBILDUNGSNACHWEIS", A4.w - MARGIN, top - 16, 9, this.f.bold, C.text);
     this.textRight(meta.beleg, A4.w - MARGIN, top - 30, 8.5, this.f.reg, C.muted);
     page.drawRectangle({ x: MARGIN, y: top - 58, width: A4.w - 2 * MARGIN, height: 2.2, color: C.brand });
     page.drawLine({ start: { x: MARGIN, y: top - 62 }, end: { x: A4.w - MARGIN, y: top - 62 }, thickness: 0.5, color: C.line });

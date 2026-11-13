@@ -1,5 +1,5 @@
 /** Fester Stand der Datenschutzerklärung (bei inhaltlichen Änderungen anpassen). */
-export const PRIVACY_UPDATED_AT = "12. November 2026";
+export const PRIVACY_UPDATED_AT = "13. November 2026";
 
 /** Startwerte, falls die öffentlichen Einstellungen nicht geladen werden können. */
 export const PRIVACY_TEXT_DEFAULTS = {

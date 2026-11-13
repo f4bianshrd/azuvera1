@@ -3,7 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, isAfter } from "date-fns";
 import { toast } from "sonner";
-import { ArrowRight, CalendarDays, CalendarOff, FilePlus2, GraduationCap } from "lucide-react";
+import { ArrowRight, CalendarDays, CalendarOff, ClipboardCheck, FilePlus2, GraduationCap } from "lucide-react";
+import { useInstructionSummary } from "@/features/instructions/components/summary";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -107,6 +108,7 @@ function Dashboard() {
     if (!done && !profile.profession_id) setOnboardingOpen(true);
   }, [profile]);
 
+  const { data: instr } = useInstructionSummary(isAzubi ? profile?.id : null);
   if (!profile) return <CardSkeleton />;
   if (!isAzubi) return <StaffDashboard profile={profile} />;
 
@@ -155,6 +157,16 @@ function Dashboard() {
       color: "border-border bg-muted/40",
       text: `Wochenbericht KW ${thisWeek.weekNumber}/${thisWeek.year} noch nicht angelegt`,
       link: { to: "/reports/new", label: "Anlegen" },
+    });
+  }
+
+  const dueInstructions = (instr?.dueSoon ?? 0) + (instr?.overdue ?? 0);
+  if (dueInstructions > 0) {
+    tasks.push({
+      key: "instructions",
+      color: "border-warning/50 bg-warning/10",
+      text: `${dueInstructions} Unterweisung(en) fällig oder bald fällig`,
+      link: { to: "/unterweisungen", label: "Öffnen" },
     });
   }
 
@@ -277,6 +289,7 @@ function Dashboard() {
           <QuickLink to="/reports/new" icon={FilePlus2} title="Neuer Bericht" hint="Tages- oder Wochenbericht erfassen" />
           <QuickLink to="/abwesenheiten" icon={CalendarOff} title="Abwesenheiten" hint="Urlaub, Krankheit und Berufsschule" />
           <QuickLink to="/noten" icon={GraduationCap} title="Schulnoten" hint="Bewertungen und Durchschnitte" />
+          <QuickLink to="/unterweisungen" icon={ClipboardCheck} title="Unterweisungen" hint="Fristen und Nachweise im Blick" />
         </ul>
         <p className="mt-3 text-xs text-muted-foreground">Der Ausbildungsplan erscheint hier mit einem späteren Baustein.</p>
       </section>

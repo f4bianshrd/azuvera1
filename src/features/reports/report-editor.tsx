@@ -1,4 +1,5 @@
 import { ReportLinksBlock } from "@/features/plan/components/report-links";
+import { ReportInstructionChips } from "@/features/instructions/components/report-chips";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -335,6 +336,7 @@ export function ReportEditor({
             onChange={(v) => set(s.key, v)}
           />
           {interim[s.key] && <p className="text-sm italic text-muted-foreground">{interim[s.key]}</p>}
+          {s.key === "instructions" && <ReportInstructionChips azubiId={azubiId} reportType={state.reportType} reportDate={state.reportDate} editable />}
           <p className="text-right text-xs text-muted-foreground tabular-nums">
             {state[s.key].length.toLocaleString("de-DE")} / 20.000
           </p>

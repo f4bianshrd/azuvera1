@@ -9,6 +9,7 @@ import { openUserDb, currentDb, currentUserId, type AzuveraDB, type OutboxEntry,
 import { classifyError, coalesce, friendlyError, mayUseNetworkFor, readyHeads, backoffDelayMs, type ErrorKind } from "./rules";
 import { getSyncStatus, setSyncStatus } from "./status";
 import { PlanSyncError, executePlanOp, pullPlanData } from "./plan-sync";
+import { executeInstructionOp, pullInstructionData } from "./instruction-sync";
 
 export const PREF_WIFI_ONLY = "azuvera-sync-wifi-only";
 export const PREF_PHOTOS_WIFI = "azuvera-sync-photos-wifi";
@@ -17,7 +18,7 @@ const OVERLAP_MS = 5 * 60_000;
 const RECONCILE_MS = 10 * 60_000;
 const FILE_CACHE_LIMIT = 50 * 1024 * 1024;
 const LOG_LIMIT = 200;
-const LOCAL_QUERY_KEYS = ["reports", "absences", "absent-days", "grades", "review", "my-profile", "plan", "report-links"];
+const LOCAL_QUERY_KEYS = ["reports", "absences", "absent-days", "grades", "review", "my-profile", "plan", "report-links", "instructions"];
 
 class SyncError extends Error {
   constructor(public kind: ErrorKind, message: string) { super(message); }
@@ -237,7 +238,7 @@ async function runEntry(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<
 
 function tableFor(record: string) {
   const [kind] = record.split(":");
-  return ({ report: "reports", attachment: "report_attachments", absence: "absences", grade: "school_grades", comment: "report_comments" } as const)[kind as "report"];
+  return ({ report: "reports", attachment: "report_attachments", absence: "absences", grade: "school_grades", comment: "report_comments", instruction: "instruction_records" } as const)[kind as "report"];
 }
 
 async function setRecordSync(db: AzuveraDB, record: string, state: "failed" | "conflict" | "pending", error?: string): Promise<void> {
@@ -267,6 +268,7 @@ const REPORT_CONTENT = ["weekly_mode", "report_date", "activities", "school_cont
 async function execute(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<void> {
   const id = String(e.payload.id ?? "");
   if (await executePlanOp(db, userId, e)) return;
+  if (await executeInstructionOp(db, userId, e)) return;
   switch (e.op) {
     case "report.upsert": {
       const row = await db.reports.get(id);
@@ -472,6 +474,7 @@ async function pull(db: AzuveraDB, userId: string): Promise<void> {
     }
   }
   await pullPlanData(db, userId);
+  await pullInstructionData(db, userId);
 }
 
 /** ID-Listen abgleichen: lokal entfernen, was auf dem Server nicht mehr existiert (sofern nichts wartet). */
