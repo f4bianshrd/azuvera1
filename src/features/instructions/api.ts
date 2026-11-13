@@ -178,7 +178,7 @@ export async function listPendingInstructions(): Promise<PendingInstruction[]> {
 export async function canReviewFor(azubiId: string): Promise<boolean> {
   const uid = myId();
   if (!uid || uid === azubiId || !online()) return false;
-  const { data } = await supabase.rpc("can_review_for", { _user_id: uid, _azubi_id: azubiId } as never);
+  const { data } = await supabase.rpc("can_review_for", { _reviewer: uid, _azubi: azubiId });
   return data === true;
 }
 
