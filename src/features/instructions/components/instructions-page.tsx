@@ -58,10 +58,12 @@ export function InstructionsPage({ search }: { search: InstructionsSearch }) {
 
   // ?neu=1, ?thema=<id>, ?nachweis=<id> öffnen die Dialoge direkt
   useEffect(() => {
-    if (!data) return;
+    if (!data || !(search.neu || search.thema || search.nachweis)) return;
     if (data.own && (search.neu === "1" || search.thema)) setDialog({ topicId: search.thema ?? null });
     if (search.nachweis) { const r = data.records.find((x) => x.id === search.nachweis); if (r) setDetail(r); }
-  }, [data, search.neu, search.thema, search.nachweis]);
+    // Einmalig auswerten, damit Neuladen den Dialog nicht wieder öffnet
+    void navigate({ to: "/unterweisungen", search: search.azubi ? { azubi: search.azubi } : {}, replace: true });
+  }, [data, search.neu, search.thema, search.nachweis, search.azubi, navigate]);
 
   const refresh = () => { void qc.invalidateQueries({ queryKey: ["instructions"] }); };
   const readOnly = () => toast.info(READ_ONLY_TOAST);
