@@ -16,7 +16,15 @@ import {
   type Report,
   type ReportAttachment,
 } from "./api";
-import { MAX_ATTACHMENTS, processFile, sanitizeFileName } from "./attachments";
+import { MAX_ATTACHMENTS, processFile, sanitizeFileName, UserFacingError } from "./attachments";
+import { isQuotaError, QUOTA_MESSAGE } from "@/lib/sync/db";
+
+/** Nur eigene, verständliche Meldungen anzeigen – technische Fehlertexte nie. */
+function uploadErrorMessage(e: unknown): string {
+  if (isQuotaError(e)) return QUOTA_MESSAGE;
+  if (e instanceof UserFacingError) return e.message;
+  return "Die Datei konnte auf diesem Gerät nicht gespeichert werden. Bitte versuche es erneut oder starte die App neu.";
+}
 
 interface PendingUpload {
   key: string;
@@ -72,7 +80,7 @@ export function AttachmentSection({
         } catch (e) {
           console.error(e);
           setPending((p) => p.map((x) => (x.key === key ? { ...x, progress: "error" as const } : x)));
-          toast.error(e instanceof Error ? e.message : "Upload fehlgeschlagen.");
+          toast.error(uploadErrorMessage(e));
         }
       }
     },
@@ -219,6 +227,7 @@ export function AttachmentSection({
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {attachments.map((a, i) => (
             <li key={a.id} className="group relative overflow-hidden rounded-xl border bg-muted/30">
+              <div className="relative">
               <button
                 type="button"
                 className="block aspect-square w-full"
@@ -247,6 +256,7 @@ export function AttachmentSection({
                   </Button>
                 </div>
               )}
+              </div>
               {editable && (
                 <div className="p-1.5">
                   <Input
