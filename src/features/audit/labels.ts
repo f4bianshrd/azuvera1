@@ -59,6 +59,12 @@ export const ACTION_LABELS: Record<string, string> = {
   link_code_revoked: "Verknüpfungscode widerrufen",
   link_created: "Verknüpfung hergestellt",
   link_removed: "Verknüpfung entfernt",
+  instruction_submit: "Unterweisung eingereicht",
+  instruction_confirm: "Unterweisung bestätigt",
+  instruction_reject: "Unterweisung zurückgewiesen",
+  instruction_reopen: "Unterweisung wieder geöffnet",
+  pdf_export_instructions: "Unterweisungsnachweis exportiert",
+  catalog_saved: "Katalog gespeichert",
 };
 
 /** Ältere Verwaltungs-Ereignisse aus Baustein 1B (nicht im Filter, aber lesbar). */
@@ -82,6 +88,8 @@ export const ENTITY_LABELS: Record<string, string> = {
   export: "Export",
   reminder: "Erinnerung",
   account: "Konto",
+  instruction: "Unterweisung",
+  catalog: "Unterweisungskatalog",
 };
 
 export const HISTORY_FILTERS = {

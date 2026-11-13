@@ -15,6 +15,9 @@ const T: Record<string, [string, string]> = {
   review_pending: ["Berichte warten auf Prüfung", "Es warten Berichte seit längerer Zeit auf deine Prüfung."],
   daily_nudge: ["Berichtseintrag nicht vergessen", "Du hast heute noch keinen Berichtseintrag angelegt."],
   instruction_due: ["Unterweisung fällig", "Eine Unterweisung ist fällig."],
+  instruction_submitted: ["Neue Unterweisung zur Bestätigung", "Es wartet eine Unterweisung auf deine Bestätigung."],
+  instruction_confirmed: ["Unterweisung bestätigt", "Deine Unterweisung wurde bestätigt."],
+  instruction_rejected: ["Unterweisung zurückgewiesen", "Deine Unterweisung wurde zurückgewiesen. Lies die Notiz in der App."],
   deputy_assigned: ["Vertretung eingetragen", "Für dich wurde eine Vertretung eingetragen."],
   deputy_ended: ["Vertretung beendet", "Eine Vertretung wurde beendet."],
 };

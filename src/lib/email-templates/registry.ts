@@ -23,5 +23,8 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   absence_rejected: N.absence_rejected,
   deputy_assigned: N.deputy_assigned,
   deputy_ended: N.deputy_ended,
+  instruction_submitted: N.instruction_submitted,
+  instruction_confirmed: N.instruction_confirmed,
+  instruction_rejected: N.instruction_rejected,
   email_test: N.email_test,
 }
