@@ -42,7 +42,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Ausbilderportal", icon: ClipboardCheck, section: "arbeit", to: "/ausbilder", roles: TEAM_ROLES },
   { label: "Team", icon: Users, section: "arbeit", to: "/team", roles: TEAM_ROLES },
   { label: "Ausbildungsplan", icon: CalendarDays, section: "arbeit", to: "/ausbildungsplan" },
-  { label: "Unterweisungen", icon: ShieldCheck, section: "arbeit" },
+  { label: "Unterweisungen", icon: ClipboardCheck, section: "arbeit", to: "/unterweisungen" },
   { label: "Abwesenheiten", icon: CalendarOff, section: "arbeit", to: "/abwesenheiten" },
   { label: "Schulnoten", icon: GraduationCap, section: "arbeit", to: "/noten" },
   { label: "Erinnerungen", icon: Bell, section: "arbeit", to: "/erinnerungen", roles: REVIEWER_ROLES },
@@ -55,6 +55,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Betriebe", icon: Building2, section: "verwaltung", to: "/stammdaten/betriebe", roles: ["ausbildungsleitung"] },
   { label: "Berufe", icon: BookOpen, section: "verwaltung", to: "/stammdaten/berufe", roles: ["ausbildungsleitung"] },
   { label: "Ausbildungspläne", icon: ListTree, section: "verwaltung", to: "/stammdaten/ausbildungsplaene", roles: ["ausbildungsleitung"] },
+  { label: "Unterweisungs-Kataloge", icon: ShieldCheck, section: "verwaltung", to: "/stammdaten/unterweisungen", roles: ["ausbildungsleitung"] },
   { label: "Einstellungen", icon: Settings, section: "verwaltung", to: "/admin/einstellungen", roles: ["ausbildungsleitung"] },
 ];
 
@@ -105,5 +106,6 @@ export function titleForPath(pathname: string): string {
   if (pathname.startsWith("/stammdaten/ausbildungsplaene")) return "Ausbildungspläne";
   if (pathname.startsWith("/ausbildungsplan")) return "Ausbildungsplan";
   if (pathname.startsWith("/verknuepfungen")) return "Verknüpfungen";
+  if (pathname.startsWith("/stammdaten/unterweisungen")) return "Unterweisungs-Kataloge";
   return "Azuvera";
 }

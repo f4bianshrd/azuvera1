@@ -9,7 +9,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { dateDe } from "@/features/export/pdf/text";
 import type { DueState } from "../due";
 import type { InstructionData, InstructionRecord } from "../api";
-import { RECORD_STATUS_DE, STATE_FILTER, STATE_SHORT, intervalLabel, sortRecords, type TopicView } from "../model";
+import { RECORD_STATUS_DE, STATE_FILTER, intervalLabel, sortRecords, type TopicView } from "../model";
 import { DueBadge, RecordStatusBadge } from "./badges";
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
@@ -210,10 +210,6 @@ export function LegendTab() {
         <li>Themen mit ‚Je nach Betrieb‘ zählen erst, wenn du dazu einen Nachweis eingetragen hast.</li>
       </ul>
       <p className="mt-4 rounded-xl bg-muted/60 p-3 text-sm text-muted-foreground">Die Kataloge sind eine Hilfe. Welche Inhalte im Betrieb vermittelt werden, legt die Gefährdungsbeurteilung des Betriebs fest.</p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {(["valid", "due_soon", "overdue", "open", "optional"] as DueState[]).map((s) => <DueBadge key={s} status={{ state: s, due_on: null }} />)}
-      </div>
-      <p className="sr-only">{Object.values(STATE_SHORT).join(", ")}</p>
     </section>
   );
 }
