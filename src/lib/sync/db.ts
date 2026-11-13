@@ -32,6 +32,14 @@ export type LocalTopic = Row<"training_topics">;
 export type LocalReportTopic = Row<"report_topics">;
 export type LocalReportPlanItem = Row<"report_plan_items">;
 
+type InstrRow<T extends "instruction_catalogs" | "instruction_topics" | "instruction_points"> = Row<T>;
+export interface InstructionTopicNode extends InstrRow<"instruction_topics"> { points: InstrRow<"instruction_points">[] }
+/** Aufgelöster Unterweisungskatalog mit Themen und Punkten (sortiert). */
+export interface InstructionCatalogTree { catalog: InstrRow<"instruction_catalogs">; topics: InstructionTopicNode[] }
+export interface LocalInstructionCatalog { id: string; tree: InstructionCatalogTree; fetched_at: string }
+export type LocalInstructionRecord = Row<"instruction_records"> & SyncFields;
+export type LocalInstructionRecordPoint = Row<"instruction_record_points">;
+
 export interface LookupRow { key: string; value: unknown; updated_at: string }
 export interface FileRow { key: string; blob: Blob; kind: "original" | "thumb" | "signature"; synced: boolean; size: number; last_used_at: number }
 export interface LocalSignature { id: string; report_id: string; blob: Blob; created_at: string }
@@ -42,7 +50,8 @@ export type OutboxOp =
   | "absence.upsert" | "absence.delete"
   | "grade.upsert" | "grade.delete"
   | "comment.insert" | "profile.update"
-  | "progress.upsert" | "report.links";
+  | "progress.upsert" | "report.links"
+  | "instruction.upsert" | "instruction.delete";
 
 export interface OutboxPayload {
   id?: string | undefined;
@@ -89,6 +98,9 @@ export class AzuveraDB extends Dexie {
   training_topics!: Table<LocalTopic, string>;
   report_topics!: Table<LocalReportTopic, [string, string]>;
   report_plan_items!: Table<LocalReportPlanItem, [string, string]>;
+  instruction_catalogs!: Table<LocalInstructionCatalog, string>;
+  instruction_records!: Table<LocalInstructionRecord, string>;
+  instruction_record_points!: Table<LocalInstructionRecordPoint, [string, string]>;
 
   constructor(name: string) {
     super(name);
@@ -113,6 +125,12 @@ export class AzuveraDB extends Dexie {
       training_topics: "id, profession_id",
       report_topics: "[report_id+topic_id], report_id, topic_id",
       report_plan_items: "[report_id+item_id], report_id, item_id",
+    });
+    // Version 3 (Daten-Prompt B2): Unterweisungskataloge, Nachweise und besprochene Inhalte.
+    this.version(3).stores({
+      instruction_catalogs: "id",
+      instruction_records: "id, azubi_id, topic_id, given_on, status, _sync",
+      instruction_record_points: "[record_id+point_id], record_id, point_id",
     });
   }
 }
