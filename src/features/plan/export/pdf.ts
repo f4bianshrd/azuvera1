@@ -101,7 +101,7 @@ function infoBlock(d: PlanDoc) {
   d.y += 9.5 + 4;
   d.para(m.planTitle, 10, d.bold, C.text);
   if (m.source) d.para(m.source, 9, d.reg, C.muted);
-  d.y -= 12;
+  d.y -= 20;
   const rows: [string, string][] = [["Name", m.personName], ["Beruf", m.profession], ["Betrieb", m.company], ["Auswahl", m.selection]];
   for (const [k, v] of rows) {
     d.ensure(14);
