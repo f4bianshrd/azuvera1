@@ -339,7 +339,8 @@ async function execute(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<v
         const up = await supabase.storage.from("report-files").upload(path, file.blob, { contentType: file.kind === "thumb" ? "image/jpeg" : row.mime_type, upsert: false });
         if (up.error && !/exists|duplicate/i.test(up.error.message)) {
           const status = Number((up.error as { statusCode?: string }).statusCode) || undefined;
-          throw new SyncError(classifyError({ message: up.error.message, status }) === "network" ? "network" : "permanent", up.error.message);
+          const kind = classifyError({ message: up.error.message, status }) === "network" ? "network" : "permanent";
+          throw new SyncError(kind, kind === "network" ? "Keine Verbindung zum Server." : storageUploadMessage(up.error.message, status));
         }
         await db.files.update(file.key, { synced: true });
       }
@@ -502,4 +503,13 @@ export async function clearFileCache(): Promise<void> {
   if (!db) return;
   const all = await db.files.toArray();
   await db.files.bulkDelete(all.filter((f) => f.synced).map((f) => f.key));
+}
+
+/** Verständliche Meldung für abgelehnte Datei-Uploads (statt technischer Server-Texte). */
+function storageUploadMessage(message: string, status: number | undefined): string {
+  const m = message.toLowerCase();
+  if (status === 413 || m.includes("too large") || m.includes("size")) return "Die Datei ist zu groß (höchstens 10 MB).";
+  if (status === 403 || m.includes("row-level security") || m.includes("unauthorized")) return "Anhänge können nur zu Entwürfen oder zurückgewiesenen Berichten hinzugefügt werden.";
+  if (m.includes("mime") || m.includes("content type")) return "Dieser Dateityp ist nicht erlaubt.";
+  return "Die Datei wurde vom Server abgelehnt. Bitte versuche es erneut.";
 }
