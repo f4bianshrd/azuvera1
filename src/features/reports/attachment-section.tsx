@@ -17,6 +17,16 @@ import {
   type ReportAttachment,
 } from "./api";
 import { MAX_ATTACHMENTS, processFile, sanitizeFileName } from "./attachments";
+import { isQuotaError, QUOTA_MESSAGE } from "@/lib/sync/db";
+
+/** Nur eigene, verständliche Meldungen anzeigen – technische Fehlertexte nie. */
+function uploadErrorMessage(e: unknown): string {
+  if (isQuotaError(e)) return QUOTA_MESSAGE;
+  const msg = e instanceof Error ? e.message : "";
+  // Eigene Meldungen aus processFile/addAttachment sind deutsch und enden mit Punkt.
+  if (/^[A-ZÄÖÜ][^\n]*[äöüß ]/.test(msg) && /\.$/.test(msg) && !/blob|object store|indexeddb|transaction/i.test(msg)) return msg;
+  return "Die Datei konnte auf diesem Gerät nicht gespeichert werden. Bitte versuche es erneut oder starte die App neu.";
+}
 
 interface PendingUpload {
   key: string;
@@ -72,7 +82,7 @@ export function AttachmentSection({
         } catch (e) {
           console.error(e);
           setPending((p) => p.map((x) => (x.key === key ? { ...x, progress: "error" as const } : x)));
-          toast.error(e instanceof Error ? e.message : "Upload fehlgeschlagen.");
+          toast.error(uploadErrorMessage(e));
         }
       }
     },
