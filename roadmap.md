@@ -83,5 +83,5 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [x] Prüfungsmappe als PDF: Ausbilder:innen stellen Prüfungen und Berichte einer Person in einem Dokument zusammen
 - [x] Push-Ruhezeiten auch beim Versand prüfen (Wiederholungen, Rückstau)
 - [ ] Echter Push-Test auf dem Handy – braucht ein Gerät, auf dem Push in der veröffentlichten App eingeschaltet ist (derzeit keins)
-- [ ] Daten-Prompt A2a: Landwirt/in
-- [ ] Daten-Prompt A2b: Landwirt/in (neue Fassung)
+- [x] Daten-Prompt A2a: Landwirt/in (bisherige Fassung LWK Niedersachsen 2018, 140 Punkte)
+- [x] Daten-Prompt A2b: Landwirt/in (neue Fassung ab 1. August 2027, 161 Punkte)
