@@ -97,8 +97,11 @@ function infoBlock(d: PlanDoc) {
   d.ensure(90);
   d.t("Ausbildungsplan", MARGIN, d.y, 18, d.bold, C.brandDark);
   d.y -= 18;
-  d.t(`${m.planTitle}${m.source ? ` · ${m.source}` : ""}`, MARGIN, d.y, 9.5, d.reg, C.muted, A4.w - 2 * MARGIN);
-  d.y -= 16;
+  // Quelle vollständig (umbrechen statt kürzen), damit die Fundstelle im PDF lesbar bleibt.
+  d.y += 9.5 + 4;
+  d.para(m.planTitle, 10, d.bold, C.text);
+  if (m.source) d.para(m.source, 9, d.reg, C.muted);
+  d.y -= 12;
   const rows: [string, string][] = [["Name", m.personName], ["Beruf", m.profession], ["Betrieb", m.company], ["Auswahl", m.selection]];
   for (const [k, v] of rows) {
     d.ensure(14);
@@ -224,7 +227,12 @@ function coverPage(d: PlanDoc) {
   let y = A4.h / 2 + 60;
   d.t("Ausbildungsplan", MARGIN, y, 34, d.bold, C.brandDark); y -= 30;
   d.t(m.planTitle, MARGIN, y, 14, d.reg, C.text, A4.w - 2 * MARGIN); y -= 18;
-  if (m.source) { d.t(m.source, MARGIN, y, 10, d.reg, C.muted, A4.w - 2 * MARGIN); y -= 30; } else y -= 12;
+  if (m.source) {
+    for (const line of wrapText(sanitizeForPdf(m.source), d.reg, 10, A4.w - 2 * MARGIN).slice(0, 4)) {
+      d.page.drawText(line, { x: MARGIN, y, size: 10, font: d.reg, color: C.muted }); y -= 13;
+    }
+    y -= 17;
+  } else y -= 12;
   d.page.drawRectangle({ x: MARGIN, y: y + 8, width: 60, height: 3, color: d.accent }); y -= 16;
   for (const [k, v] of [["Name", m.personName], ["Beruf", m.profession], ["Betrieb", m.company], ["Auswahl", m.selection]] as const) {
     d.t(k, MARGIN, y, 9, d.bold, C.muted); d.t(v, MARGIN + 70, y, 11, d.reg, C.text, A4.w - 2 * MARGIN - 70); y -= 18;
