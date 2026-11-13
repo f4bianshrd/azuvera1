@@ -30,6 +30,7 @@ import { Route as AuthenticatedProtokollRouteImport } from './routes/_authentica
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/sync'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
+import { Route as AuthenticatedUnterweisungenRouteImport } from './routes/_authenticated/unterweisungen'
 import { Route as AuthenticatedVerknuepfungenRouteImport } from './routes/_authenticated/verknuepfungen'
 import { Route as ApiDeleteAccountRouteImport } from './routes/api/delete-account'
 import { Route as ApiEmailTestRouteImport } from './routes/api/email-test'
@@ -161,6 +162,12 @@ const AuthenticatedTeamRoute = AuthenticatedTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedUnterweisungenRoute =
+  AuthenticatedUnterweisungenRouteImport.update({
+    id: '/unterweisungen',
+    path: '/unterweisungen',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedVerknuepfungenRoute =
   AuthenticatedVerknuepfungenRouteImport.update({
     id: '/verknuepfungen',
@@ -292,6 +299,7 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/sync': typeof AuthenticatedSyncRoute
   '/team': typeof AuthenticatedTeamRouteWithChildren
+  '/unterweisungen': typeof AuthenticatedUnterweisungenRoute
   '/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
   '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
@@ -332,6 +340,7 @@ export interface FileRoutesByTo {
   '/profil': typeof AuthenticatedProfilRoute
   '/protokoll': typeof AuthenticatedProtokollRoute
   '/sync': typeof AuthenticatedSyncRoute
+  '/unterweisungen': typeof AuthenticatedUnterweisungenRoute
   '/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
   '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
@@ -376,6 +385,7 @@ export interface FileRoutesById {
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
   '/_authenticated/sync': typeof AuthenticatedSyncRoute
   '/_authenticated/team': typeof AuthenticatedTeamRouteWithChildren
+  '/_authenticated/unterweisungen': typeof AuthenticatedUnterweisungenRoute
   '/_authenticated/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
   '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
@@ -420,6 +430,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/sync'
     | '/team'
+    | '/unterweisungen'
     | '/verknuepfungen'
     | '/api/delete-account'
     | '/api/email-test'
@@ -460,6 +471,7 @@ export interface FileRouteTypes {
     | '/profil'
     | '/protokoll'
     | '/sync'
+    | '/unterweisungen'
     | '/verknuepfungen'
     | '/api/delete-account'
     | '/api/email-test'
@@ -503,6 +515,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports'
     | '/_authenticated/sync'
     | '/_authenticated/team'
+    | '/_authenticated/unterweisungen'
     | '/_authenticated/verknuepfungen'
     | '/api/delete-account'
     | '/api/email-test'
@@ -693,6 +706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTeamRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/unterweisungen': {
+      id: '/_authenticated/unterweisungen'
+      path: '/unterweisungen'
+      fullPath: '/unterweisungen'
+      preLoaderRoute: typeof AuthenticatedUnterweisungenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/verknuepfungen': {
       id: '/_authenticated/verknuepfungen'
       path: '/verknuepfungen'
@@ -880,6 +900,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
   AuthenticatedSyncRoute: typeof AuthenticatedSyncRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRouteWithChildren
+  AuthenticatedUnterweisungenRoute: typeof AuthenticatedUnterweisungenRoute
   AuthenticatedVerknuepfungenRoute: typeof AuthenticatedVerknuepfungenRoute
   AuthenticatedAdminEinstellungenRoute: typeof AuthenticatedAdminEinstellungenRoute
   AuthenticatedStammdatenAusbildungsplaeneRoute: typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -903,6 +924,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
   AuthenticatedSyncRoute: AuthenticatedSyncRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRouteWithChildren,
+  AuthenticatedUnterweisungenRoute: AuthenticatedUnterweisungenRoute,
   AuthenticatedVerknuepfungenRoute: AuthenticatedVerknuepfungenRoute,
   AuthenticatedAdminEinstellungenRoute: AuthenticatedAdminEinstellungenRoute,
   AuthenticatedStammdatenAusbildungsplaeneRoute:
