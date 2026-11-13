@@ -88,9 +88,9 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 
 ## Prompt-Paket Neustart (13.11.2026)
 - [x] Abgleich 1A–A2b mit Paket: Wortlaut identisch, nur Zwischentexte neu
-- [ ] Daten-Prompt A3: Gärtner/in, sieben Fachrichtungen
-- [ ] Daten-Prompt A4a: Pferdewirt/in Pferdehaltung und Service
-- [ ] Daten-Prompt A4b: Pferdewirt/in vier weitere Fachrichtungen
+- [x] Daten-Prompt A3: Gärtner/in, sieben Fachrichtungen
+- [x] Daten-Prompt A4a: Pferdewirt/in Pferdehaltung und Service
+- [x] Daten-Prompt A4b: Pferdewirt/in vier weitere Fachrichtungen
 - [ ] Daten-Prompt B1: Unterweisungen – Datenbank, Fälligkeiten, Funktionen
 - [ ] Daten-Prompt B2: Unterweisungen – Oberfläche, Export, Katalog-Editor
 - [ ] Daten-Prompt B3: Unterweisungskataloge allgemein + Landwirt/in
