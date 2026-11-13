@@ -605,6 +605,272 @@ export type Database = {
         }
         Relationships: []
       }
+      instruction_catalogs: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          profession_id: string | null
+          sort_order: number
+          source: string | null
+          status: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          profession_id?: string | null
+          sort_order?: number
+          source?: string | null
+          status?: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          profession_id?: string | null
+          sort_order?: number
+          source?: string | null
+          status?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instruction_catalogs_profession_id_fkey"
+            columns: ["profession_id"]
+            isOneToOne: false
+            referencedRelation: "professions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instruction_points: {
+        Row: {
+          catalog_id: string
+          id: string
+          is_active: boolean
+          key: string
+          label: string
+          sort_order: number
+          topic_id: string
+        }
+        Insert: {
+          catalog_id: string
+          id?: string
+          is_active?: boolean
+          key: string
+          label: string
+          sort_order?: number
+          topic_id: string
+        }
+        Update: {
+          catalog_id?: string
+          id?: string
+          is_active?: boolean
+          key?: string
+          label?: string
+          sort_order?: number
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instruction_points_catalog_id_fkey"
+            columns: ["catalog_id"]
+            isOneToOne: false
+            referencedRelation: "instruction_catalogs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "instruction_points_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "instruction_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instruction_record_points: {
+        Row: {
+          point_id: string
+          record_id: string
+        }
+        Insert: {
+          point_id: string
+          record_id: string
+        }
+        Update: {
+          point_id?: string
+          record_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instruction_record_points_point_id_fkey"
+            columns: ["point_id"]
+            isOneToOne: false
+            referencedRelation: "instruction_points"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "instruction_record_points_record_id_fkey"
+            columns: ["record_id"]
+            isOneToOne: false
+            referencedRelation: "instruction_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instruction_records: {
+        Row: {
+          azubi_id: string
+          confirmed_by_name: string | null
+          confirmed_role_label: string | null
+          content_hash: string | null
+          created_at: string
+          duration_minutes: number | null
+          given_on: string | null
+          id: string
+          instructor_name: string | null
+          notes: string | null
+          on_behalf_of: string | null
+          review_note: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: string
+          submitted_at: string | null
+          title: string
+          topic_id: string | null
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          azubi_id: string
+          confirmed_by_name?: string | null
+          confirmed_role_label?: string | null
+          content_hash?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          given_on?: string | null
+          id?: string
+          instructor_name?: string | null
+          notes?: string | null
+          on_behalf_of?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          submitted_at?: string | null
+          title: string
+          topic_id?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          azubi_id?: string
+          confirmed_by_name?: string | null
+          confirmed_role_label?: string | null
+          content_hash?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          given_on?: string | null
+          id?: string
+          instructor_name?: string | null
+          notes?: string | null
+          on_behalf_of?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          submitted_at?: string | null
+          title?: string
+          topic_id?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instruction_records_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "instruction_records_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "instruction_records_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "instruction_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instruction_topics: {
+        Row: {
+          catalog_id: string
+          category: string
+          hint: string | null
+          id: string
+          interval_months: number | null
+          is_active: boolean
+          is_optional: boolean
+          key: string
+          legal_basis: string | null
+          sort_order: number
+          title: string
+          when_text: string | null
+        }
+        Insert: {
+          catalog_id: string
+          category: string
+          hint?: string | null
+          id?: string
+          interval_months?: number | null
+          is_active?: boolean
+          is_optional?: boolean
+          key: string
+          legal_basis?: string | null
+          sort_order?: number
+          title: string
+          when_text?: string | null
+        }
+        Update: {
+          catalog_id?: string
+          category?: string
+          hint?: string | null
+          id?: string
+          interval_months?: number | null
+          is_active?: boolean
+          is_optional?: boolean
+          key?: string
+          legal_basis?: string | null
+          sort_order?: number
+          title?: string
+          when_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instruction_topics_catalog_id_fkey"
+            columns: ["catalog_id"]
+            isOneToOne: false
+            referencedRelation: "instruction_catalogs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       internal_config: {
         Row: {
           key: string
@@ -1817,6 +2083,10 @@ export type Database = {
         Args: { p_actor?: string; p_user: string }
         Returns: undefined
       }
+      admin_duplicate_catalog: {
+        Args: { p_catalog: string; p_code: string; p_title: string }
+        Returns: string
+      }
       admin_duplicate_plan: {
         Args: { p_code: string; p_plan: string; p_title: string }
         Returns: string
@@ -1841,7 +2111,15 @@ export type Database = {
           used: boolean
         }[]
       }
+      admin_save_instruction_catalog: {
+        Args: { p_catalog: Json }
+        Returns: string
+      }
       admin_save_plan: { Args: { p_plan: Json }; Returns: string }
+      admin_set_catalog_status: {
+        Args: { p_catalog: string; p_status: string }
+        Returns: undefined
+      }
       admin_set_plan_status: {
         Args: { p_plan: string; p_status: string }
         Returns: undefined
@@ -1930,6 +2208,10 @@ export type Database = {
           week_start: string
         }[]
       }
+      confirm_instruction: {
+        Args: { p_expected_version: number; p_id: string; p_note: string }
+        Returns: undefined
+      }
       create_invite_code: {
         Args: {
           _note?: string
@@ -1982,6 +2264,7 @@ export type Database = {
           quiet_to: string
         }[]
       }
+      export_catalog_json: { Args: { p_catalog: string }; Returns: Json }
       export_header: {
         Args: { p_azubi: string }
         Returns: {
@@ -1996,12 +2279,18 @@ export type Database = {
         }[]
       }
       export_my_data: { Args: never; Returns: Json }
+      export_my_data_base: { Args: never; Returns: Json }
       export_plan_json: { Args: { p_plan: string }; Returns: Json }
       finish_delivery: {
         Args: { p_error: string; p_id: number; p_ok: boolean; p_skip: boolean }
         Returns: undefined
       }
+      generate_instruction_reminders: {
+        Args: { p_now: string }
+        Returns: number
+      }
       generate_reminders: { Args: { p_now?: string }; Returns: number }
+      generate_reminders_base: { Args: { p_now?: string }; Returns: number }
       get_my_notification_prefs: {
         Args: never
         Returns: {
@@ -2036,6 +2325,47 @@ export type Database = {
         }
         Returns: boolean
       }
+      instruction_hash: { Args: { p_id: string }; Returns: string }
+      instruction_overview: {
+        Args: { p_as_of?: string; p_azubi: string }
+        Returns: {
+          catalog_id: string
+          due_on: string
+          effective_months: number
+          is_optional: boolean
+          last_confirmed: boolean
+          last_given_on: string
+          last_record_id: string
+          state: string
+          topic_id: string
+        }[]
+      }
+      instruction_overview_core: {
+        Args: { p_as_of: string; p_azubi: string }
+        Returns: {
+          catalog_id: string
+          due_on: string
+          effective_months: number
+          is_optional: boolean
+          last_confirmed: boolean
+          last_given_on: string
+          last_record_id: string
+          state: string
+          topic_id: string
+        }[]
+      }
+      instruction_pending: {
+        Args: never
+        Returns: {
+          azubi_id: string
+          azubi_name: string
+          given_on: string
+          record_id: string
+          submitted_at: string
+          title: string
+        }[]
+      }
+      instruction_role_label: { Args: { p_user: string }; Returns: string }
       is_active_deputy: {
         Args: { _deputy: string; _on_date?: string; _principal: string }
         Returns: boolean
@@ -2102,6 +2432,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      log_instruction_export: {
+        Args: { p_azubi: string; p_count: number; p_from: string; p_to: string }
+        Returns: undefined
+      }
       missing_weeks: {
         Args: { p_azubi?: string }
         Returns: {
@@ -2159,6 +2493,10 @@ export type Database = {
         Args: { p_id: string; p_note: string }
         Returns: undefined
       }
+      reject_instruction: {
+        Args: { p_expected_version: number; p_id: string; p_note: string }
+        Returns: undefined
+      }
       reject_report: {
         Args: { _expected_version: number; _note: string; _report_id: string }
         Returns: undefined
@@ -2172,6 +2510,10 @@ export type Database = {
         Args: { p_endpoint: string }
         Returns: undefined
       }
+      reopen_instruction: {
+        Args: { p_id: string; p_note: string }
+        Returns: undefined
+      }
       reopen_report: {
         Args: { _reason: string; _report_id: string }
         Returns: undefined
@@ -2180,6 +2522,18 @@ export type Database = {
       report_hash: { Args: { _report_id: string }; Returns: string }
       report_title: { Args: { _report_id: string }; Returns: string }
       request_account_deletion: { Args: { p_note: string }; Returns: string }
+      resolve_instruction_catalogs: {
+        Args: { p_azubi: string }
+        Returns: {
+          code: string
+          id: string
+          profession_id: string
+          sort_order: number
+          source: string
+          subtitle: string
+          title: string
+        }[]
+      }
       resolve_plan: { Args: { p_azubi: string }; Returns: string }
       review_absence: {
         Args: {
@@ -2252,6 +2606,10 @@ export type Database = {
           p_new_company_name?: string
           p_profession: string
         }
+        Returns: undefined
+      }
+      submit_instruction: {
+        Args: { p_expected_version: number; p_id: string }
         Returns: undefined
       }
       submit_report: {
