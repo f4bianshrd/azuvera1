@@ -66,7 +66,7 @@ export function CatalogsAdmin({ catalogParam }: { catalogParam: string | undefin
       {header}
       <div className="flex flex-wrap gap-2"><Button className="min-h-11" onClick={() => setImportOpen(true)}><FileJson className="size-4" aria-hidden />JSON importieren</Button></div>
       {isLoading && <ListSkeleton />}
-      {error && <EmptyState icon={AlertTriangle} title="Kataloge nicht verfügbar" description={error instanceof Error ? error.message : undefined} />}
+      {error && <EmptyState icon={AlertTriangle} title="Kataloge nicht verfügbar" description={error instanceof Error ? error.message : "Bitte später erneut versuchen."} />}
       {list && list.length === 0 && <EmptyState icon={ShieldCheck} title="Noch keine Kataloge" />}
       <ul className="grid gap-3 lg:grid-cols-2">
         {(list ?? []).map((c) => (
