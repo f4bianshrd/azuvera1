@@ -1,9 +1,12 @@
-// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { sniffType } from "./attachments";
 
-const bytes = (...parts: (number[] | string)[]) =>
-  new Blob(parts.map((p) => (typeof p === "string" ? new TextEncoder().encode(p) : new Uint8Array(p))));
+/** Kleiner Blob-Ersatz (jsdom kennt Blob.arrayBuffer nicht). */
+function bytes(...parts: (number[] | string)[]): Blob {
+  const chunks = parts.map((p) => (typeof p === "string" ? [...new TextEncoder().encode(p)] : p));
+  const all = new Uint8Array(chunks.flat());
+  return { slice: (a: number, b: number) => ({ arrayBuffer: async () => all.slice(a, b).buffer }) } as unknown as Blob;
+}
 
 describe("sniffType PDF", () => {
   it("erkennt PDF mit %PDF am Anfang", async () => {
