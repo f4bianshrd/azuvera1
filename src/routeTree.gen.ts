@@ -43,6 +43,7 @@ import { Route as AuthenticatedReportsNewRouteImport } from './routes/_authentic
 import { Route as AuthenticatedStammdatenAusbildungsplaeneRouteImport } from './routes/_authenticated/stammdaten.ausbildungsplaene'
 import { Route as AuthenticatedStammdatenBerufeRouteImport } from './routes/_authenticated/stammdaten.berufe'
 import { Route as AuthenticatedStammdatenBetriebeRouteImport } from './routes/_authenticated/stammdaten.betriebe'
+import { Route as AuthenticatedStammdatenUnterweisungenRouteImport } from './routes/_authenticated/stammdaten.unterweisungen'
 import { Route as AuthenticatedTeamIndexRouteImport } from './routes/_authenticated/team.index'
 import { Route as AuthenticatedTeamAzubiIdRouteImport } from './routes/_authenticated/team.$azubiId'
 import { Route as ApiPublicDispatchNotificationsRouteImport } from './routes/api/public/dispatch-notifications'
@@ -234,6 +235,12 @@ const AuthenticatedStammdatenBetriebeRoute =
     path: '/stammdaten/betriebe',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedStammdatenUnterweisungenRoute =
+  AuthenticatedStammdatenUnterweisungenRouteImport.update({
+    id: '/stammdaten/unterweisungen',
+    path: '/stammdaten/unterweisungen',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTeamIndexRoute = AuthenticatedTeamIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -311,6 +318,7 @@ export interface FileRoutesByFullPath {
   '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/stammdaten/unterweisungen': typeof AuthenticatedStammdatenUnterweisungenRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
@@ -352,6 +360,7 @@ export interface FileRoutesByTo {
   '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   '/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/stammdaten/unterweisungen': typeof AuthenticatedStammdatenUnterweisungenRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
@@ -397,6 +406,7 @@ export interface FileRoutesById {
   '/_authenticated/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   '/_authenticated/stammdaten/berufe': typeof AuthenticatedStammdatenBerufeRoute
   '/_authenticated/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
+  '/_authenticated/stammdaten/unterweisungen': typeof AuthenticatedStammdatenUnterweisungenRoute
   '/_authenticated/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
@@ -442,6 +452,7 @@ export interface FileRouteTypes {
     | '/stammdaten/ausbildungsplaene'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
+    | '/stammdaten/unterweisungen'
     | '/team/$azubiId'
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
@@ -483,6 +494,7 @@ export interface FileRouteTypes {
     | '/stammdaten/ausbildungsplaene'
     | '/stammdaten/berufe'
     | '/stammdaten/betriebe'
+    | '/stammdaten/unterweisungen'
     | '/team/$azubiId'
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
@@ -527,6 +539,7 @@ export interface FileRouteTypes {
     | '/_authenticated/stammdaten/ausbildungsplaene'
     | '/_authenticated/stammdaten/berufe'
     | '/_authenticated/stammdaten/betriebe'
+    | '/_authenticated/stammdaten/unterweisungen'
     | '/_authenticated/team/$azubiId'
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
@@ -797,6 +810,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStammdatenBetriebeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/stammdaten/unterweisungen': {
+      id: '/_authenticated/stammdaten/unterweisungen'
+      path: '/stammdaten/unterweisungen'
+      fullPath: '/stammdaten/unterweisungen'
+      preLoaderRoute: typeof AuthenticatedStammdatenUnterweisungenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/team/': {
       id: '/_authenticated/team/'
       path: '/'
@@ -906,6 +926,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStammdatenAusbildungsplaeneRoute: typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
   AuthenticatedStammdatenBetriebeRoute: typeof AuthenticatedStammdatenBetriebeRoute
+  AuthenticatedStammdatenUnterweisungenRoute: typeof AuthenticatedStammdatenUnterweisungenRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -931,6 +952,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedStammdatenAusbildungsplaeneRoute,
   AuthenticatedStammdatenBerufeRoute: AuthenticatedStammdatenBerufeRoute,
   AuthenticatedStammdatenBetriebeRoute: AuthenticatedStammdatenBetriebeRoute,
+  AuthenticatedStammdatenUnterweisungenRoute:
+    AuthenticatedStammdatenUnterweisungenRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
