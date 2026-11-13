@@ -85,3 +85,16 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [ ] Echter Push-Test auf dem Handy – braucht ein Gerät, auf dem Push in der veröffentlichten App eingeschaltet ist (derzeit keins)
 - [x] Daten-Prompt A2a: Landwirt/in (bisherige Fassung LWK Niedersachsen 2018, 140 Punkte)
 - [x] Daten-Prompt A2b: Landwirt/in (neue Fassung ab 1. August 2027, 161 Punkte)
+
+## Prompt-Paket Neustart (13.11.2026)
+- [x] Abgleich 1A–A2b mit Paket: Wortlaut identisch, nur Zwischentexte neu
+- [ ] Daten-Prompt A3: Gärtner/in, sieben Fachrichtungen
+- [ ] Daten-Prompt A4a: Pferdewirt/in Pferdehaltung und Service
+- [ ] Daten-Prompt A4b: Pferdewirt/in vier weitere Fachrichtungen
+- [ ] Daten-Prompt B1: Unterweisungen – Datenbank, Fälligkeiten, Funktionen
+- [ ] Daten-Prompt B2: Unterweisungen – Oberfläche, Export, Katalog-Editor
+- [ ] Daten-Prompt B3: Unterweisungskataloge allgemein + Landwirt/in
+- [ ] Daten-Prompt B4: Unterweisungskataloge Gärtner/in + Pferdewirt/in
+- [ ] Zusatz C1–C4: Erfahrungsberichte
+- [ ] Zusatz D1, Zwischenschritt, D2, D3: offene Registrierung, Einladungen, Zugriff
+- [ ] Abnahme-Prompt 1 und 2
