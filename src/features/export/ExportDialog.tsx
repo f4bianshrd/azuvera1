@@ -16,6 +16,9 @@ import { saveFile } from "@/lib/platform";
 import { getExportHeader, listExportReports, logExport } from "./api";
 import { ExportCancelled, buildBulk, buildZip, exportBaseName } from "./pdf/build";
 import { dateDe } from "./pdf/text";
+import { loadInstructionData, logInstructionExport } from "@/features/instructions/api";
+import { buildInstructionInput } from "@/features/instructions/export";
+import { berlinToday } from "@/features/instructions/due";
 
 const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
@@ -42,6 +45,7 @@ function ExportDialog({ azubiId, isSelf, onClose }: { azubiId: string; isSelf: b
   const [embed, setEmbed] = useState(false);
   const [sig, setSig] = useState("digital");
   const [fmt, setFmt] = useState("pdf");
+  const [withInstr, setWithInstr] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const abort = useRef<AbortController | null>(null);
   useEffect(() => () => abort.current?.abort(), []);
@@ -67,11 +71,15 @@ function ExportDialog({ azubiId, isSelf, onClose }: { azubiId: string; isSelf: b
     const base = exportBaseName(header, range.label);
     const o = { embedImages: embed, blankSignatures: sig === "blank", signal: ctrl.signal, onProgress: setProgress };
     try {
-      const out = fmt === "zip" ? await buildZip(list.reports, header, periodText, base, o) : await buildBulk(list.reports, header, periodText, base, o);
+      const instr = withInstr
+        ? buildInstructionInput(await loadInstructionData(azubiId), header, { catalogId: "all", state: "all", from: range.from, to: range.to, onlyConfirmed: true, withOverview: false }, berlinToday())
+        : null;
+      const out = fmt === "zip" ? await buildZip(list.reports, header, periodText, base, o, instr) : await buildBulk(list.reports, header, periodText, base, o, instr);
       if (ctrl.signal.aborted) return;
       saveFile(out.blob, out.filename);
       toast.success("Export fertig");
       void logExport(azubiId, fmt === "zip" || out.filename.endsWith(".zip") ? "zip" : "bulk", n, range.from, range.to).catch(() => undefined);
+      if (instr) void logInstructionExport(azubiId, instr.records.length, range.from, range.to);
       onClose();
     } catch (e) {
       if (!(e instanceof ExportCancelled)) toast.error("Der Export ist fehlgeschlagen. Bitte versuche es erneut.");
@@ -105,6 +113,10 @@ function ExportDialog({ azubiId, isSelf, onClose }: { azubiId: string; isSelf: b
           <fieldset className="space-y-1"><legend className="font-semibold">Anhänge</legend>
             <Check id="ex-img" label="Bilder als Anlagen einbetten" checked={embed} onChange={setEmbed} />
             <p className="pl-6 text-xs text-muted-foreground">Vergrößert die Datei deutlich.</p>
+          </fieldset>
+          <fieldset className="space-y-1"><legend className="font-semibold">Unterweisungsnachweise</legend>
+            <Check id="ex-ins" label="Als Anhang beilegen" checked={withInstr} onChange={setWithInstr} />
+            <p className="pl-6 text-xs text-muted-foreground">Nur bestätigte Nachweise werden beigelegt.</p>
           </fieldset>
           <fieldset className="space-y-2"><legend className="font-semibold">Unterschriftsfelder</legend>
             <RadioGroup value={sig} onValueChange={setSig}><Radio id="ex-sd" value="digital" label="Digitale Bestätigung anzeigen" /><Radio id="ex-sb" value="blank" label="Leer lassen zum handschriftlichen Unterschreiben" /></RadioGroup>
