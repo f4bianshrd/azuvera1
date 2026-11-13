@@ -4,6 +4,9 @@
  * gewollt, Datenschutz), Vorschau und sha256.
  */
 
+/** Fehler mit einer Meldung, die so dem Nutzer gezeigt werden darf. */
+export class UserFacingError extends Error {}
+
 export const MAX_ATTACHMENTS = 10;
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 export const MAX_EDGE = 2048;
@@ -83,9 +86,9 @@ export interface ProcessedFile {
 
 /** Datei prüfen und für den Upload vorbereiten. Wirft Error mit Nutzer-Meldung. */
 export async function processFile(file: File): Promise<ProcessedFile> {
-  if (file.size > MAX_FILE_BYTES) throw new Error("Dateien dürfen höchstens 10 MB groß sein.");
+  if (file.size > MAX_FILE_BYTES) throw new UserFacingError("Dateien dürfen höchstens 10 MB groß sein.");
   const sniffed = await sniffType(file);
-  if (!sniffed) throw new Error("Dieser Dateityp ist nicht erlaubt. Erlaubt sind JPEG, PNG, WebP und PDF.");
+  if (!sniffed) throw new UserFacingError("Dieser Dateityp ist nicht erlaubt. Erlaubt sind JPEG, PNG, WebP und PDF.");
 
   if (sniffed === "application/pdf") {
     // Als frische Kopie im Speicher ablegen: iPhone/iPad (Safari, Home-Bildschirm-App) können
@@ -94,7 +97,7 @@ export async function processFile(file: File): Promise<ProcessedFile> {
     try {
       blob = new Blob([await file.arrayBuffer()], { type: "application/pdf" });
     } catch {
-      throw new Error("Die PDF-Datei konnte nicht gelesen werden. Bitte speichere sie zuerst in der Dateien-App und versuche es erneut.");
+      throw new UserFacingError("Die PDF-Datei konnte nicht gelesen werden. Bitte speichere sie zuerst in der Dateien-App und versuche es erneut.");
     }
     return { blob, mimeType: "application/pdf", sha256: await sha256Hex(blob) };
   }
@@ -106,7 +109,7 @@ export async function processFile(file: File): Promise<ProcessedFile> {
       const converted = await heic2any({ blob: file, toType: "image/jpeg", quality: JPEG_QUALITY });
       source = Array.isArray(converted) ? converted[0]! : converted;
     } catch {
-      throw new Error(HEIC_ERROR);
+      throw new UserFacingError(HEIC_ERROR);
     }
   }
 
@@ -122,6 +125,6 @@ export async function processFile(file: File): Promise<ProcessedFile> {
       sha256: await sha256Hex(full.blob),
     };
   } catch {
-    throw new Error(HEIC_ERROR);
+    throw new UserFacingError(HEIC_ERROR);
   }
 }

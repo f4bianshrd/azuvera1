@@ -16,15 +16,13 @@ import {
   type Report,
   type ReportAttachment,
 } from "./api";
-import { MAX_ATTACHMENTS, processFile, sanitizeFileName } from "./attachments";
+import { MAX_ATTACHMENTS, processFile, sanitizeFileName, UserFacingError } from "./attachments";
 import { isQuotaError, QUOTA_MESSAGE } from "@/lib/sync/db";
 
 /** Nur eigene, verständliche Meldungen anzeigen – technische Fehlertexte nie. */
 function uploadErrorMessage(e: unknown): string {
   if (isQuotaError(e)) return QUOTA_MESSAGE;
-  const msg = e instanceof Error ? e.message : "";
-  // Eigene Meldungen aus processFile/addAttachment sind deutsch und enden mit Punkt.
-  if (/^[A-ZÄÖÜ][^\n]*[äöüß ]/.test(msg) && /\.$/.test(msg) && !/blob|object store|indexeddb|transaction/i.test(msg)) return msg;
+  if (e instanceof UserFacingError) return e.message;
   return "Die Datei konnte auf diesem Gerät nicht gespeichert werden. Bitte versuche es erneut oder starte die App neu.";
 }
 
