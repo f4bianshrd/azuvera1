@@ -239,6 +239,13 @@
       "when": 1794529988257,
       "tag": "0033_a2a_landwirt_lwk_ni_2018",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1794530080169,
+      "tag": "0034_a2b_landwirt_2027",
+      "breakpoints": true
     }
   ]
 }
