@@ -253,6 +253,13 @@
       "when": 1794576958035,
       "tag": "0035_a3_gaertner_fachrichtungen",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1794577035298,
+      "tag": "0036_a4a_pferdewirt_pferdehaltung",
+      "breakpoints": true
     }
   ]
 }
