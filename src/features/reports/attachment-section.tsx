@@ -227,6 +227,7 @@ export function AttachmentSection({
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {attachments.map((a, i) => (
             <li key={a.id} className="group relative overflow-hidden rounded-xl border bg-muted/30">
+              <div className="relative">
               <button
                 type="button"
                 className="block aspect-square w-full"
@@ -255,6 +256,7 @@ export function AttachmentSection({
                   </Button>
                 </div>
               )}
+              </div>
               {editable && (
                 <div className="p-1.5">
                   <Input
