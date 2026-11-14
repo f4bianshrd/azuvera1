@@ -91,10 +91,10 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [x] Daten-Prompt A3: Gärtner/in, sieben Fachrichtungen
 - [x] Daten-Prompt A4a: Pferdewirt/in Pferdehaltung und Service
 - [x] Daten-Prompt A4b: Pferdewirt/in vier weitere Fachrichtungen
-- [ ] Daten-Prompt B1: Unterweisungen – Datenbank, Fälligkeiten, Funktionen
-- [ ] Daten-Prompt B2: Unterweisungen – Oberfläche, Export, Katalog-Editor
-- [ ] Daten-Prompt B3: Unterweisungskataloge allgemein + Landwirt/in
-- [ ] Daten-Prompt B4: Unterweisungskataloge Gärtner/in + Pferdewirt/in
+- [x] Daten-Prompt B1: Unterweisungen – Datenbank, Fälligkeiten, Funktionen
+- [x] Daten-Prompt B2: Unterweisungen – Oberfläche, Export, Katalog-Editor
+- [x] Daten-Prompt B3: Unterweisungskataloge allgemein + Landwirt/in
+- [x] Daten-Prompt B4: Unterweisungskataloge Gärtner/in + Pferdewirt/in
 - [ ] Zusatz C1–C4: Erfahrungsberichte
 - [ ] Zusatz D1, Zwischenschritt, D2, D3: offene Registrierung, Einladungen, Zugriff
 - [ ] Abnahme-Prompt 1 und 2
