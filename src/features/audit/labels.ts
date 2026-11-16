@@ -22,6 +22,18 @@ export const FIELD_LABELS: Record<string, string> = {
   report_date: "Datum",
 };
 
+/** Abschnitte eines Erfahrungsberichts (Einträge mit entity_type 'experience'). */
+export const EXPERIENCE_FIELD_LABELS: Record<string, string> = {
+  kind: "Art",
+  title: "Thema",
+  area: "Bereich",
+  written_on: "Datum",
+  body: "Bericht",
+  reasoning: "Begründung und Bewertung",
+};
+
+const EXPERIENCE_KIND_LABELS: Record<string, string> = { erfahrungsbericht: "Erfahrungsbericht", projektbericht: "Projektbericht", leittext: "Leittext" };
+
 const METHOD_LABELS: Record<string, string> = {
   draw: "Gezeichnet",
   saved: "Gespeicherte Unterschrift",
@@ -80,6 +92,7 @@ const LEGACY_LABELS: Record<string, string> = {
 
 export const ENTITY_LABELS: Record<string, string> = {
   report: "Bericht",
+  experience: "Erfahrungsbericht",
   plan: "Ausbildungsplan",
   link: "Verknüpfung",
   absence: "Abwesenheit",
@@ -154,8 +167,20 @@ export interface DescribedEntry {
 }
 
 /** Haupttext und Einzelheiten eines Eintrags; `names` löst „i. V. für“ auf. */
-export function describeEntry(entry: Pick<AuditEntry, "action" | "details">, names?: Map<string, string>): DescribedEntry {
+export function describeEntry(entry: Pick<AuditEntry, "action" | "details"> & { entity_type?: string }, names?: Map<string, string>): DescribedEntry {
   const d = asDetails(entry.details);
+  if (entry.entity_type === "experience") {
+    if (entry.action === "create") {
+      const kind = typeof d.kind === "string" ? EXPERIENCE_KIND_LABELS[d.kind] ?? null : null;
+      const date = typeof d.written_on === "string" ? dateDe(d.written_on) : null;
+      return { title: "Erfahrungsbericht angelegt", details: [[kind, date].filter(Boolean).join(" · ")].filter(Boolean) };
+    }
+    if (entry.action === "edit") {
+      const fields = Array.isArray(d.fields) ? d.fields.map((f) => EXPERIENCE_FIELD_LABELS[String(f)] ?? String(f)) : [];
+      const ver = typeof d.version === "number" ? d.version : null;
+      return { title: "Erfahrungsbericht bearbeitet", details: [fields.length ? `Abschnitte: ${fields.join(", ")}` : "", ver !== null ? `Version ${ver}` : ""].filter(Boolean) };
+    }
+  }
   const version = typeof d.version === "number" ? d.version : null;
   const v = version !== null ? ` (Version ${version})` : "";
   const hash = shortHash(d.content_hash);
@@ -203,6 +228,10 @@ export function describeEntry(entry: Pick<AuditEntry, "action" | "details">, nam
     case "pdf_export": {
       const kind = d.kind === "zip" ? "ZIP" : d.kind === "bulk" ? "Sammel-PDF" : d.kind === "single" ? "Einzel-PDF" : null;
       const count = typeof d.count === "number" ? `${d.count} Bericht${d.count === 1 ? "" : "e"}` : null;
+      if (d.scope === "experience") {
+        const ec = typeof d.count === "number" ? `${d.count} Erfahrungsbericht${d.count === 1 ? "" : "e"}` : null;
+        return { title: "PDF exportiert (Erfahrungsberichte)", details: [[kind, ec].filter(Boolean).join(" · ")].filter(Boolean) };
+      }
       return { title: "PDF exportiert", details: [[kind, count].filter(Boolean).join(" · ")].filter(Boolean) };
     }
     case "plan_export":
