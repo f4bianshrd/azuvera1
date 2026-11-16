@@ -12,6 +12,7 @@ export type ReminderRules = {
   today_enabled: boolean; today_time: string;
   overdue_enabled: boolean; overdue_time: string; overdue_every_days: number; overdue_max: number;
   review_enabled: boolean; review_weekdays: number[]; review_time: string; review_after_days: number;
+  experience_enabled: boolean; experience_days_before: number[]; experience_time: string;
 };
 export async function getReminderRules(){const {data,error}=await supabase.rpc('get_reminder_rules');if(error)throw error;return data as unknown as ReminderRules;}
 export async function saveReminderRules(rules:ReminderRules){const {error}=await supabase.rpc('save_reminder_rules',{p_rules:rules as never});if(error)throw error;}

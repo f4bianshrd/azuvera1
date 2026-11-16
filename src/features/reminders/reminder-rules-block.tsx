@@ -31,6 +31,26 @@ function Group({ title, help, toggle, children }: { title: string; help?: string
   );
 }
 
+/** „Tage vor Ende des Lehrjahres“: 1 bis 5 Werte von 1 bis 365 als Chips. */
+function DaysBefore({ value, onChange }: { value: number[]; onChange: (v: number[]) => void }) {
+  const [draft, setDraft] = useState("");
+  const add = () => {
+    const n = Number(draft);
+    if (!Number.isInteger(n) || n < 1 || n > 365) { toast.error("Bitte eine ganze Zahl von 1 bis 365 eingeben."); return; }
+    if (value.length >= 5) { toast.error("Höchstens 5 Werte."); return; }
+    onChange([...new Set([...value, n])].sort((a, b) => b - a));
+    setDraft("");
+  };
+  return <div className="space-y-1.5">
+    <Label htmlFor="rr-exp-days">Tage vor Ende des Lehrjahres</Label>
+    <div className="flex flex-wrap items-center gap-2">
+      {value.map((d) => <Button key={d} type="button" size="sm" variant="secondary" aria-label={`${d} Tage entfernen`} disabled={value.length <= 1} onClick={() => onChange(value.filter((x) => x !== d))}>{d} ×</Button>)}
+      <Input id="rr-exp-days" type="number" min={1} max={365} step={1} value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }} className="h-11 w-24 text-base" />
+      <Button type="button" size="sm" variant="outline" onClick={add} disabled={value.length >= 5}>Hinzufügen</Button>
+    </div>
+  </div>;
+}
+
 export function ReminderRulesBlock() {
   const qc = useQueryClient();
   const { data } = useQuery({ queryKey: ["app-settings", "reminder_rules"], queryFn: getReminderRules });
@@ -39,7 +59,7 @@ export function ReminderRulesBlock() {
   useEffect(() => { if (data) setR(data); }, [data]);
   if (!r) return null;
   const set = <K extends keyof ReminderRules>(k: K, v: ReminderRules[K]) => setR({ ...r, [k]: v });
-  const time = (id: string, k: "deadline_time" | "soon_time" | "today_time" | "overdue_time" | "review_time") =>
+  const time = (id: string, k: "deadline_time" | "soon_time" | "today_time" | "overdue_time" | "review_time" | "experience_time") =>
     <Input id={id} type="time" value={r[k]} onChange={(e) => set(k, e.target.value)} className="h-11 w-32 text-base" />;
   const num = (id: string, k: "overdue_every_days" | "overdue_max" | "review_after_days", min: number, max: number) =>
     <Input id={id} type="number" min={min} max={max} step={1} value={r[k]} onChange={(e) => set(k, Number(e.target.value))} className="h-11 w-24 text-base" />;
@@ -82,6 +102,11 @@ export function ReminderRulesBlock() {
           </div>
           <Field label="Uhrzeit" htmlFor="rr-rv-time">{time("rr-rv-time", "review_time")}</Field>
           <Field label="nach … Tagen" htmlFor="rr-rv-days">{num("rr-rv-days", "review_after_days", 1, 30)}</Field>
+        </Group>
+        <Group title="Erinnerung an Erfahrungsberichte" help="Erinnert Azubis, denen im laufenden Lehrjahr noch Erfahrungsberichte fehlen. Eingereichte Berichte zählen als erledigt."
+          toggle={<Switch aria-label="Erinnerung an Erfahrungsberichte" checked={r.experience_enabled ?? true} onCheckedChange={(v) => set("experience_enabled", v)} />}>
+          <Field label="Uhrzeit" htmlFor="rr-exp-time">{time("rr-exp-time", "experience_time")}</Field>
+          <DaysBefore value={r.experience_days_before ?? [60, 30, 14]} onChange={(v) => set("experience_days_before", v)} />
         </Group>
       </div>
       <p className="mt-4 text-xs text-muted-foreground">Zeiten gelten in Deutschland. Push-Nachrichten beachten zusätzlich die persönlichen Ruhezeiten.</p>
