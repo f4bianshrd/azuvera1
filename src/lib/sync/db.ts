@@ -39,6 +39,14 @@ export interface InstructionCatalogTree { catalog: InstrRow<"instruction_catalog
 export interface LocalInstructionCatalog { id: string; tree: InstructionCatalogTree; fetched_at: string }
 export type LocalInstructionRecord = Row<"instruction_records"> & SyncFields;
 export type LocalInstructionRecordPoint = Row<"instruction_record_points">;
+export type LocalExperience = Row<"experience_reports"> & SyncFields & {
+  /** Einreichen wartet auf die Synchronisation (lokal gesperrt). */
+  _submit_pending?: boolean;
+  /** Serverstand bei Konflikt. */
+  _server?: Row<"experience_reports"> | null;
+};
+export type LocalExperienceAttachment = Row<"experience_attachments"> & SyncFields;
+export type LocalExperienceComment = Row<"experience_comments"> & SyncFields;
 
 export interface LookupRow { key: string; value: unknown; updated_at: string }
 export interface FileRow { key: string; blob: Blob; kind: "original" | "thumb" | "signature"; synced: boolean; size: number; last_used_at: number }
@@ -51,7 +59,10 @@ export type OutboxOp =
   | "grade.upsert" | "grade.delete"
   | "comment.insert" | "profile.update"
   | "progress.upsert" | "report.links"
-  | "instruction.upsert" | "instruction.delete";
+  | "instruction.upsert" | "instruction.delete"
+  | "experience.upsert" | "experience.delete" | "experience.submit"
+  | "experience_attachment.upload" | "experience_attachment.update" | "experience_attachment.delete"
+  | "experience_comment.insert";
 
 export interface OutboxPayload {
   id?: string | undefined;
@@ -101,6 +112,9 @@ export class AzuveraDB extends Dexie {
   instruction_catalogs!: Table<LocalInstructionCatalog, string>;
   instruction_records!: Table<LocalInstructionRecord, string>;
   instruction_record_points!: Table<LocalInstructionRecordPoint, [string, string]>;
+  experience_reports!: Table<LocalExperience, string>;
+  experience_attachments!: Table<LocalExperienceAttachment, string>;
+  experience_comments!: Table<LocalExperienceComment, string>;
 
   constructor(name: string) {
     super(name);
@@ -131,6 +145,12 @@ export class AzuveraDB extends Dexie {
       instruction_catalogs: "id",
       instruction_records: "id, azubi_id, topic_id, given_on, status, _sync",
       instruction_record_points: "[record_id+point_id], record_id, point_id",
+    });
+    // Version 4 (Zusatz C4): Erfahrungsberichte, Anhänge und Kommentare.
+    this.version(4).stores({
+      experience_reports: "id, azubi_id, written_on, status, _sync",
+      experience_attachments: "id, experience_id, azubi_id, _sync",
+      experience_comments: "id, experience_id, azubi_id, created_at, _sync",
     });
   }
 }
