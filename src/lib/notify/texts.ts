@@ -18,6 +18,12 @@ const T: Record<string, [string, string]> = {
   instruction_submitted: ["Neue Unterweisung zur Bestätigung", "Es wartet eine Unterweisung auf deine Bestätigung."],
   instruction_confirmed: ["Unterweisung bestätigt", "Deine Unterweisung wurde bestätigt."],
   instruction_rejected: ["Unterweisung zurückgewiesen", "Deine Unterweisung wurde zurückgewiesen. Lies die Notiz in der App."],
+  experience_submitted: ["Neuer Erfahrungsbericht zur Prüfung", "Es wartet ein Erfahrungsbericht auf deine Prüfung."],
+  experience_approved: ["Erfahrungsbericht freigegeben", "Dein Erfahrungsbericht wurde freigegeben."],
+  experience_rejected: ["Erfahrungsbericht zurückgewiesen", "Dein Erfahrungsbericht wurde zurückgewiesen. Lies die Korrekturnotiz in der App."],
+  experience_reopened: ["Erfahrungsbericht wieder geöffnet", "Einer deiner Erfahrungsberichte wurde wieder geöffnet."],
+  experience_comment: ["Neuer Kommentar", "Zu einem Erfahrungsbericht gibt es einen neuen Kommentar."],
+  experience_due: ["Erfahrungsberichte fehlen noch", "In deinem Lehrjahr fehlen noch Erfahrungsberichte. Öffne Azuvera, um sie zu schreiben."],
   deputy_assigned: ["Vertretung eingetragen", "Für dich wurde eine Vertretung eingetragen."],
   deputy_ended: ["Vertretung beendet", "Eine Vertretung wurde beendet."],
 };
