@@ -295,6 +295,13 @@
       "when": 1794846435803,
       "tag": "0041_c1_bundesland_erfahrungsbericht_vorgaben",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1794846808934,
+      "tag": "0042_c2_erfahrungsberichte_datenmodell",
+      "breakpoints": true
     }
   ]
 }

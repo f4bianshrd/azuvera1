@@ -613,6 +613,202 @@ export type Database = {
           },
         ]
       }
+      experience_attachments: {
+        Row: {
+          azubi_id: string
+          caption: string | null
+          created_at: string
+          experience_id: string
+          file_name: string
+          height: number | null
+          id: string
+          mime_type: string
+          sha256: string | null
+          size_bytes: number
+          sort_order: number
+          storage_path: string
+          thumb_path: string | null
+          width: number | null
+        }
+        Insert: {
+          azubi_id: string
+          caption?: string | null
+          created_at?: string
+          experience_id: string
+          file_name: string
+          height?: number | null
+          id?: string
+          mime_type: string
+          sha256?: string | null
+          size_bytes: number
+          sort_order?: number
+          storage_path: string
+          thumb_path?: string | null
+          width?: number | null
+        }
+        Update: {
+          azubi_id?: string
+          caption?: string | null
+          created_at?: string
+          experience_id?: string
+          file_name?: string
+          height?: number | null
+          id?: string
+          mime_type?: string
+          sha256?: string | null
+          size_bytes?: number
+          sort_order?: number
+          storage_path?: string
+          thumb_path?: string | null
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_attachments_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_attachments_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experience_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_comments: {
+        Row: {
+          author_id: string
+          azubi_id: string
+          body: string
+          created_at: string
+          experience_id: string
+          id: string
+          kind: string
+          section: string
+        }
+        Insert: {
+          author_id?: string
+          azubi_id: string
+          body: string
+          created_at?: string
+          experience_id: string
+          id?: string
+          kind?: string
+          section?: string
+        }
+        Update: {
+          author_id?: string
+          azubi_id?: string
+          body?: string
+          created_at?: string
+          experience_id?: string
+          id?: string
+          kind?: string
+          section?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_comments_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_comments_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experience_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_reports: {
+        Row: {
+          area: string
+          azubi_id: string
+          body: string
+          content_hash: string | null
+          created_at: string
+          id: string
+          kind: string
+          reasoning: string
+          review_note: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: Database["public"]["Enums"]["report_status"]
+          submitted_at: string | null
+          title: string
+          updated_at: string
+          version: number
+          written_on: string
+        }
+        Insert: {
+          area?: string
+          azubi_id: string
+          body?: string
+          content_hash?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          reasoning?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          submitted_at?: string | null
+          title?: string
+          updated_at?: string
+          version?: number
+          written_on?: string
+        }
+        Update: {
+          area?: string
+          azubi_id?: string
+          body?: string
+          content_hash?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          reasoning?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          submitted_at?: string | null
+          title?: string
+          updated_at?: string
+          version?: number
+          written_on?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_reports_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_reports_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       experience_requirements: {
         Row: {
           bundesland: string | null
@@ -690,6 +886,117 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "bundeslaender"
             referencedColumns: ["code"]
+          },
+        ]
+      }
+      experience_signatures: {
+        Row: {
+          client_signed_at: string | null
+          content_hash: string | null
+          experience_id: string
+          experience_version: number
+          id: string
+          image_path: string | null
+          method: string
+          on_behalf_of: string | null
+          role: string
+          signed_at: string
+          signer_id: string
+          signer_name: string
+          signer_role_label: string | null
+        }
+        Insert: {
+          client_signed_at?: string | null
+          content_hash?: string | null
+          experience_id: string
+          experience_version: number
+          id?: string
+          image_path?: string | null
+          method: string
+          on_behalf_of?: string | null
+          role: string
+          signed_at?: string
+          signer_id: string
+          signer_name: string
+          signer_role_label?: string | null
+        }
+        Update: {
+          client_signed_at?: string | null
+          content_hash?: string | null
+          experience_id?: string
+          experience_version?: number
+          id?: string
+          image_path?: string | null
+          method?: string
+          on_behalf_of?: string | null
+          role?: string
+          signed_at?: string
+          signer_id?: string
+          signer_name?: string
+          signer_role_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_signatures_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experience_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_signatures_on_behalf_of_fkey"
+            columns: ["on_behalf_of"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_signatures_signer_id_fkey"
+            columns: ["signer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_versions: {
+        Row: {
+          changed_by: string | null
+          content_hash: string | null
+          created_at: string
+          experience_id: string
+          id: string
+          snapshot: Json
+          status: string
+          version: number
+        }
+        Insert: {
+          changed_by?: string | null
+          content_hash?: string | null
+          created_at?: string
+          experience_id: string
+          id?: string
+          snapshot: Json
+          status: string
+          version: number
+        }
+        Update: {
+          changed_by?: string | null
+          content_hash?: string | null
+          created_at?: string
+          experience_id?: string
+          id?: string
+          snapshot?: Json
+          status?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_versions_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experience_reports"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -2258,6 +2565,17 @@ export type Database = {
         Args: { _azubi_id: string; _patch: Json }
         Returns: undefined
       }
+      approve_experience: {
+        Args: {
+          p_client_signed_at?: string
+          p_expected_version: number
+          p_id: string
+          p_image_path?: string
+          p_method: string
+          p_note?: string
+        }
+        Returns: undefined
+      }
       approve_report: {
         Args: {
           _client_signed_at?: string
@@ -2384,6 +2702,8 @@ export type Database = {
           quiet_to: string
         }[]
       }
+      experience_canonical: { Args: { p_id: string }; Returns: string }
+      experience_hash: { Args: { p_id: string }; Returns: string }
       experience_requirement_for: {
         Args: { p_bundesland: string; p_profession_code: string }
         Returns: {
@@ -2415,6 +2735,33 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      experience_review_queue: {
+        Args: { statuses?: Database["public"]["Enums"]["report_status"][] }
+        Returns: {
+          azubi_id: string
+          deputy_for: string
+          experience_id: string
+          status: Database["public"]["Enums"]["report_status"]
+          submitted_at: string
+        }[]
+      }
+      experience_title: { Args: { p_id: string }; Returns: string }
+      experience_year_counts: {
+        Args: { p_azubi: string }
+        Returns: {
+          approved: number
+          azubi_id: string
+          bundesland: string
+          is_current: boolean
+          profession_code: string
+          required: number
+          requirement_id: string
+          submitted: number
+          year_end: string
+          year_no: number
+          year_start: string
+        }[]
       }
       export_catalog_json: { Args: { p_catalog: string }; Returns: Json }
       export_header: {
@@ -2645,6 +2992,10 @@ export type Database = {
         Args: { p_id: string; p_note: string }
         Returns: undefined
       }
+      reject_experience: {
+        Args: { p_expected_version: number; p_id: string; p_note: string }
+        Returns: undefined
+      }
       reject_instruction: {
         Args: { p_expected_version: number; p_id: string; p_note: string }
         Returns: undefined
@@ -2660,6 +3011,10 @@ export type Database = {
       remove_push_device: { Args: { p_id: string }; Returns: undefined }
       remove_push_subscription: {
         Args: { p_endpoint: string }
+        Returns: undefined
+      }
+      reopen_experience: {
+        Args: { p_id: string; p_reason: string }
         Returns: undefined
       }
       reopen_instruction: {
@@ -2760,6 +3115,16 @@ export type Database = {
         }
         Returns: undefined
       }
+      submit_experience: {
+        Args: {
+          p_client_signed_at?: string
+          p_expected_version: number
+          p_id: string
+          p_image_path?: string
+          p_method: string
+        }
+        Returns: undefined
+      }
       submit_instruction: {
         Args: { p_expected_version: number; p_id: string }
         Returns: undefined
@@ -2773,6 +3138,22 @@ export type Database = {
           _report_id: string
         }
         Returns: undefined
+      }
+      team_experience_overview: {
+        Args: { p_azubi?: string }
+        Returns: {
+          approved: number
+          azubi_id: string
+          bundesland: string
+          is_current: boolean
+          profession_code: string
+          required: number
+          requirement_id: string
+          submitted: number
+          year_end: string
+          year_no: number
+          year_start: string
+        }[]
       }
       team_week_overview: {
         Args: { week_start: string }
@@ -2806,6 +3187,17 @@ export type Database = {
           entries: number
           first_bad_id: number
           ok: boolean
+        }[]
+      }
+      verify_experience: {
+        Args: { p_id: string }
+        Returns: {
+          computed_hash: string
+          experience_id: string
+          hash_ok: boolean
+          signatures_ok: boolean
+          stored_hash: string
+          version: number
         }[]
       }
       verify_report: {
