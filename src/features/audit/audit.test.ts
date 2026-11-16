@@ -66,3 +66,14 @@ describe("Wortvergleich", () => {
     expect(parts.some((p) => p.kind === "removed")).toBe(false);
   });
 });
+
+describe("Erfahrungsberichte im Protokoll", () => {
+  it("benennt Abschnitte eines Erfahrungsberichts", () => {
+    const d = describeEntry({ action: "edit", entity_type: "experience", details: { version: 2, fields: ["title", "body", "reasoning"] } });
+    expect(d.title).toBe("Erfahrungsbericht bearbeitet");
+    expect(d.details[0]).toBe("Abschnitte: Thema, Bericht, Begründung und Bewertung");
+  });
+  it("zeigt den Export der Erfahrungsberichte", () => {
+    expect(describeEntry({ action: "pdf_export", details: { kind: "bulk", count: 3, scope: "experience" } }).title).toBe("PDF exportiert (Erfahrungsberichte)");
+  });
+});
