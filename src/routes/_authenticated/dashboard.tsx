@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ResponsiveDialog } from "@/components/dialogs";
 import { CardSkeleton, PageHeader, StatCard, StatusBadge } from "@/components/shared";
 import { SyncBadge } from "@/features/sync/sync-badge";
+import { ExperienceProgressCard } from "@/features/experience/components/progress-card";
+import { NotebookPen } from "lucide-react";
 import { useMyProfile } from "@/features/app/session";
 import { useProfessions } from "@/features/app/queries";
 import { supabase } from "@/integrations/supabase/client";
@@ -270,7 +272,8 @@ function Dashboard() {
         )}
       </section>
 
-      {/* Abdeckung */}
+      {/* Abdeckung und Erfahrungsberichte */}
+      <div className="grid gap-4 lg:grid-cols-2">
       {coverage && (
         <div>
           <CoverageDonut coverage={coverage} title={`Abdeckung · ${coveragePeriod!.year}. Lehrjahr`} size={140} />
@@ -281,6 +284,13 @@ function Dashboard() {
           </Button>
         </div>
       )}
+      {profile && isAzubi && (
+        <div className="space-y-2">
+          <ExperienceProgressCard azubiId={profile.id} compact />
+          <Button asChild variant="outline" size="sm"><Link to="/erfahrungsberichte/new"><NotebookPen className="size-4" aria-hidden />Neuer Erfahrungsbericht</Link></Button>
+        </div>
+      )}
+      </div>
 
       {/* Schnellzugriff – nur Links zu existierenden Seiten */}
       <section className="rounded-2xl border bg-card p-5">
