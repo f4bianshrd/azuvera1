@@ -302,6 +302,13 @@
       "when": 1794846808934,
       "tag": "0042_c2_erfahrungsberichte_datenmodell",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1794847011922,
+      "tag": "0043_c4_erfahrungsberichte_export_erinnerungen_auskunft",
+      "breakpoints": true
     }
   ]
 }

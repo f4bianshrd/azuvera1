@@ -2594,6 +2594,7 @@ export type Database = {
           id: string
         }[]
       }
+      audit_experience_visible: { Args: { p_id: string }; Returns: boolean }
       audit_hash: {
         Args: {
           _action: string
@@ -2784,6 +2785,10 @@ export type Database = {
         Args: { p_error: string; p_id: number; p_ok: boolean; p_skip: boolean }
         Returns: undefined
       }
+      generate_experience_reminders: {
+        Args: { p_now: string }
+        Returns: number
+      }
       generate_instruction_reminders: {
         Args: { p_now: string }
         Returns: number
@@ -2921,6 +2926,16 @@ export type Database = {
         Returns: undefined
       }
       log_data_export: { Args: never; Returns: undefined }
+      log_experience_export: {
+        Args: {
+          p_azubi: string
+          p_count: number
+          p_from: string
+          p_kind: string
+          p_to: string
+        }
+        Returns: undefined
+      }
       log_export: {
         Args: {
           p_azubi: string
