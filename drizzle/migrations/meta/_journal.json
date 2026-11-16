@@ -288,6 +288,13 @@
       "when": 1794577752353,
       "tag": "0040_b4_unterweisungskataloge_gaertner_pferdewirt",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1794846435803,
+      "tag": "0041_c1_bundesland_erfahrungsbericht_vorgaben",
+      "breakpoints": true
     }
   ]
 }

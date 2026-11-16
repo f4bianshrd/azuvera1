@@ -312,9 +312,28 @@ export type Database = {
           },
         ]
       }
+      bundeslaender: {
+        Row: {
+          code: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          code: string
+          name: string
+          sort_order: number
+        }
+        Update: {
+          code?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           address: string | null
+          bundesland: string | null
           chamber: string | null
           contact_email: string | null
           contact_person: string | null
@@ -329,6 +348,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          bundesland?: string | null
           chamber?: string | null
           contact_email?: string | null
           contact_person?: string | null
@@ -343,6 +363,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          bundesland?: string | null
           chamber?: string | null
           contact_email?: string | null
           contact_person?: string | null
@@ -355,7 +376,15 @@ export type Database = {
           training_number?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "companies_bundesland_fkey"
+            columns: ["bundesland"]
+            isOneToOne: false
+            referencedRelation: "bundeslaender"
+            referencedColumns: ["code"]
+          },
+        ]
       }
       company_professions: {
         Row: {
@@ -581,6 +610,86 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_requirements: {
+        Row: {
+          bundesland: string | null
+          checked_on: string | null
+          created_at: string
+          hint_kind: string | null
+          hint_per_year: number | null
+          hint_total: number | null
+          hint_until_interim: number | null
+          id: string
+          is_active: boolean
+          leittext_weight: number
+          min_pages: number | null
+          note: string | null
+          page_unit: string | null
+          profession_code: string | null
+          required_basis: string
+          required_per_year: number
+          source_issuer: string | null
+          source_stand: string | null
+          source_title: string | null
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          bundesland?: string | null
+          checked_on?: string | null
+          created_at?: string
+          hint_kind?: string | null
+          hint_per_year?: number | null
+          hint_total?: number | null
+          hint_until_interim?: number | null
+          id?: string
+          is_active?: boolean
+          leittext_weight?: number
+          min_pages?: number | null
+          note?: string | null
+          page_unit?: string | null
+          profession_code?: string | null
+          required_basis?: string
+          required_per_year?: number
+          source_issuer?: string | null
+          source_stand?: string | null
+          source_title?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bundesland?: string | null
+          checked_on?: string | null
+          created_at?: string
+          hint_kind?: string | null
+          hint_per_year?: number | null
+          hint_total?: number | null
+          hint_until_interim?: number | null
+          id?: string
+          is_active?: boolean
+          leittext_weight?: number
+          min_pages?: number | null
+          note?: string | null
+          page_unit?: string | null
+          profession_code?: string | null
+          required_basis?: string
+          required_per_year?: number
+          source_issuer?: string | null
+          source_stand?: string | null
+          source_title?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_requirements_bundesland_fkey"
+            columns: ["bundesland"]
+            isOneToOne: false
+            referencedRelation: "bundeslaender"
+            referencedColumns: ["code"]
           },
         ]
       }
@@ -1271,6 +1380,7 @@ export type Database = {
           ausbilder_id: string | null
           ausbildungsbeginn: string | null
           ausbildungsende: string | null
+          bundesland: string | null
           company_id: string | null
           created_at: string
           email: string
@@ -1294,6 +1404,7 @@ export type Database = {
           ausbilder_id?: string | null
           ausbildungsbeginn?: string | null
           ausbildungsende?: string | null
+          bundesland?: string | null
           company_id?: string | null
           created_at?: string
           email?: string
@@ -1317,6 +1428,7 @@ export type Database = {
           ausbilder_id?: string | null
           ausbildungsbeginn?: string | null
           ausbildungsende?: string | null
+          bundesland?: string | null
           company_id?: string | null
           created_at?: string
           email?: string
@@ -1343,6 +1455,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_bundesland_fkey"
+            columns: ["bundesland"]
+            isOneToOne: false
+            referencedRelation: "bundeslaender"
+            referencedColumns: ["code"]
           },
           {
             foreignKeyName: "profiles_company_fk"
@@ -2253,6 +2372,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      effective_bundesland: { Args: { p_azubi: string }; Returns: string }
       effective_prefs: {
         Args: { _uid: string }
         Returns: {
@@ -2263,6 +2383,38 @@ export type Database = {
           quiet_hours_enabled: boolean
           quiet_to: string
         }[]
+      }
+      experience_requirement_for: {
+        Args: { p_bundesland: string; p_profession_code: string }
+        Returns: {
+          bundesland: string | null
+          checked_on: string | null
+          created_at: string
+          hint_kind: string | null
+          hint_per_year: number | null
+          hint_total: number | null
+          hint_until_interim: number | null
+          id: string
+          is_active: boolean
+          leittext_weight: number
+          min_pages: number | null
+          note: string | null
+          page_unit: string | null
+          profession_code: string | null
+          required_basis: string
+          required_per_year: number
+          source_issuer: string | null
+          source_stand: string | null
+          source_title: string | null
+          source_url: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "experience_requirements"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       export_catalog_json: { Args: { p_catalog: string }; Returns: Json }
       export_header: {
@@ -2631,6 +2783,21 @@ export type Database = {
           to_review: number
           week_status: string
         }[]
+      }
+      training_year_bounds: {
+        Args: { n: number; p_end: string; p_start: string }
+        Returns: {
+          year_end: string
+          year_start: string
+        }[]
+      }
+      training_year_clamped: {
+        Args: { p_date: string; p_end: string; p_start: string }
+        Returns: number
+      }
+      training_year_count: {
+        Args: { p_end: string; p_start: string }
+        Returns: number
       }
       verify_audit_chain: {
         Args: { p_chain?: string }
