@@ -95,6 +95,8 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [x] Daten-Prompt B2: Unterweisungen – Oberfläche, Export, Katalog-Editor
 - [x] Daten-Prompt B3: Unterweisungskataloge allgemein + Landwirt/in
 - [x] Daten-Prompt B4: Unterweisungskataloge Gärtner/in + Pferdewirt/in
-- [ ] Zusatz C1–C4: Erfahrungsberichte
+- [x] Zusatz C1–C4: Erfahrungsberichte (Vorgaben, Datenmodell, Seiten, Prüf-Tab, Verwaltung, Export, Protokoll, Erinnerungen, Datenschutz)
+- [ ] C4 Rest: gemeinsamer Export „Berichte und Erfahrungsberichte“ in einem Dialog/Sammel-PDF (derzeit getrennte Exporte)
+- [ ] C Abnahme im Browser: Einreichen/Freigeben mit zwei Konten, PDF-Export, Handy-Ansicht – noch nicht durchgespielt
 - [ ] Zusatz D1, Zwischenschritt, D2, D3: offene Registrierung, Einladungen, Zugriff
 - [ ] Abnahme-Prompt 1 und 2
