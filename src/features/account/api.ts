@@ -9,6 +9,8 @@ export type MyDataExport = Record<string, unknown> & {
   report_attachments: { id: string; report_id: string; storage_path: string; file_name: string }[];
   report_signatures: { id: string; image_path: string | null; own: boolean }[];
   user_signatures: { image_path: string | null }[];
+  experience_attachments?: { id: string; experience_id: string; storage_path: string; file_name: string }[];
+  experience_signatures?: { id: string; image_path: string | null; role: string }[];
 };
 
 export class DataExportCancelled extends Error {}
@@ -37,9 +39,10 @@ function readme(created: Date, withFiles: boolean, missing: number): string {
     "",
     "Inhalt:",
     "- daten.json: alle bei Azuvera zu deinem Konto gespeicherten Daten (Profil, Rolle, Einwilligungen,",
-    "  Benachrichtigungs-Einstellungen, Geräte, Berichte inkl. Entwürfe, Versionen, Unterschriften, Kommentare,",
+    "  Benachrichtigungs-Einstellungen, Geräte, Berichte und Erfahrungsberichte inkl. Entwürfe, Versionen, Unterschriften, Kommentare,",
     "  Abwesenheiten, Noten, Benachrichtigungen, Vertretungen, KI-Nutzung, Löschanträge und Protokolleinträge).",
     withFiles ? "- anhaenge/{Bericht-ID}/: die Originaldateien deiner Anhänge." : "- Anhänge wurden auf Wunsch nicht eingeschlossen.",
+    ...(withFiles ? ["- anhaenge_erfahrungsberichte/{Erfahrungsbericht-ID}/: die Anhänge deiner Erfahrungsberichte."] : []),
     withFiles ? "- unterschriften/: die Bilder deiner Unterschriften." : "- Unterschriftsbilder wurden auf Wunsch nicht eingeschlossen.",
     ...(missing ? [`- ${missing} Datei(en) konnten nicht geladen werden.`] : []),
     "",
@@ -63,8 +66,11 @@ export async function buildMyDataZip(
     const sigPaths = [
       ...data.report_signatures.filter((s) => s.own && s.image_path).map((s) => s.image_path!),
       ...data.user_signatures.map((u) => u.image_path).filter((p): p is string => !!p),
+      // Eigene Unterschriften an Erfahrungsberichten (Azubi: Einreichen, Prüfende: Freigabe)
+      ...(data.experience_signatures ?? []).filter((s) => s.image_path && ((data["role"] === "azubi") === (s.role === "azubi"))).map((s) => s.image_path!),
     ].filter((p, i, a) => a.indexOf(p) === i);
-    const total = data.report_attachments.length + sigPaths.length;
+    const expAttachments = data.experience_attachments ?? [];
+    const total = data.report_attachments.length + expAttachments.length + sigPaths.length;
     let done = 0;
     opts.onProgress({ done, total });
     const used = new Map<string, Set<string>>();
@@ -73,6 +79,16 @@ export async function buildMyDataZip(
       const bytes = await download("report-files", a.storage_path);
       if (bytes) {
         const folder = `anhaenge/${a.report_id}`;
+        const set = used.get(folder) ?? new Set<string>(); used.set(folder, set);
+        files[`${folder}/${uniqueName(set, zipSafeName(a.file_name, `${a.id}`))}`] = bytes;
+      } else missing++;
+      opts.onProgress({ done: ++done, total });
+    }
+    for (const a of expAttachments) {
+      if (opts.signal.aborted) throw new DataExportCancelled();
+      const bytes = await download("experience-files", a.storage_path);
+      if (bytes) {
+        const folder = `anhaenge_erfahrungsberichte/${a.experience_id}`;
         const set = used.get(folder) ?? new Set<string>(); used.set(folder, set);
         files[`${folder}/${uniqueName(set, zipSafeName(a.file_name, `${a.id}`))}`] = bytes;
       } else missing++;
