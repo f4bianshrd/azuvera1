@@ -69,9 +69,9 @@ function NewExperiencePage() {
     {!report && <p className="mt-6 text-sm text-muted-foreground">Anhänge kannst du hinzufügen, sobald der Entwurf gespeichert ist.</p>}
 
     <div className="fixed inset-x-0 bottom-16 z-20 border-t bg-background/95 p-3 backdrop-blur sm:bottom-0">
-      <div className="mx-auto grid max-w-3xl grid-cols-2 gap-2 sm:flex sm:justify-between">
-        <Button variant="ghost" className="col-span-2 sm:col-span-1" onClick={() => void navigate({ to: "/erfahrungsberichte" })}>Abbrechen</Button>
-        <div className="col-span-2 grid grid-cols-2 gap-2 sm:flex">
+      <div className="mx-auto flex max-w-3xl flex-col-reverse gap-2 sm:flex-row sm:justify-between">
+        <Button variant="ghost" onClick={() => void navigate({ to: "/erfahrungsberichte" })}>Abbrechen</Button>
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Button variant="outline" onClick={() => void saveDraft()}>Als Entwurf speichern</Button>
           <Button onClick={() => void toSubmit()}>Weiter zum Einreichen</Button>
         </div>
