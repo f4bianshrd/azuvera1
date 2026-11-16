@@ -152,7 +152,7 @@ export function berlinIso(iso: string): string {
 interface Details {
   version?: unknown; content_hash?: unknown; report_type?: unknown; report_date?: unknown; fields?: unknown;
   mime_type?: unknown; size_bytes?: unknown; sha256?: unknown; field?: unknown; method?: unknown;
-  on_behalf_of?: unknown; section?: unknown; kind?: unknown; count?: unknown; status?: unknown;
+  on_behalf_of?: unknown; section?: unknown; kind?: unknown; count?: unknown; status?: unknown; written_on?: unknown; scope?: unknown;
 }
 function asDetails(d: unknown): Details {
   return d && typeof d === "object" && !Array.isArray(d) ? (d as Details) : {};

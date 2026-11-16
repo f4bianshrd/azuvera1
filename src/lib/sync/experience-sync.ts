@@ -131,8 +131,8 @@ export async function executeExperienceOp(db: AzuveraDB, userId: string, e: Outb
         }
       }
       const args: Record<string, unknown> = { p_id: id, p_expected_version: row._base_version, p_method: e.payload.method };
-      if (imagePath) args.p_image_path = imagePath;
-      if (e.payload.clientSignedAt) args.p_client_signed_at = e.payload.clientSignedAt;
+      if (imagePath) args["p_image_path"] = imagePath;
+      if (e.payload.clientSignedAt) args["p_client_signed_at"] = e.payload.clientSignedAt;
       const res = await supabase.rpc("submit_experience", args as never);
       if (res.error) {
         if (classifyError({ ...res.error, status: res.status }) === "conflict") {

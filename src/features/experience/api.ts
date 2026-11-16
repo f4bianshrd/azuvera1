@@ -253,7 +253,8 @@ export async function saveExperienceDraft(id: string, patch: Partial<ExperienceD
   const row = db ? await db.experience_reports.get(id) : undefined;
   if (!db || !row) throw new Error("Erfahrungsbericht nicht gefunden.");
   if (row._submit_pending) throw new Error("Wird eingereicht, sobald du online bist.");
-  const next: LocalExperience = { ...row, ...draftSchema.partial().parse(patch), updated_at: nowIso(), _sync: row._sync === "conflict" ? "conflict" : "pending" };
+  const parsed = Object.fromEntries(Object.entries(draftSchema.partial().parse(patch)).filter(([, v]) => v !== undefined)) as Partial<ExperienceDraft>;
+  const next: LocalExperience = { ...row, ...parsed, updated_at: nowIso(), _sync: row._sync === "conflict" ? "conflict" : "pending" };
   await db.experience_reports.put(next);
   if (row._sync !== "conflict") await enqueue({ record: `experience:${id}`, op: "experience.upsert", payload: { id }, title: saveTitle() });
   else changed();
@@ -296,8 +297,8 @@ export async function submitExperience(input: { id: string; method: "draw" | "cl
 export async function approveExperience(input: { id: string; expectedVersion: number; method: "draw" | "saved" | "click"; imagePath?: string | undefined; note?: string | undefined }): Promise<void> {
   requireOnline();
   const args: Record<string, unknown> = { p_id: input.id, p_expected_version: input.expectedVersion, p_method: input.method, p_client_signed_at: nowIso() };
-  if (input.imagePath) args.p_image_path = input.imagePath;
-  if (input.note) args.p_note = input.note;
+  if (input.imagePath) args["p_image_path"] = input.imagePath;
+  if (input.note) args["p_note"] = input.note;
   const { error } = await supabase.rpc("approve_experience", args as never);
   if (error) rethrow(error);
 }

@@ -128,7 +128,7 @@ function ExperienceDetailPage() {
           {editable && !editing && <Button variant="outline" size="sm" onClick={() => setEditing(true)}>Bearbeiten</Button>}
           {editing && <Button variant="outline" size="sm" onClick={() => void handle.current?.flush().then(() => setEditing(false))}>Fertig</Button>}
           {isOwner && report.status === "draft" && !report._submit_pending && <Button variant="outline" size="sm" className="text-destructive" onClick={() => setDeleteOpen(true)}><Trash2 className="size-4" aria-hidden /> Löschen</Button>}
-          {editable && <Button size="sm" onClick={() => void (editing ? handle.current?.flush() : Promise.resolve()).then(() => setSubmitOpen(true))}>{report.status === "rejected" ? "Erneut einreichen" : "Einreichen"}</Button>}
+          {editable && <Button size="sm" onClick={() => { void (async () => { if (editing) await handle.current?.flush(); setSubmitOpen(true); })(); }}>{report.status === "rejected" ? "Erneut einreichen" : "Einreichen"}</Button>}
         </div>
       </div>
     </div>

@@ -52,7 +52,7 @@ export async function listEntityVersions(entity: HistoryEntity, id: string): Pro
     const s = (v.snapshot && typeof v.snapshot === "object" && !Array.isArray(v.snapshot) ? v.snapshot : {}) as Record<string, unknown>;
     const t = (k: string) => (typeof s[k] === "string" ? (s[k] as string) : "");
     const kinds: Record<string, string> = { erfahrungsbericht: "Erfahrungsbericht", projektbericht: "Projektbericht", leittext: "Leittext" };
-    const att = Array.isArray(s.attachments) ? (s.attachments as unknown[]).map((a) => (a && typeof a === "object" && "file_name" in a ? String((a as { file_name: unknown }).file_name) : "")).filter(Boolean) : [];
+    const att = Array.isArray(s["attachments"]) ? (s["attachments"] as unknown[]).map((a) => (a && typeof a === "object" && "file_name" in a ? String((a as { file_name: unknown }).file_name) : "")).filter(Boolean) : [];
     const written = t("written_on");
     return {
       id: v.id, version: v.version, status: v.status, created_at: v.created_at, content_hash: v.content_hash, attachments: att,
