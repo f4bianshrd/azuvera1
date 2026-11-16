@@ -26,6 +26,22 @@ function uploadErrorMessage(e: unknown): string {
   return "Die Datei konnte auf diesem Gerät nicht gespeichert werden. Bitte versuche es erneut oder starte die App neu.";
 }
 
+/** Gemeinsame Felder von Berichts- und Erfahrungsberichts-Anhängen. */
+export interface AttachmentLike {
+  id: string; file_name: string; mime_type: string; caption: string | null; sort_order: number;
+  storage_path: string; thumb_path: string | null; _sync?: string | undefined; _base_version?: number | null | undefined;
+}
+/** Datenzugriff je Modul (Berichte bzw. Erfahrungsberichte) – die Oberfläche bleibt dieselbe. */
+export interface AttachmentAdapter {
+  queryKey: unknown[];
+  limitMessage: string;
+  add: (input: Parameters<typeof addAttachment>[0]) => Promise<void>;
+  update: (id: string, patch: { caption?: string; sort_order?: number }) => Promise<void>;
+  remove: (a: AttachmentLike) => Promise<void>;
+  url: (a: AttachmentLike, kind: "thumb" | "original") => Promise<string>;
+  openExternal: (a: AttachmentLike) => Promise<void>;
+}
+
 interface PendingUpload {
   key: string;
   name: string;
@@ -36,12 +52,23 @@ export function AttachmentSection({
   report,
   attachments,
   editable,
+  adapter,
 }: {
-  report: Report;
-  attachments: ReportAttachment[];
+  report: Pick<Report, "id" | "azubi_id">;
+  attachments: AttachmentLike[];
   editable: boolean;
+  adapter?: AttachmentAdapter;
 }) {
   const queryClient = useQueryClient();
+  const api: AttachmentAdapter = adapter ?? {
+    queryKey: ["reports", report.id],
+    limitMessage: "Höchstens 10 Anhänge je Bericht.",
+    add: addAttachment,
+    update: updateAttachment,
+    remove: (a) => deleteAttachment(a as ReportAttachment),
+    url: (a, kind) => attachmentUrl(a as ReportAttachment, kind),
+    openExternal: (a) => openAttachmentExternally(a as ReportAttachment),
+  };
   const [pending, setPending] = useState<PendingUpload[]>([]);
   const [viewer, setViewer] = useState<{ index: number; url: string } | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -49,14 +76,14 @@ export function AttachmentSection({
   const galleryRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["reports", report.id] });
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: api.queryKey });
 
   const handleFiles = useCallback(
     async (files: FileList | File[]) => {
       const list = [...files];
       if (list.length === 0) return;
       if (attachments.length + pending.length + list.length > MAX_ATTACHMENTS) {
-        toast.error("Höchstens 10 Anhänge je Bericht.");
+        toast.error(api.limitMessage);
         return;
       }
       for (const file of list) {
@@ -64,7 +91,7 @@ export function AttachmentSection({
         setPending((p) => [...p, { key, name: file.name, progress: "uploading" }]);
         try {
           const processed = await processFile(file);
-          await addAttachment({
+          await api.add({
             report,
             blob: processed.blob,
             thumb: processed.thumb ?? undefined,
@@ -92,9 +119,9 @@ export function AttachmentSection({
     fileRef.current?.click();
   };
 
-  const remove = async (a: ReportAttachment) => {
+  const remove = async (a: AttachmentLike) => {
     try {
-      await deleteAttachment(a);
+      await api.remove(a);
       await invalidate();
       toast.success("Anhang gelöscht");
     } catch {
@@ -102,25 +129,25 @@ export function AttachmentSection({
     }
   };
 
-  const move = async (a: ReportAttachment, dir: -1 | 1) => {
+  const move = async (a: AttachmentLike, dir: -1 | 1) => {
     const idx = attachments.findIndex((x) => x.id === a.id);
     const swap = attachments[idx + dir];
     if (!swap) return;
     try {
-      await updateAttachment(a.id, { sort_order: swap.sort_order });
-      await updateAttachment(swap.id, { sort_order: a.sort_order });
+      await api.update(a.id, { sort_order: swap.sort_order });
+      await api.update(swap.id, { sort_order: a.sort_order });
       await invalidate();
     } catch {
       toast.error("Reihenfolge konnte nicht geändert werden.");
     }
   };
 
-  const openViewer = async (a: ReportAttachment, index: number) => {
+  const openViewer = async (a: AttachmentLike, index: number) => {
     try {
       if (a.mime_type === "application/pdf") {
-        await openAttachmentExternally(a);
+        await api.openExternal(a);
       } else {
-        const url = await attachmentUrl(a, "original");
+        const url = await api.url(a, "original");
         setViewer({ index, url });
       }
     } catch {
@@ -128,7 +155,7 @@ export function AttachmentSection({
     }
   };
 
-  const thumbUrl = async (a: ReportAttachment): Promise<string> => attachmentUrl(a, "thumb");
+  const thumbUrl = async (a: AttachmentLike): Promise<string> => api.url(a, "thumb");
 
   return (
     <section className="space-y-3">
@@ -266,7 +293,7 @@ export function AttachmentSection({
                     className="h-8 text-xs"
                     onBlur={(e) => {
                       const v = e.target.value.trim();
-                      if (v !== (a.caption ?? "")) void updateAttachment(a.id, { caption: v }).then(invalidate);
+                      if (v !== (a.caption ?? "")) void api.update(a.id, { caption: v }).then(invalidate);
                     }}
                   />
                 </div>
@@ -323,8 +350,8 @@ function AttachmentThumb({
   attachment,
   loadUrl,
 }: {
-  attachment: ReportAttachment;
-  loadUrl: (a: ReportAttachment) => Promise<string>;
+  attachment: AttachmentLike;
+  loadUrl: (a: AttachmentLike) => Promise<string>;
 }) {
   const [url, setUrl] = useState<string | null>(null);
   const ref = useRef<HTMLSpanElement>(null);
