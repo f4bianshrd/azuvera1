@@ -1,3 +1,5 @@
+import { listBundeslaender } from "@/features/experience/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -40,6 +42,7 @@ const emptyForm = {
   contact_person: "",
   training_number: "",
   chamber: "",
+  bundesland: "",
   contact_email: "",
   contact_phone: "",
 };
@@ -49,6 +52,7 @@ function BetriebePage() {
   const queryClient = useQueryClient();
   const { data: companies, isLoading } = useCompanies();
   const { data: professions } = useProfessions();
+  const { data: lands = [] } = useQuery({ queryKey: ["experience", "bundeslaender"], queryFn: listBundeslaender });
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Company | null>(null);
   const [deleting, setDeleting] = useState<Company | null>(null);
@@ -91,6 +95,7 @@ function BetriebePage() {
       contact_person: c.contact_person ?? "",
       training_number: c.training_number ?? "",
       chamber: c.chamber ?? "",
+      bundesland: c.bundesland ?? "",
       contact_email: c.contact_email ?? "",
       contact_phone: c.contact_phone ?? "",
     });
@@ -121,6 +126,7 @@ function BetriebePage() {
         contact_person: form.contact_person || null,
         training_number: form.training_number || null,
         chamber: form.chamber || null,
+        bundesland: form.bundesland || null,
         contact_email: form.contact_email || null,
         contact_phone: form.contact_phone || null,
         logo_url: logoUrl,
@@ -204,6 +210,9 @@ function BetriebePage() {
                   <p className="text-sm text-muted-foreground">
                     {[c.legal_form, c.chamber].filter(Boolean).join(" · ") || "—"}
                   </p>
+                  <p className="text-sm text-muted-foreground">
+                    Bundesland: {lands.find((l) => l.code === c.bundesland)?.name ?? "—"}
+                  </p>
                 </div>
                 <div className="flex shrink-0 gap-1">
                   <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => openEdit(c)} aria-label={`${c.name} bearbeiten`}>
@@ -239,6 +248,14 @@ function BetriebePage() {
               <Label htmlFor="c-chamber">Kammer</Label>
               <Input id="c-chamber" value={form.chamber} onChange={set("chamber")} placeholder="IHK / HWK / LWK" className="h-11 text-base" />
             </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="c-bundesland">Bundesland</Label>
+            <Select value={form.bundesland || "none"} onValueChange={(v) => setForm((f) => ({ ...f, bundesland: v === "none" ? "" : v }))}>
+              <SelectTrigger id="c-bundesland" className="h-11" aria-describedby="c-bundesland-hint"><SelectValue /></SelectTrigger>
+              <SelectContent><SelectItem value="none">Nicht festgelegt</SelectItem>{lands.map((l) => <SelectItem key={l.code} value={l.code}>{l.name}</SelectItem>)}</SelectContent>
+            </Select>
+            <p id="c-bundesland-hint" className="text-xs text-muted-foreground">Das Bundesland des Betriebs bestimmt, welche Vorgaben für Erfahrungsberichte gelten.</p>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="c-address">Anschrift</Label>
