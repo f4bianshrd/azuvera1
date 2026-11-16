@@ -39,6 +39,7 @@ import { Route as ApiNotificationStatusRouteImport } from './routes/api/notifica
 import { Route as ApiPushTestRouteImport } from './routes/api/push-test'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin_.einstellungen'
 import { Route as AuthenticatedErfahrungsberichteIndexRouteImport } from './routes/_authenticated/erfahrungsberichte.index'
+import { Route as AuthenticatedErfahrungsberichteNewRouteImport } from './routes/_authenticated/erfahrungsberichte.new'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
 import { Route as AuthenticatedReportsNewRouteImport } from './routes/_authenticated/reports.new'
@@ -215,6 +216,12 @@ const AuthenticatedErfahrungsberichteIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedErfahrungsberichteRoute,
   } as any)
+const AuthenticatedErfahrungsberichteNewRoute =
+  AuthenticatedErfahrungsberichteNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedErfahrungsberichteRoute,
+  } as any)
 const AuthenticatedReportsIndexRoute =
   AuthenticatedReportsIndexRouteImport.update({
     id: '/',
@@ -328,6 +335,7 @@ export interface FileRoutesByFullPath {
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
+  '/erfahrungsberichte/new': typeof AuthenticatedErfahrungsberichteNewRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -371,6 +379,7 @@ export interface FileRoutesByTo {
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
+  '/erfahrungsberichte/new': typeof AuthenticatedErfahrungsberichteNewRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -419,6 +428,7 @@ export interface FileRoutesById {
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
   '/_authenticated/admin_/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
+  '/_authenticated/erfahrungsberichte/new': typeof AuthenticatedErfahrungsberichteNewRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/reports/new': typeof AuthenticatedReportsNewRoute
   '/_authenticated/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -467,6 +477,7 @@ export interface FileRouteTypes {
     | '/api/notification-status'
     | '/api/push-test'
     | '/admin/einstellungen'
+    | '/erfahrungsberichte/new'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/ausbildungsplaene'
@@ -510,6 +521,7 @@ export interface FileRouteTypes {
     | '/api/notification-status'
     | '/api/push-test'
     | '/admin/einstellungen'
+    | '/erfahrungsberichte/new'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/ausbildungsplaene'
@@ -557,6 +569,7 @@ export interface FileRouteTypes {
     | '/api/notification-status'
     | '/api/push-test'
     | '/_authenticated/admin_/einstellungen'
+    | '/_authenticated/erfahrungsberichte/new'
     | '/_authenticated/reports/$id'
     | '/_authenticated/reports/new'
     | '/_authenticated/stammdaten/ausbildungsplaene'
@@ -806,6 +819,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErfahrungsberichteIndexRouteImport
       parentRoute: typeof AuthenticatedErfahrungsberichteRoute
     }
+    '/_authenticated/erfahrungsberichte/new': {
+      id: '/_authenticated/erfahrungsberichte/new'
+      path: '/new'
+      fullPath: '/erfahrungsberichte/new'
+      preLoaderRoute: typeof AuthenticatedErfahrungsberichteNewRouteImport
+      parentRoute: typeof AuthenticatedErfahrungsberichteRoute
+    }
     '/_authenticated/reports/': {
       id: '/_authenticated/reports/'
       path: '/'
@@ -915,11 +935,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedErfahrungsberichteRouteChildren {
+  AuthenticatedErfahrungsberichteNewRoute: typeof AuthenticatedErfahrungsberichteNewRoute
   AuthenticatedErfahrungsberichteIndexRoute: typeof AuthenticatedErfahrungsberichteIndexRoute
 }
 
 const AuthenticatedErfahrungsberichteRouteChildren: AuthenticatedErfahrungsberichteRouteChildren =
   {
+    AuthenticatedErfahrungsberichteNewRoute:
+      AuthenticatedErfahrungsberichteNewRoute,
     AuthenticatedErfahrungsberichteIndexRoute:
       AuthenticatedErfahrungsberichteIndexRoute,
   }
