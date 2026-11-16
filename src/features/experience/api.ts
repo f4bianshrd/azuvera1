@@ -517,3 +517,11 @@ export async function listVisibleAzubis(): Promise<AzubiHeader[]> {
   const names = await experienceNames(rows.map((r) => r.azubi_id));
   return [...names.values()].sort((a, b) => a.name.localeCompare(b.name, "de"));
 }
+
+/** Für wen die angemeldete Person gerade prüft (eigene Zuständigkeit oder Vertretung). */
+export async function experienceActingPrincipal(azubiId: string): Promise<string | null> {
+  const uid = myId();
+  if (!uid || !getNetworkStatus().online) return null;
+  const { data } = await supabase.rpc("acting_principal", { _reviewer: uid, _azubi: azubiId });
+  return data ?? null;
+}
