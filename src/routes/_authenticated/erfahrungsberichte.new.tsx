@@ -62,16 +62,16 @@ function NewExperiencePage() {
     setSubmitOpen(true);
   };
 
-  return <div className="pb-24">
+  return <div className="pb-44 sm:pb-24">
     <PageHeader title="Neuer Erfahrungsbericht" subtitle="Speichert automatisch – du kannst auch diktieren." />
     <ExperienceEditor azubiId={profile.id} report={null} requirement={requirement} onSaved={setReport} onDirtyChange={setDirty} handleRef={handle} />
     {report && <div className="mt-6"><ExperienceAttachments report={report} attachments={detail?.attachments ?? []} editable /></div>}
     {!report && <p className="mt-6 text-sm text-muted-foreground">Anhänge kannst du hinzufügen, sobald der Entwurf gespeichert ist.</p>}
 
     <div className="fixed inset-x-0 bottom-16 z-20 border-t bg-background/95 p-3 backdrop-blur sm:bottom-0">
-      <div className="mx-auto flex max-w-3xl flex-wrap justify-between gap-2">
-        <Button variant="ghost" onClick={() => void navigate({ to: "/erfahrungsberichte" })}>Abbrechen</Button>
-        <div className="flex gap-2">
+      <div className="mx-auto grid max-w-3xl grid-cols-2 gap-2 sm:flex sm:justify-between">
+        <Button variant="ghost" className="col-span-2 sm:col-span-1" onClick={() => void navigate({ to: "/erfahrungsberichte" })}>Abbrechen</Button>
+        <div className="col-span-2 grid grid-cols-2 gap-2 sm:flex">
           <Button variant="outline" onClick={() => void saveDraft()}>Als Entwurf speichern</Button>
           <Button onClick={() => void toSubmit()}>Weiter zum Einreichen</Button>
         </div>
