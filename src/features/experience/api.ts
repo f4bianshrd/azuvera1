@@ -473,3 +473,47 @@ export async function logExperienceExport(azubiId: string, kind: "single" | "bul
   const { error } = await supabase.rpc("log_experience_export", { p_azubi: azubiId, p_kind: kind, p_count: count, p_from: from as string, p_to: to as string });
   if (error) throw error;
 }
+
+// ---------- Personen und Rechte (online) ----------
+export interface AzubiHeader { id: string; name: string; profession: string | null }
+
+/** Name und Beruf einer Azubi-Person für Kopfzeilen (nur sichtbare Personen). */
+export const getAzubiHeader = (azubiId: string) => cachedOnline(`experience-azubi:${azubiId}`, async (): Promise<AzubiHeader | null> => {
+  const { data, error } = await supabase.from("profiles").select("id, full_name, professions(name)").eq("id", azubiId).maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return { id: data.id, name: data.full_name, profession: (data.professions as { name: string } | null)?.name ?? null };
+});
+
+/** Namen mehrerer Personen (z. B. für das Prüfportal). */
+export async function experienceNames(ids: string[]): Promise<Map<string, AzubiHeader>> {
+  const unique = [...new Set(ids)].filter(Boolean);
+  const out = new Map<string, AzubiHeader>();
+  if (!unique.length || !getNetworkStatus().online) return out;
+  const { data } = await supabase.from("profiles").select("id, full_name, professions(name)").in("id", unique);
+  for (const p of data ?? []) out.set(p.id, { id: p.id, name: p.full_name, profession: (p.professions as { name: string } | null)?.name ?? null });
+  return out;
+}
+
+export async function canReviewExperience(azubiId: string): Promise<boolean> {
+  const uid = myId();
+  if (!uid || uid === azubiId || !getNetworkStatus().online) return false;
+  const { data } = await supabase.rpc("can_review_for", { _reviewer: uid, _azubi: azubiId });
+  return data === true;
+}
+
+export async function canCommentExperience(azubiId: string): Promise<boolean> {
+  const uid = myId();
+  if (!uid) return false;
+  if (uid === azubiId) return true;
+  if (!getNetworkStatus().online) return false;
+  const { data } = await supabase.rpc("can_comment_for", { _user: uid, _azubi: azubiId });
+  return data === true;
+}
+
+/** Personen, deren Erfahrungsberichte ich sehen darf (aus der Team-Übersicht). */
+export async function listVisibleAzubis(): Promise<AzubiHeader[]> {
+  const rows = await getTeamOverview();
+  const names = await experienceNames(rows.map((r) => r.azubi_id));
+  return [...names.values()].sort((a, b) => a.name.localeCompare(b.name, "de"));
+}
