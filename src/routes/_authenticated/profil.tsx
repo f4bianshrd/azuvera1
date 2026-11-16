@@ -1,3 +1,4 @@
+import { BundeslandField } from "@/features/experience/components/bundesland-field";
 import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -355,6 +356,7 @@ function ProfilPage() {
               </div>
             </>
           )}
+          {isAzubi && <BundeslandField azubiId={profile.id} />}
           <div className="space-y-1.5 sm:col-span-2">
             <Label>Aktuelles Ausbildungsjahr</Label>
             <Select value={year} onValueChange={applyYear}>
