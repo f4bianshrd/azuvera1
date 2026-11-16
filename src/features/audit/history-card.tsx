@@ -14,8 +14,8 @@ import { ROLE_LABELS, type AppRole } from "@/features/app/session";
 import { OFFLINE_ACTION_HINT, useOnline } from "@/lib/sync/status";
 import { cn } from "@/lib/utils";
 import {
-  auditNames, listReportHistory, listReportVersions, snapshotOf, verifyReportIntegrity,
-  type ReportIntegrity, type ReportVersion,
+  auditNames, listEntityHistory, listEntityVersions, verifyEntityIntegrity,
+  type EntityVersion, type HistoryEntity, type ReportIntegrity,
 } from "./api";
 import { wordDiff } from "./diff";
 import { describeEntry, formatAuditTime, matchesHistoryFilter, referencedIds, shortHash, type HistoryFilter } from "./labels";
@@ -36,21 +36,31 @@ const VERSION_STATUS: Record<string, string> = {
   submitted: "Eingereicht", rejected: "Zurückgewiesen", approved: "Freigegeben", draft: "Wieder geöffnet",
 };
 
-const SECTIONS: { key: "activities" | "school" | "instructions" | "summary"; label: string }[] = [
-  { key: "activities", label: "Tätigkeiten" },
-  { key: "school", label: "Berufsschule" },
-  { key: "instructions", label: "Unterweisungen" },
-  { key: "summary", label: "Zusammenfassung" },
-];
+const SECTIONS: Record<HistoryEntity, { key: string; label: string }[]> = {
+  report: [
+    { key: "activities", label: "Tätigkeiten" },
+    { key: "school", label: "Berufsschule" },
+    { key: "instructions", label: "Unterweisungen" },
+    { key: "summary", label: "Zusammenfassung" },
+  ],
+  experience: [
+    { key: "kind", label: "Art" },
+    { key: "title", label: "Thema" },
+    { key: "area", label: "Bereich" },
+    { key: "written_on", label: "Datum" },
+    { key: "body", label: "Bericht" },
+    { key: "reasoning", label: "Begründung" },
+  ],
+};
 
-export function HistoryCard({ reportId, isDraft, onServer }: { reportId: string; isDraft: boolean; onServer: boolean }) {
+export function HistoryCard({ reportId, isDraft, onServer, entity = "report" }: { reportId: string; isDraft: boolean; onServer: boolean; entity?: HistoryEntity }) {
   const online = useOnline();
   const [filter, setFilter] = useState<HistoryFilter>("all");
   const [integrity, setIntegrity] = useState<ReportIntegrity | "draft" | "error" | null>(null);
   const [checking, setChecking] = useState(false);
   const enabled = online && onServer;
 
-  const { data: entries, isLoading } = useQuery({ queryKey: ["audit", "report", reportId], queryFn: () => listReportHistory(reportId), enabled });
+  const { data: entries, isLoading } = useQuery({ queryKey: ["audit", entity, reportId], queryFn: () => listEntityHistory(entity, reportId), enabled });
   const { data: names } = useQuery({
     queryKey: ["audit", "names", reportId, entries?.length],
     queryFn: () => auditNames(referencedIds(entries ?? [])),
@@ -60,7 +70,7 @@ export function HistoryCard({ reportId, isDraft, onServer }: { reportId: string;
   const runCheck = async () => {
     if (isDraft) { setIntegrity("draft"); return; }
     setChecking(true);
-    try { setIntegrity(await verifyReportIntegrity(reportId)); } catch { setIntegrity("error"); } finally { setChecking(false); }
+    try { setIntegrity(await verifyEntityIntegrity(entity, reportId)); } catch { setIntegrity("error"); } finally { setChecking(false); }
   };
 
   const shown = (entries ?? []).filter((e) => matchesHistoryFilter(e.action, filter));
@@ -79,13 +89,13 @@ export function HistoryCard({ reportId, isDraft, onServer }: { reportId: string;
           className={cn("min-h-9 rounded-full border px-3 text-sm font-medium transition-colors", filter === c.value ? "border-primary bg-primary text-primary-foreground" : "bg-background text-muted-foreground hover:text-foreground")}>{c.label}</button>)}
       </div>
 
-      {!onServer ? <p className="mt-3 text-sm text-muted-foreground">Der Verlauf erscheint, sobald der Bericht synchronisiert ist.</p>
+      {!onServer ? <p className="mt-3 text-sm text-muted-foreground">Der Verlauf erscheint, sobald der {entity === "experience" ? "Erfahrungsbericht" : "Bericht"} synchronisiert ist.</p>
         : isLoading ? <div className="mt-3"><ListSkeleton rows={3} /></div>
         : shown.length === 0 ? <p className="mt-3 text-sm text-muted-foreground">Keine Einträge für diese Auswahl.</p>
         : <ol className="mt-4 space-y-0">
           {shown.map((e, i) => {
             const Icon = ICONS[e.action] ?? Circle;
-            const desc = describeEntry(e, names);
+            const desc = describeEntry({ ...e, entity_type: entity }, names);
             const name = e.actor_id ? names?.get(e.actor_id) ?? "…" : "System";
             return <li key={e.id} className="relative flex gap-3 pb-4">
               {i < shown.length - 1 && <span className="absolute left-4 top-9 bottom-0 w-px bg-border" aria-hidden />}
@@ -105,7 +115,7 @@ export function HistoryCard({ reportId, isDraft, onServer }: { reportId: string;
 
       <p className="mt-2 text-xs text-muted-foreground">Das Protokoll wird nur ergänzt und kann nicht geändert werden. Zeitpunkte sind Serverzeiten; offline erfasste Änderungen erscheinen mit dem Zeitpunkt der Synchronisation.</p>
 
-      {onServer && <VersionsCard reportId={reportId} />}
+      {onServer && <VersionsCard reportId={reportId} entity={entity} />}
     </>}
   </section>;
 }
@@ -130,8 +140,8 @@ export function Box({ tone, icon: Icon, children }: { tone: "ok" | "bad" | "info
   </div>;
 }
 
-function VersionsCard({ reportId }: { reportId: string }) {
-  const { data: versions, isLoading } = useQuery({ queryKey: ["audit", "versions", reportId], queryFn: () => listReportVersions(reportId) });
+function VersionsCard({ reportId, entity }: { reportId: string; entity: HistoryEntity }) {
+  const { data: versions, isLoading } = useQuery({ queryKey: ["audit", "versions", entity, reportId], queryFn: () => listEntityVersions(entity, reportId) });
   const [open, setOpen] = useState<number | null>(null);
   const list = versions ?? [];
   return <div className="mt-4 rounded-xl border p-3">
@@ -149,22 +159,22 @@ function VersionsCard({ reportId }: { reportId: string }) {
           </button></li>;
         })}
       </ul>}
-    <VersionDialog version={open !== null ? list[open] ?? null : null} previous={open !== null ? previousVersion(list, open) : null} onClose={() => setOpen(null)} />
+    <VersionDialog entity={entity} version={open !== null ? list[open] ?? null : null} previous={open !== null ? previousVersion(list, open) : null} onClose={() => setOpen(null)} />
   </div>;
 }
 
 /** Vorherige Version = neuester Schnappschuss mit kleinerer Versionsnummer. */
-function previousVersion(list: ReportVersion[], index: number): ReportVersion | null {
+function previousVersion(list: EntityVersion[], index: number): EntityVersion | null {
   const current = list[index];
   if (!current) return null;
   for (let i = index - 1; i >= 0; i--) if (list[i]!.version < current.version) return list[i]!;
   return null;
 }
 
-function VersionDialog({ version, previous, onClose }: { version: ReportVersion | null; previous: ReportVersion | null; onClose: () => void }) {
+function VersionDialog({ entity, version, previous, onClose }: { entity: HistoryEntity; version: EntityVersion | null; previous: EntityVersion | null; onClose: () => void }) {
   const [showDiff, setShowDiff] = useState(false);
-  const snap = version ? snapshotOf(version) : null;
-  const prev = previous ? snapshotOf(previous) : null;
+  const snap = version ? version.sections : null;
+  const prev = previous ? previous.sections : null;
   return <Dialog open={!!version} onOpenChange={(o) => { if (!o) { setShowDiff(false); onClose(); } }}>
     <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
       <DialogHeader>
@@ -178,8 +188,8 @@ function VersionDialog({ version, previous, onClose }: { version: ReportVersion 
       {!prev && <p className="text-xs text-muted-foreground">Dies ist die erste gespeicherte Version.</p>}
       {showDiff && prev && <p className="text-xs text-muted-foreground">Vergleich mit Version {previous?.version}: <ins className="rounded bg-success/15 px-0.5 underline decoration-2 underline-offset-2">hinzugefügt</ins> · <del className="rounded bg-destructive/10 px-0.5 text-destructive line-through">entfernt</del></p>}
       {snap && <div className="space-y-3">
-        {SECTIONS.map((s) => {
-          const now = snap[s.key];
+        {SECTIONS[entity].map((s) => {
+          const now = snap[s.key] ?? "";
           const before = prev?.[s.key] ?? "";
           if (!now.trim() && !(showDiff && before.trim())) return null;
           return <section key={s.key} className="rounded-xl border p-3">
@@ -187,6 +197,10 @@ function VersionDialog({ version, previous, onClose }: { version: ReportVersion 
             <p className="mt-1 whitespace-pre-wrap text-sm">{showDiff && prev ? <DiffText before={before} after={now} /> : now}</p>
           </section>;
         })}
+        {entity === "experience" && version && <section className="rounded-xl border p-3">
+          <h4 className="text-sm font-semibold text-muted-foreground">Anhänge</h4>
+          {version.attachments.length ? <ul className="mt-1 list-disc pl-5 text-sm">{version.attachments.map((a) => <li key={a} className="break-words">{a}</li>)}</ul> : <p className="mt-1 text-sm text-muted-foreground">Keine Anhänge.</p>}
+        </section>}
       </div>}
     </DialogContent>
   </Dialog>;

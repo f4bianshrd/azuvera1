@@ -33,13 +33,14 @@ import { filterVisibleReports, isOverdue, reviewAgeLabel } from "@/features/revi
 import { cn } from "@/lib/utils";
 import { DeputyPanel, DeputyBanner } from "@/features/deputies/deputy-panel";
 import { REVIEWER_ROLES } from "@/features/app/session";
+import { ExperienceReviewTab, useExperienceQueue } from "@/features/experience/components/review-tab";
 
 const TITLE = "Ausbilderportal – Azuvera";
-type PortalTab = "pruefen" | "abwesenheiten" | "alle" | "vertretung";
+type PortalTab = "pruefen" | "erfahrungsberichte" | "abwesenheiten" | "alle" | "vertretung";
 
 export const Route = createFileRoute("/_authenticated/ausbilder")({
   validateSearch: (search: Record<string, unknown>): { tab?: PortalTab | undefined } => ({
-    tab: search["tab"] === "vertretung" || search["tab"] === "abwesenheiten" || search["tab"] === "alle" ? search["tab"] : "pruefen",
+    tab: search["tab"] === "vertretung" || search["tab"] === "erfahrungsberichte" || search["tab"] === "abwesenheiten" || search["tab"] === "alle" ? search["tab"] : "pruefen",
   }),
   head: () => ({ meta: [
     { title: TITLE },
@@ -85,6 +86,7 @@ function TrainerPortalPage() {
   const rejectedQuery = useQuery({ queryKey: ["review", "queue", "rejected"], queryFn: () => listReviewQueue(["rejected"]), enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
   const todayQuery = useQuery({ queryKey: ["review", "today-approvals"], queryFn: countTodayApprovals, enabled: !!profile && profile.role !== "azubi" && !readOnly, refetchInterval: 60_000 });
   const queue = useMemo(() => queueQuery.data ?? [], [queueQuery.data]);
+  const experienceQueue = useExperienceQueue(!!profile && profile.role !== "azubi" && !readOnly);
   const queueIds = useMemo(() => queue.map((item) => item.report_id), [queue]);
   const reportsQuery = useQuery({ queryKey: ["review", "queue-reports", queueIds.join(",")], queryFn: () => listReportsByIds(queueIds), enabled: queueIds.length > 0 });
   const peopleQuery = useQuery({ queryKey: ["review", "people"], queryFn: listReviewPeople, enabled: !!profile && profile.role !== "azubi" });
@@ -166,6 +168,7 @@ function TrainerPortalPage() {
     </section>
     <div className="flex flex-wrap gap-1 rounded-xl bg-muted p-1">
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "pruefen" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("pruefen")}>Zu prüfen <Badge variant="secondary">{queue.length}</Badge></button>
+      <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "erfahrungsberichte" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("erfahrungsberichte")}>Erfahrungsberichte <Badge variant="secondary">{experienceQueue.data?.length ?? 0}</Badge></button>
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "abwesenheiten" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("abwesenheiten")}>Abwesenheiten <Badge variant="secondary">{absencesQuery.data?.length ?? 0}</Badge></button>
       <button className={cn("min-h-10 rounded-lg px-4 text-sm font-medium", tab === "alle" ? "bg-background shadow-sm" : "text-muted-foreground")} onClick={() => setTab("alle")}>Alle Berichte</button>
       {canManageDeputies && <Button variant={tab === "vertretung" ? "secondary" : "ghost"} onClick={() => setTab("vertretung")}>Vertretung</Button>}
@@ -173,7 +176,8 @@ function TrainerPortalPage() {
 
     {readOnly && canManageDeputies && <Button variant="outline" onClick={() => setTab(tab === "vertretung" ? "alle" : "vertretung")}>{tab === "vertretung" ? "Alle Berichte" : "Vertretung"}</Button>}
     {activeTab === "vertretung" && profile && REVIEWER_ROLES.includes(profile.role) && <DeputyPanel />}
-    {activeTab !== "abwesenheiten" && activeTab !== "vertretung" && <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+    {activeTab === "erfahrungsberichte" && profile && <ExperienceReviewTab reviewerId={profile.id} />}
+    {activeTab !== "abwesenheiten" && activeTab !== "vertretung" && activeTab !== "erfahrungsberichte" && <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
       <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Suche nach Name, KW oder Datum" className="sm:w-64" />
       <Select value={azubi || "all"} onValueChange={(value) => setAzubi(value === "all" ? "" : value)}><SelectTrigger className="sm:w-52"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Alle Azubis</SelectItem>{people.map((person) => <SelectItem key={person.id} value={person.id}>{person.full_name}</SelectItem>)}</SelectContent></Select>
       <Select value={type} onValueChange={(value) => setType(value as ReportType | "all")}><SelectTrigger className="sm:w-44"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Alle Typen</SelectItem><SelectItem value="daily">Tagesbericht</SelectItem><SelectItem value="weekly">Wochenbericht</SelectItem></SelectContent></Select>

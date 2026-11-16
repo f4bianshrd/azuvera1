@@ -8,7 +8,10 @@ export const STATUS_DE: Record<string, string> = { draft: "Entwurf", submitted: 
 export const METHOD_DE: Record<string, string> = { draw: "gezeichnet", saved: "gespeicherte Unterschrift", click: "Klick-Bestätigung" };
 const ROLE_DE: Record<string, string> = { azubi: "Auszubildende(r)", ausbilder: "Ausbilder(in)" };
 
-export interface RenderOptions { embedImages: boolean; blankSignatures: boolean; withProtocol: boolean; belegOverride?: string }
+/** Abweichende Vorlage (z. B. Erfahrungsbericht): Titel, Kopfzeilen, Tabelle und Abschnitte statt der Berichtsfelder. */
+export interface ReportVariant { title: string; rightLabel: string; topic?: string; rows: [string, string][]; sections: { title: string; text: string | null | undefined }[] }
+
+export interface RenderOptions { embedImages: boolean; blankSignatures: boolean; withProtocol: boolean; belegOverride?: string; variant?: ReportVariant }
 
 /** Abschnitt einer Berichtsvorlage – spätere Bausteine können weitere einhängen. */
 export interface ReportSectionDef { title: string; text: (b: ReportBundle) => string | null | undefined }
@@ -46,7 +49,7 @@ function watermarkFor(status: string): string | null {
 export async function renderReport(doc: Doc, b: ReportBundle, h: ExportHeader, o: RenderOptions): Promise<void> {
   const r = b.report;
   const beleg = o.belegOverride ?? belegNr(r.id);
-  const title = reportPdfTitle(b);
+  const title = o.variant?.title ?? reportPdfTitle(b);
   const wm = watermarkFor(r.status);
   const W = A4.w - 2 * MARGIN;
   const cont = () => {
@@ -58,16 +61,22 @@ export async function renderReport(doc: Doc, b: ReportBundle, h: ExportHeader, o
 
   doc.newPage({ beleg }, wm);
   doc.text(title, MARGIN, doc.y, 15, doc.f.bold, C.text);
-  doc.textRight(reportPeriodLabel(b), A4.w - MARGIN, doc.y + 2, 10.5, doc.f.reg, C.brandDark);
+  doc.textRight(o.variant?.rightLabel ?? reportPeriodLabel(b), A4.w - MARGIN, doc.y + 2, 10.5, doc.f.reg, C.brandDark);
   doc.y -= 26;
+  if (o.variant?.topic) {
+    doc.paragraph(`Thema: ${o.variant.topic}`, { size: 12, lead: 16, font: doc.f.bold, onBreak: cont });
+    doc.y -= 10;
+  }
 
   // Angaben zum Ausbildungsverhältnis
-  const rows: [string, string][] = [["Auszubildende(r)", h.azubi_name ?? "–"]];
+  const rows: [string, string][] = o.variant ? [...o.variant.rows] : [["Auszubildende(r)", h.azubi_name ?? "–"]];
+  if (!o.variant) {
   if (h.personalnummer) rows.push(["Personalnummer", h.personalnummer]);
   rows.push(["Ausbildungsberuf", h.profession_name ?? "–"], ["Ausbildungsbetrieb", h.company_name ?? "–"], ["Berichtsdatum", dateDe(r.report_date)]);
   if (r.report_type === "weekly") rows.push(["Kalenderwoche", `${r.week_number} / ${r.year}`], ["Berichtsform", r.weekly_mode === "topics" ? "Themenbericht" : "Tätigkeitsbericht"]);
   const year = h.training_start ? yearOfDate(new Date(`${r.report_date}T00:00:00`), new Date(`${h.training_start}T00:00:00`), h.training_end ? new Date(`${h.training_end}T00:00:00`) : undefined) : null;
   rows.push(["Ausbildungsjahr", year ? `${year}. Lehrjahr` : "–"], ["Status", STATUS_DE[r.status] ?? r.status], ["Version", String(r.version)]);
+  }
   const cellH = 28, colW = W / 2;
   const tableH = 18 + Math.ceil(rows.length / 2) * cellH;
   const top = doc.y;
@@ -90,7 +99,8 @@ export async function renderReport(doc: Doc, b: ReportBundle, h: ExportHeader, o
     doc.page.drawLine({ start: { x: MARGIN, y: doc.y - 5 }, end: { x: A4.w - MARGIN, y: doc.y - 5 }, thickness: 0.5, color: C.line });
     doc.y -= 6;
   };
-  for (const s of REPORT_SECTIONS) {
+  const sections = o.variant ? o.variant.sections.map((x) => ({ title: x.title, text: () => x.text })) : REPORT_SECTIONS;
+  for (const s of sections) {
     const t = s.text(b)?.trim();
     if (!t) continue;
     heading(s.title);

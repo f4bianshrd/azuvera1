@@ -37,14 +37,14 @@ function SignatureEntry({ signature, principalName }: { signature: ReportSignatu
   </article>;
 }
 
-export function SignaturesCard({ signatures, currentVersion }: { signatures: ReportSignature[]; currentVersion: number }) {
+export function SignaturesCard({ signatures, currentVersion, note }: { signatures: ReportSignature[]; currentVersion: number; note?: string }) {
   const current = signatures.filter((signature) => signature.report_version === currentVersion);
   const previous = signatures.filter((signature) => signature.report_version !== currentVersion);
   const principalIds = [...new Set(signatures.map((signature) => signature.on_behalf_of).filter((id): id is string => !!id))];
   const { data: names } = useQuery({ queryKey: ["review", "signature-principals", principalIds.join(",")], queryFn: () => displayNames(principalIds), enabled: principalIds.length > 0 });
   return <section className="rounded-2xl border bg-card p-4">
     <h2 className="font-semibold">Unterschriften</h2>
-    <p className="mt-1 text-xs text-muted-foreground">Zeitpunkt und Prüfsumme wurden bei der Unterschrift festgehalten.</p>
+    <p className="mt-1 text-xs text-muted-foreground">{note ?? "Zeitpunkt und Prüfsumme wurden bei der Unterschrift festgehalten."}</p>
     <div className="mt-4 space-y-3">
       {current.map((signature) => <SignatureEntry key={signature.id} signature={signature} principalName={names?.get(signature.on_behalf_of ?? "")} />)}
       {!current.some((signature) => signature.role === "ausbilder") && <p className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">Noch nicht freigegeben.</p>}

@@ -17,7 +17,7 @@ export function mayUseNetworkFor(op: OutboxOp, net: NetworkStatus, prefs: NetPre
   if (force) return true;
   const known = net.type !== null;
   if (known && prefs.wifiOnly && !isWifi(net)) return false;
-  if (op === "attachment.upload") {
+  if (op === "attachment.upload" || op === "experience_attachment.upload") {
     if (net.saveData) return false;
     if (known && prefs.photosWifiOnly && !isWifi(net)) return false;
   }

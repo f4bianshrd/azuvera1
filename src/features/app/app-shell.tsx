@@ -18,6 +18,7 @@ import { OfflinePageHint } from "@/features/sync/offline-page-hint";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { getReviewQueue as getExperienceReviewQueue } from "@/features/experience/api";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -151,7 +152,11 @@ export function AppShell() {
 
   const { data: reviewCount = 0 } = useQuery({
     queryKey: ["review", "queue-count"],
-    queryFn: async () => (await listReviewQueue()).length,
+    // Berichte und Erfahrungsberichte zusammen
+    queryFn: async () => {
+      const [reports, experiences] = await Promise.all([listReviewQueue(), getExperienceReviewQueue().catch(() => [])]);
+      return reports.length + experiences.length;
+    },
     enabled: !!profile && profile.role !== "azubi",
     refetchInterval: 60_000,
   });

@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   UserRound,
   Users,
-  type LucideIcon, RefreshCw, ScrollText, QrCode } from "lucide-react";
+  type LucideIcon, RefreshCw, ScrollText, QrCode, NotebookPen, Scale } from "lucide-react";
 import type { AppRole } from "./session";
 import { REVIEWER_ROLES, VIEWER_ROLES } from "./session";
 
@@ -39,6 +39,7 @@ const TEAM_ROLES: AppRole[] = [...REVIEWER_ROLES, ...VIEWER_ROLES];
 export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: Home, section: "arbeit", to: "/dashboard" },
   { label: "Berichte", icon: FileText, section: "arbeit", to: "/reports" },
+  { label: "Erfahrungsberichte", icon: NotebookPen, section: "arbeit", to: "/erfahrungsberichte" },
   { label: "Ausbilderportal", icon: ClipboardCheck, section: "arbeit", to: "/ausbilder", roles: TEAM_ROLES },
   { label: "Team", icon: Users, section: "arbeit", to: "/team", roles: TEAM_ROLES },
   { label: "Ausbildungsplan", icon: CalendarDays, section: "arbeit", to: "/ausbildungsplan" },
@@ -54,6 +55,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Administration", icon: Settings2, section: "verwaltung", to: "/admin", roles: ["ausbildungsleitung"] },
   { label: "Betriebe", icon: Building2, section: "verwaltung", to: "/stammdaten/betriebe", roles: ["ausbildungsleitung"] },
   { label: "Berufe", icon: BookOpen, section: "verwaltung", to: "/stammdaten/berufe", roles: ["ausbildungsleitung"] },
+  { label: "Vorgaben Erfahrungsberichte", icon: Scale, section: "verwaltung", to: "/admin/erfahrungsberichte", roles: ["ausbildungsleitung"] },
   { label: "Ausbildungspläne", icon: ListTree, section: "verwaltung", to: "/stammdaten/ausbildungsplaene", roles: ["ausbildungsleitung"] },
   { label: "Unterweisungs-Kataloge", icon: ShieldCheck, section: "verwaltung", to: "/stammdaten/unterweisungen", roles: ["ausbildungsleitung"] },
   { label: "Einstellungen", icon: Settings, section: "verwaltung", to: "/admin/einstellungen", roles: ["ausbildungsleitung"] },

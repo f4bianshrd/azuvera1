@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { EmptyState, ListSkeleton, PageHeader } from "@/components/shared";
 import { ROLE_LABELS, useMyProfile, type AppRole } from "@/features/app/session";
 import {
-  auditNames, listAudit, listAuditForCsv, listAzubiOptions, PAGE_SIZE, verifyAuditChain, visibleReportIds,
+  auditNames, listAudit, listAuditForCsv, listAzubiOptions, PAGE_SIZE, verifyAuditChain, visibleReportIds, visibleExperienceIds,
   type AuditFilters, type ChainResult,
 } from "@/features/audit/api";
 import { buildAuditCsv } from "@/features/audit/csv";
@@ -70,10 +70,12 @@ function ProtokollPage() {
     initialPageParam: null as number | null,
     queryFn: async ({ pageParam }) => {
       const entries = await listAudit(filters, pageParam);
-      const [names, visible] = await Promise.all([
+      const [names, visibleReports, visibleExperiences] = await Promise.all([
         auditNames(referencedIds(entries)),
         visibleReportIds(entries.filter((e) => e.entity_type === "report" && e.entity_id).map((e) => e.entity_id!)),
+        visibleExperienceIds(entries.filter((e) => e.entity_type === "experience" && e.entity_id).map((e) => e.entity_id!)),
       ]);
+      const visible = new Set([...visibleReports, ...visibleExperiences]);
       return { entries, names, visible };
     },
     getNextPageParam: (last) => (last.entries.length === PAGE_SIZE ? last.entries[last.entries.length - 1]!.id : undefined),
@@ -198,6 +200,9 @@ function ObjectCell({ e, visible }: { e: AuditEntry; visible: Set<string> }) {
   const label = ENTITY_LABELS[e.entity_type] ?? e.entity_type;
   if (e.entity_type === "report" && e.entity_id && visible.has(e.entity_id)) {
     return <Link to="/reports/$id" params={{ id: e.entity_id }} className="text-primary underline-offset-2 hover:underline">{label} {e.entity_id.slice(0, 8)}</Link>;
+  }
+  if (e.entity_type === "experience" && e.entity_id && visible.has(e.entity_id)) {
+    return <Link to="/erfahrungsberichte/$id" params={{ id: e.entity_id }} className="text-primary underline-offset-2 hover:underline">{label} {e.entity_id.slice(0, 8)}</Link>;
   }
   return <span>{label}</span>;
 }

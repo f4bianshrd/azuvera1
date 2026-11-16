@@ -24,6 +24,52 @@ export async function listReportVersions(reportId: string): Promise<ReportVersio
   return data ?? [];
 }
 
+export type HistoryEntity = "report" | "experience";
+
+/** Verlauf für Berichte oder Erfahrungsberichte (entity_type). */
+export async function listEntityHistory(entity: HistoryEntity, id: string): Promise<AuditEntry[]> {
+  if (entity === "report") return listReportHistory(id);
+  const { data, error } = await supabase.from("audit_log").select(COLS)
+    .eq("entity_type", "experience").eq("entity_id", id)
+    .order("id", { ascending: false }).limit(1000);
+  if (error) throw error;
+  return data ?? [];
+}
+
+/** Gemeinsame Form einer gespeicherten Version (Schnappschuss als Text-Abschnitte). */
+export interface EntityVersion { id: string; version: number; status: string; created_at: string; content_hash: string | null; sections: Record<string, string>; attachments: string[] }
+
+export async function listEntityVersions(entity: HistoryEntity, id: string): Promise<EntityVersion[]> {
+  if (entity === "report") {
+    return (await listReportVersions(id)).map((v) => {
+      const s = snapshotOf(v);
+      return { id: v.id, version: v.version, status: v.status, created_at: v.created_at, content_hash: v.content_hash, sections: { ...s }, attachments: [] };
+    });
+  }
+  const { data, error } = await supabase.from("experience_versions").select("*").eq("experience_id", id).order("version", { ascending: true }).order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((v) => {
+    const s = (v.snapshot && typeof v.snapshot === "object" && !Array.isArray(v.snapshot) ? v.snapshot : {}) as Record<string, unknown>;
+    const t = (k: string) => (typeof s[k] === "string" ? (s[k] as string) : "");
+    const kinds: Record<string, string> = { erfahrungsbericht: "Erfahrungsbericht", projektbericht: "Projektbericht", leittext: "Leittext" };
+    const att = Array.isArray(s["attachments"]) ? (s["attachments"] as unknown[]).map((a) => (a && typeof a === "object" && "file_name" in a ? String((a as { file_name: unknown }).file_name) : "")).filter(Boolean) : [];
+    const written = t("written_on");
+    return {
+      id: v.id, version: v.version, status: v.status, created_at: v.created_at, content_hash: v.content_hash, attachments: att,
+      sections: { kind: kinds[t("kind")] ?? t("kind"), title: t("title"), area: t("area"), written_on: written ? written.split("-").reverse().join(".") : "", body: t("body"), reasoning: t("reasoning") },
+    };
+  });
+}
+
+export async function verifyEntityIntegrity(entity: HistoryEntity, id: string): Promise<ReportIntegrity> {
+  if (entity === "report") return verifyReportIntegrity(id);
+  const { data, error } = await supabase.rpc("verify_experience", { p_id: id });
+  if (error) throw error;
+  const row = (Array.isArray(data) ? data[0] : data) as { version: number; hash_ok: boolean | null; signatures_ok: boolean | null } | undefined;
+  if (!row) throw new Error("not_found");
+  return { version: row.version, hashOk: row.hash_ok, signaturesOk: row.signatures_ok };
+}
+
 export function snapshotOf(v: ReportVersion): VersionSnapshot {
   const s = (v.snapshot && typeof v.snapshot === "object" && !Array.isArray(v.snapshot) ? v.snapshot : {}) as Record<string, unknown>;
   const t = (k: string) => (typeof s[k] === "string" ? (s[k] as string) : "");
@@ -99,6 +145,14 @@ export async function visibleReportIds(ids: string[]): Promise<Set<string>> {
   const unique = [...new Set(ids)].filter(Boolean);
   if (!unique.length) return new Set();
   const { data, error } = await supabase.from("reports").select("id").in("id", unique);
+  if (error) throw error;
+  return new Set((data ?? []).map((r) => r.id));
+}
+
+export async function visibleExperienceIds(ids: string[]): Promise<Set<string>> {
+  const unique = [...new Set(ids)].filter(Boolean);
+  if (!unique.length) return new Set();
+  const { data, error } = await supabase.from("experience_reports").select("id").in("id", unique);
   if (error) throw error;
   return new Set((data ?? []).map((r) => r.id));
 }

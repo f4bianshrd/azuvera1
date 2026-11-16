@@ -17,7 +17,7 @@ import { currentEndpoint, currentEndpointHash, disablePush, enablePush, getPushS
 const GROUPS: { key: GroupKey; title: string; hint: string }[] = [
   { key: "reports", title: "Berichte und Kommentare", hint: "Einreichungen, Freigaben, Zurückweisungen, Kommentare" },
   { key: "absences", title: "Abwesenheiten", hint: "Anträge und Entscheidungen" },
-  { key: "reminders", title: "Erinnerungen", hint: "Fehlende Berichte, Fristen, wartende Prüfungen, Unterweisungen" },
+  { key: "reminders", title: "Erinnerungen", hint: "Fehlende Berichte, Fristen, wartende Prüfungen, Unterweisungen, Erfahrungsberichte" },
   { key: "deputy", title: "Vertretung", hint: "Vertretungen, die für dich eingetragen oder beendet werden" },
 ];
 

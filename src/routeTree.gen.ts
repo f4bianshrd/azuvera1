@@ -22,6 +22,7 @@ import { Route as AuthenticatedAusbilderRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAusbildungsplanRouteImport } from './routes/_authenticated/ausbildungsplan'
 import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_authenticated/benachrichtigungen'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedErfahrungsberichteRouteImport } from './routes/_authenticated/erfahrungsberichte'
 import { Route as AuthenticatedErinnerungenRouteImport } from './routes/_authenticated/erinnerungen'
 import { Route as AuthenticatedNotenRouteImport } from './routes/_authenticated/noten'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
@@ -37,6 +38,10 @@ import { Route as ApiEmailTestRouteImport } from './routes/api/email-test'
 import { Route as ApiNotificationStatusRouteImport } from './routes/api/notification-status'
 import { Route as ApiPushTestRouteImport } from './routes/api/push-test'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin_.einstellungen'
+import { Route as AuthenticatedAdminErfahrungsberichteRouteImport } from './routes/_authenticated/admin_.erfahrungsberichte'
+import { Route as AuthenticatedErfahrungsberichteIndexRouteImport } from './routes/_authenticated/erfahrungsberichte.index'
+import { Route as AuthenticatedErfahrungsberichteIdRouteImport } from './routes/_authenticated/erfahrungsberichte.$id'
+import { Route as AuthenticatedErfahrungsberichteNewRouteImport } from './routes/_authenticated/erfahrungsberichte.new'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
 import { Route as AuthenticatedReportsNewRouteImport } from './routes/_authenticated/reports.new'
@@ -121,6 +126,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedErfahrungsberichteRoute =
+  AuthenticatedErfahrungsberichteRouteImport.update({
+    id: '/erfahrungsberichte',
+    path: '/erfahrungsberichte',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedErinnerungenRoute =
   AuthenticatedErinnerungenRouteImport.update({
     id: '/erinnerungen',
@@ -200,6 +211,30 @@ const AuthenticatedAdminEinstellungenRoute =
     id: '/admin_/einstellungen',
     path: '/admin/einstellungen',
     getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminErfahrungsberichteRoute =
+  AuthenticatedAdminErfahrungsberichteRouteImport.update({
+    id: '/admin_/erfahrungsberichte',
+    path: '/admin/erfahrungsberichte',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedErfahrungsberichteIndexRoute =
+  AuthenticatedErfahrungsberichteIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedErfahrungsberichteRoute,
+  } as any)
+const AuthenticatedErfahrungsberichteIdRoute =
+  AuthenticatedErfahrungsberichteIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedErfahrungsberichteRoute,
+  } as any)
+const AuthenticatedErfahrungsberichteNewRoute =
+  AuthenticatedErfahrungsberichteNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedErfahrungsberichteRoute,
   } as any)
 const AuthenticatedReportsIndexRoute =
   AuthenticatedReportsIndexRouteImport.update({
@@ -298,6 +333,7 @@ export interface FileRoutesByFullPath {
   '/ausbildungsplan': typeof AuthenticatedAusbildungsplanRoute
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/erfahrungsberichte': typeof AuthenticatedErfahrungsberichteRouteWithChildren
   '/erinnerungen': typeof AuthenticatedErinnerungenRoute
   '/noten': typeof AuthenticatedNotenRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -313,6 +349,9 @@ export interface FileRoutesByFullPath {
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
+  '/admin/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
+  '/erfahrungsberichte/$id': typeof AuthenticatedErfahrungsberichteIdRoute
+  '/erfahrungsberichte/new': typeof AuthenticatedErfahrungsberichteNewRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -323,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
+  '/erfahrungsberichte/': typeof AuthenticatedErfahrungsberichteIndexRoute
   '/reports/': typeof AuthenticatedReportsIndexRoute
   '/team/': typeof AuthenticatedTeamIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -355,6 +395,9 @@ export interface FileRoutesByTo {
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
+  '/admin/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
+  '/erfahrungsberichte/$id': typeof AuthenticatedErfahrungsberichteIdRoute
+  '/erfahrungsberichte/new': typeof AuthenticatedErfahrungsberichteNewRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -365,6 +408,7 @@ export interface FileRoutesByTo {
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
+  '/erfahrungsberichte': typeof AuthenticatedErfahrungsberichteIndexRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/team': typeof AuthenticatedTeamIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -386,6 +430,7 @@ export interface FileRoutesById {
   '/_authenticated/ausbildungsplan': typeof AuthenticatedAusbildungsplanRoute
   '/_authenticated/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/erfahrungsberichte': typeof AuthenticatedErfahrungsberichteRouteWithChildren
   '/_authenticated/erinnerungen': typeof AuthenticatedErinnerungenRoute
   '/_authenticated/noten': typeof AuthenticatedNotenRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -401,6 +446,9 @@ export interface FileRoutesById {
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
   '/_authenticated/admin_/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
+  '/_authenticated/admin_/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
+  '/_authenticated/erfahrungsberichte/$id': typeof AuthenticatedErfahrungsberichteIdRoute
+  '/_authenticated/erfahrungsberichte/new': typeof AuthenticatedErfahrungsberichteNewRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/reports/new': typeof AuthenticatedReportsNewRoute
   '/_authenticated/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -411,6 +459,7 @@ export interface FileRoutesById {
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
+  '/_authenticated/erfahrungsberichte/': typeof AuthenticatedErfahrungsberichteIndexRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/_authenticated/team/': typeof AuthenticatedTeamIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -432,6 +481,7 @@ export interface FileRouteTypes {
     | '/ausbildungsplan'
     | '/benachrichtigungen'
     | '/dashboard'
+    | '/erfahrungsberichte'
     | '/erinnerungen'
     | '/noten'
     | '/notifications'
@@ -447,6 +497,9 @@ export interface FileRouteTypes {
     | '/api/notification-status'
     | '/api/push-test'
     | '/admin/einstellungen'
+    | '/admin/erfahrungsberichte'
+    | '/erfahrungsberichte/$id'
+    | '/erfahrungsberichte/new'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/ausbildungsplaene'
@@ -457,6 +510,7 @@ export interface FileRouteTypes {
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
     | '/api/public/run-reminders'
+    | '/erfahrungsberichte/'
     | '/reports/'
     | '/team/'
     | '/lovable/email/auth/preview'
@@ -489,6 +543,9 @@ export interface FileRouteTypes {
     | '/api/notification-status'
     | '/api/push-test'
     | '/admin/einstellungen'
+    | '/admin/erfahrungsberichte'
+    | '/erfahrungsberichte/$id'
+    | '/erfahrungsberichte/new'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/ausbildungsplaene'
@@ -499,6 +556,7 @@ export interface FileRouteTypes {
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
     | '/api/public/run-reminders'
+    | '/erfahrungsberichte'
     | '/reports'
     | '/team'
     | '/lovable/email/auth/preview'
@@ -519,6 +577,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ausbildungsplan'
     | '/_authenticated/benachrichtigungen'
     | '/_authenticated/dashboard'
+    | '/_authenticated/erfahrungsberichte'
     | '/_authenticated/erinnerungen'
     | '/_authenticated/noten'
     | '/_authenticated/notifications'
@@ -534,6 +593,9 @@ export interface FileRouteTypes {
     | '/api/notification-status'
     | '/api/push-test'
     | '/_authenticated/admin_/einstellungen'
+    | '/_authenticated/admin_/erfahrungsberichte'
+    | '/_authenticated/erfahrungsberichte/$id'
+    | '/_authenticated/erfahrungsberichte/new'
     | '/_authenticated/reports/$id'
     | '/_authenticated/reports/new'
     | '/_authenticated/stammdaten/ausbildungsplaene'
@@ -544,6 +606,7 @@ export interface FileRouteTypes {
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
     | '/api/public/run-reminders'
+    | '/_authenticated/erfahrungsberichte/'
     | '/_authenticated/reports/'
     | '/_authenticated/team/'
     | '/lovable/email/auth/preview'
@@ -663,6 +726,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/erfahrungsberichte': {
+      id: '/_authenticated/erfahrungsberichte'
+      path: '/erfahrungsberichte'
+      fullPath: '/erfahrungsberichte'
+      preLoaderRoute: typeof AuthenticatedErfahrungsberichteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/erinnerungen': {
       id: '/_authenticated/erinnerungen'
       path: '/erinnerungen'
@@ -767,6 +837,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/einstellungen'
       preLoaderRoute: typeof AuthenticatedAdminEinstellungenRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin_/erfahrungsberichte': {
+      id: '/_authenticated/admin_/erfahrungsberichte'
+      path: '/admin/erfahrungsberichte'
+      fullPath: '/admin/erfahrungsberichte'
+      preLoaderRoute: typeof AuthenticatedAdminErfahrungsberichteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/erfahrungsberichte/': {
+      id: '/_authenticated/erfahrungsberichte/'
+      path: '/'
+      fullPath: '/erfahrungsberichte/'
+      preLoaderRoute: typeof AuthenticatedErfahrungsberichteIndexRouteImport
+      parentRoute: typeof AuthenticatedErfahrungsberichteRoute
+    }
+    '/_authenticated/erfahrungsberichte/$id': {
+      id: '/_authenticated/erfahrungsberichte/$id'
+      path: '/$id'
+      fullPath: '/erfahrungsberichte/$id'
+      preLoaderRoute: typeof AuthenticatedErfahrungsberichteIdRouteImport
+      parentRoute: typeof AuthenticatedErfahrungsberichteRoute
+    }
+    '/_authenticated/erfahrungsberichte/new': {
+      id: '/_authenticated/erfahrungsberichte/new'
+      path: '/new'
+      fullPath: '/erfahrungsberichte/new'
+      preLoaderRoute: typeof AuthenticatedErfahrungsberichteNewRouteImport
+      parentRoute: typeof AuthenticatedErfahrungsberichteRoute
     }
     '/_authenticated/reports/': {
       id: '/_authenticated/reports/'
@@ -876,6 +974,27 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedErfahrungsberichteRouteChildren {
+  AuthenticatedErfahrungsberichteIdRoute: typeof AuthenticatedErfahrungsberichteIdRoute
+  AuthenticatedErfahrungsberichteNewRoute: typeof AuthenticatedErfahrungsberichteNewRoute
+  AuthenticatedErfahrungsberichteIndexRoute: typeof AuthenticatedErfahrungsberichteIndexRoute
+}
+
+const AuthenticatedErfahrungsberichteRouteChildren: AuthenticatedErfahrungsberichteRouteChildren =
+  {
+    AuthenticatedErfahrungsberichteIdRoute:
+      AuthenticatedErfahrungsberichteIdRoute,
+    AuthenticatedErfahrungsberichteNewRoute:
+      AuthenticatedErfahrungsberichteNewRoute,
+    AuthenticatedErfahrungsberichteIndexRoute:
+      AuthenticatedErfahrungsberichteIndexRoute,
+  }
+
+const AuthenticatedErfahrungsberichteRouteWithChildren =
+  AuthenticatedErfahrungsberichteRoute._addFileChildren(
+    AuthenticatedErfahrungsberichteRouteChildren,
+  )
+
 interface AuthenticatedReportsRouteChildren {
   AuthenticatedReportsIdRoute: typeof AuthenticatedReportsIdRoute
   AuthenticatedReportsNewRoute: typeof AuthenticatedReportsNewRoute
@@ -912,6 +1031,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAusbildungsplanRoute: typeof AuthenticatedAusbildungsplanRoute
   AuthenticatedBenachrichtigungenRoute: typeof AuthenticatedBenachrichtigungenRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedErfahrungsberichteRoute: typeof AuthenticatedErfahrungsberichteRouteWithChildren
   AuthenticatedErinnerungenRoute: typeof AuthenticatedErinnerungenRoute
   AuthenticatedNotenRoute: typeof AuthenticatedNotenRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
@@ -923,6 +1043,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedUnterweisungenRoute: typeof AuthenticatedUnterweisungenRoute
   AuthenticatedVerknuepfungenRoute: typeof AuthenticatedVerknuepfungenRoute
   AuthenticatedAdminEinstellungenRoute: typeof AuthenticatedAdminEinstellungenRoute
+  AuthenticatedAdminErfahrungsberichteRoute: typeof AuthenticatedAdminErfahrungsberichteRoute
   AuthenticatedStammdatenAusbildungsplaeneRoute: typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
   AuthenticatedStammdatenBetriebeRoute: typeof AuthenticatedStammdatenBetriebeRoute
@@ -937,6 +1058,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAusbildungsplanRoute: AuthenticatedAusbildungsplanRoute,
   AuthenticatedBenachrichtigungenRoute: AuthenticatedBenachrichtigungenRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedErfahrungsberichteRoute:
+    AuthenticatedErfahrungsberichteRouteWithChildren,
   AuthenticatedErinnerungenRoute: AuthenticatedErinnerungenRoute,
   AuthenticatedNotenRoute: AuthenticatedNotenRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
@@ -948,6 +1071,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedUnterweisungenRoute: AuthenticatedUnterweisungenRoute,
   AuthenticatedVerknuepfungenRoute: AuthenticatedVerknuepfungenRoute,
   AuthenticatedAdminEinstellungenRoute: AuthenticatedAdminEinstellungenRoute,
+  AuthenticatedAdminErfahrungsberichteRoute:
+    AuthenticatedAdminErfahrungsberichteRoute,
   AuthenticatedStammdatenAusbildungsplaeneRoute:
     AuthenticatedStammdatenAusbildungsplaeneRoute,
   AuthenticatedStammdatenBerufeRoute: AuthenticatedStammdatenBerufeRoute,
