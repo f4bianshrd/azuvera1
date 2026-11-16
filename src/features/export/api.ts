@@ -39,7 +39,7 @@ export async function getExportReport(id: string): Promise<ExportReport> {
   return data;
 }
 
-async function fetchBytes(bucket: string, path: string): Promise<Uint8Array | null> {
+export async function fetchBytes(bucket: string, path: string): Promise<Uint8Array | null> {
   const { data } = await supabase.storage.from(bucket).createSignedUrl(path, 120);
   if (!data?.signedUrl) return null;
   const res = await fetch(data.signedUrl);
@@ -48,7 +48,7 @@ async function fetchBytes(bucket: string, path: string): Promise<Uint8Array | nu
 }
 
 /** Bild in PNG umwandeln (pdf-lib kennt nur PNG/JPEG; WebP wird über Canvas umgezeichnet). */
-async function toPng(bytes: Uint8Array, mime: string): Promise<Uint8Array | null> {
+export async function toPng(bytes: Uint8Array, mime: string): Promise<Uint8Array | null> {
   try {
     const bmp = await createImageBitmap(new Blob([bytes as BlobPart], { type: mime }));
     const max = 1600;
