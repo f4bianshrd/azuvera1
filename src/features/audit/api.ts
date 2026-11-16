@@ -149,6 +149,14 @@ export async function visibleReportIds(ids: string[]): Promise<Set<string>> {
   return new Set((data ?? []).map((r) => r.id));
 }
 
+export async function visibleExperienceIds(ids: string[]): Promise<Set<string>> {
+  const unique = [...new Set(ids)].filter(Boolean);
+  if (!unique.length) return new Set();
+  const { data, error } = await supabase.from("experience_reports").select("id").in("id", unique);
+  if (error) throw error;
+  return new Set((data ?? []).map((r) => r.id));
+}
+
 export interface ChainResult { chain_key: string; entries: number; ok: boolean; first_bad_id: number | null }
 export async function verifyAuditChain(chain: string | null): Promise<ChainResult[]> {
   const { data, error } = await supabase.rpc("verify_audit_chain", chain ? { p_chain: chain } : {});

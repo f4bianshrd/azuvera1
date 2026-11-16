@@ -199,6 +199,9 @@ function ObjectCell({ e, visible }: { e: AuditEntry; visible: Set<string> }) {
   if (e.entity_type === "report" && e.entity_id && visible.has(e.entity_id)) {
     return <Link to="/reports/$id" params={{ id: e.entity_id }} className="text-primary underline-offset-2 hover:underline">{label} {e.entity_id.slice(0, 8)}</Link>;
   }
+  if (e.entity_type === "experience" && e.entity_id && visible.has(e.entity_id)) {
+    return <Link to="/erfahrungsberichte/$id" params={{ id: e.entity_id }} className="text-primary underline-offset-2 hover:underline">{label} {e.entity_id.slice(0, 8)}</Link>;
+  }
   return <span>{label}</span>;
 }
 
