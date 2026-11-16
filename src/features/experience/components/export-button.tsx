@@ -66,6 +66,7 @@ export function ExperienceExportButton({ azubiId }: { azubiId: string }) {
 function ExperienceExportDialog({ azubiId, open, onOpenChange }: { azubiId: string; open: boolean; onOpenChange: (o: boolean) => void }) {
   const { data: profile } = useMyProfile();
   const own = profile?.id === azubiId;
+  const online = useOnline();
   const { data: progress } = useExperienceProgress(azubiId);
   const [period, setPeriod] = useState("all");
   const [statuses, setStatuses] = useState<Status[]>(["approved", "submitted"]);
