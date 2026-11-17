@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/admin_/erfahrungsberichte"
 
 function RequirementsPage() {
   const { data: me } = useMyProfile();
-  if (me && me.role !== "ausbildungsleitung") return <EmptyState title="Dazu fehlt dir die Berechtigung." />;
+  if (me && !me.is_team) return <EmptyState title="Dazu fehlt dir die Berechtigung." />;
   return <div className="space-y-5">
     <PageHeader title="Vorgaben für Erfahrungsberichte" subtitle="Wie viele Erfahrungsberichte je Lehrjahr gelten, je Bundesland und Beruf." />
     {me && <RequirementsAdmin />}

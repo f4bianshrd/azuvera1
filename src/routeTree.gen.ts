@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
+import { Route as EinladungRouteImport } from './routes/einladung'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAbwesenheitenRouteImport } from './routes/_authenticated/abwesenheiten'
@@ -33,6 +34,7 @@ import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/s
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedUnterweisungenRouteImport } from './routes/_authenticated/unterweisungen'
 import { Route as AuthenticatedVerknuepfungenRouteImport } from './routes/_authenticated/verknuepfungen'
+import { Route as AuthenticatedZugriffRouteImport } from './routes/_authenticated/zugriff'
 import { Route as ApiDeleteAccountRouteImport } from './routes/api/delete-account'
 import { Route as ApiEmailTestRouteImport } from './routes/api/email-test'
 import { Route as ApiNotificationStatusRouteImport } from './routes/api/notification-status'
@@ -75,6 +77,11 @@ const AuthRoute = AuthRouteImport.update({
 const DatenschutzRoute = DatenschutzRouteImport.update({
   id: '/datenschutz',
   path: '/datenschutz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EinladungRoute = EinladungRouteImport.update({
+  id: '/einladung',
+  path: '/einladung',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImpressumRoute = ImpressumRouteImport.update({
@@ -186,6 +193,11 @@ const AuthenticatedVerknuepfungenRoute =
     path: '/verknuepfungen',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedZugriffRoute = AuthenticatedZugriffRouteImport.update({
+  id: '/zugriff',
+  path: '/zugriff',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiDeleteAccountRoute = ApiDeleteAccountRouteImport.update({
   id: '/api/delete-account',
   path: '/api/delete-account',
@@ -324,6 +336,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/datenschutz': typeof DatenschutzRoute
+  '/einladung': typeof EinladungRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
@@ -344,6 +357,7 @@ export interface FileRoutesByFullPath {
   '/team': typeof AuthenticatedTeamRouteWithChildren
   '/unterweisungen': typeof AuthenticatedUnterweisungenRoute
   '/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
+  '/zugriff': typeof AuthenticatedZugriffRoute
   '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
@@ -373,6 +387,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/datenschutz': typeof DatenschutzRoute
+  '/einladung': typeof EinladungRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
@@ -390,6 +405,7 @@ export interface FileRoutesByTo {
   '/sync': typeof AuthenticatedSyncRoute
   '/unterweisungen': typeof AuthenticatedUnterweisungenRoute
   '/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
+  '/zugriff': typeof AuthenticatedZugriffRoute
   '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
@@ -421,6 +437,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/datenschutz': typeof DatenschutzRoute
+  '/einladung': typeof EinladungRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
@@ -441,6 +458,7 @@ export interface FileRoutesById {
   '/_authenticated/team': typeof AuthenticatedTeamRouteWithChildren
   '/_authenticated/unterweisungen': typeof AuthenticatedUnterweisungenRoute
   '/_authenticated/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
+  '/_authenticated/zugriff': typeof AuthenticatedZugriffRoute
   '/api/delete-account': typeof ApiDeleteAccountRoute
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
@@ -472,6 +490,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/datenschutz'
+    | '/einladung'
     | '/impressum'
     | '/reset-password'
     | '/abwesenheiten'
@@ -492,6 +511,7 @@ export interface FileRouteTypes {
     | '/team'
     | '/unterweisungen'
     | '/verknuepfungen'
+    | '/zugriff'
     | '/api/delete-account'
     | '/api/email-test'
     | '/api/notification-status'
@@ -521,6 +541,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/datenschutz'
+    | '/einladung'
     | '/impressum'
     | '/reset-password'
     | '/abwesenheiten'
@@ -538,6 +559,7 @@ export interface FileRouteTypes {
     | '/sync'
     | '/unterweisungen'
     | '/verknuepfungen'
+    | '/zugriff'
     | '/api/delete-account'
     | '/api/email-test'
     | '/api/notification-status'
@@ -568,6 +590,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/datenschutz'
+    | '/einladung'
     | '/impressum'
     | '/reset-password'
     | '/_authenticated/abwesenheiten'
@@ -588,6 +611,7 @@ export interface FileRouteTypes {
     | '/_authenticated/team'
     | '/_authenticated/unterweisungen'
     | '/_authenticated/verknuepfungen'
+    | '/_authenticated/zugriff'
     | '/api/delete-account'
     | '/api/email-test'
     | '/api/notification-status'
@@ -619,6 +643,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   DatenschutzRoute: typeof DatenschutzRoute
+  EinladungRoute: typeof EinladungRoute
   ImpressumRoute: typeof ImpressumRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiDeleteAccountRoute: typeof ApiDeleteAccountRoute
@@ -661,6 +686,13 @@ declare module '@tanstack/react-router' {
       path: '/datenschutz'
       fullPath: '/datenschutz'
       preLoaderRoute: typeof DatenschutzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/einladung': {
+      id: '/einladung'
+      path: '/einladung'
+      fullPath: '/einladung'
+      preLoaderRoute: typeof EinladungRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/impressum': {
@@ -801,6 +833,13 @@ declare module '@tanstack/react-router' {
       path: '/verknuepfungen'
       fullPath: '/verknuepfungen'
       preLoaderRoute: typeof AuthenticatedVerknuepfungenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/zugriff': {
+      id: '/_authenticated/zugriff'
+      path: '/zugriff'
+      fullPath: '/zugriff'
+      preLoaderRoute: typeof AuthenticatedZugriffRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/delete-account': {
@@ -1042,6 +1081,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRouteWithChildren
   AuthenticatedUnterweisungenRoute: typeof AuthenticatedUnterweisungenRoute
   AuthenticatedVerknuepfungenRoute: typeof AuthenticatedVerknuepfungenRoute
+  AuthenticatedZugriffRoute: typeof AuthenticatedZugriffRoute
   AuthenticatedAdminEinstellungenRoute: typeof AuthenticatedAdminEinstellungenRoute
   AuthenticatedAdminErfahrungsberichteRoute: typeof AuthenticatedAdminErfahrungsberichteRoute
   AuthenticatedStammdatenAusbildungsplaeneRoute: typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -1070,6 +1110,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTeamRoute: AuthenticatedTeamRouteWithChildren,
   AuthenticatedUnterweisungenRoute: AuthenticatedUnterweisungenRoute,
   AuthenticatedVerknuepfungenRoute: AuthenticatedVerknuepfungenRoute,
+  AuthenticatedZugriffRoute: AuthenticatedZugriffRoute,
   AuthenticatedAdminEinstellungenRoute: AuthenticatedAdminEinstellungenRoute,
   AuthenticatedAdminErfahrungsberichteRoute:
     AuthenticatedAdminErfahrungsberichteRoute,
@@ -1089,6 +1130,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   DatenschutzRoute: DatenschutzRoute,
+  EinladungRoute: EinladungRoute,
   ImpressumRoute: ImpressumRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ApiDeleteAccountRoute: ApiDeleteAccountRoute,

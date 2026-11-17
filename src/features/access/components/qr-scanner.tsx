@@ -50,7 +50,7 @@ export function QrScanner({ onCode, onClose }: { onCode: (code: string) => void;
         if (value) {
           const code = extractCode(value);
           if (code) { stopped = true; stopCamera(stream); onCode(code); return; }
-          setHint("Das ist kein Azuvera-Verknüpfungscode.");
+          setHint("Das ist kein Azuvera-Einladungs-Code.");
         }
         timer = window.setTimeout(() => void tick(), 160);
       };

@@ -12,7 +12,7 @@ import { sameEmail } from "./rules";
 export interface DeletableUser { id: string; full_name: string; email: string; role: string }
 
 const CONSEQUENCE_AZUBI = "Das Konto, alle Berichte, Anhänge, Kommentare und Unterschriften dieser Person werden unwiderruflich gelöscht.";
-const CONSEQUENCE_OTHER = "Das Konto wird gesperrt und anonymisiert. Unterschriften und Kommentare bleiben erhalten. Zugewiesene Azubis müssen neu zugeordnet werden.";
+const CONSEQUENCE_OTHER = "Das Konto wird gesperrt und anonymisiert. Unterschriften und Kommentare bleiben erhalten. Ihre Zugriffe auf Berichtshefte enden.";
 
 /** Bestätigungsdialog „Konto endgültig löschen?“ – genutzt von Löschanträgen und der Benutzertabelle. */
 export function DeleteAccountDialog({ user, onClose }: { user: DeletableUser; onClose: () => void }) {

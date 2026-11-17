@@ -14,15 +14,25 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   ausbilder: "Ausbilder:in",
   betriebsleiter: "Betriebsleiter:in",
   ausbildungsberater: "Ausbildungsberater:in",
+  pruefer: "Prüfer:in",
   lehrer: "Lehrer:in",
   ausbildungsleitung: "Ausbildungsleitung",
 };
 
-export const REVIEWER_ROLES: AppRole[] = ["ausbilder", "betriebsleiter", "ausbildungsleitung"];
-export const VIEWER_ROLES: AppRole[] = ["ausbildungsberater", "lehrer"];
+/** Rollen, die bei der Registrierung wählbar sind (Reihenfolge der Auswahlkarten). */
+export const SIGNUP_ROLES: AppRole[] = ["azubi", "ausbilder", "betriebsleiter", "ausbildungsberater", "pruefer", "lehrer"];
+/** Rollen, die eine Azubi-Person einladen kann. */
+export const INVITE_ROLES: AppRole[] = ["ausbilder", "betriebsleiter", "ausbildungsberater", "pruefer", "lehrer"];
+/** Rollen mit Prüfrecht (freigeben, zurückweisen, kommentieren). */
+export const REVIEWER_ROLES: AppRole[] = ["ausbilder", "betriebsleiter", "ausbildungsberater", "ausbildungsleitung"];
+/** Rollen, die eingeladen nur lesen. */
+export const VIEWER_ROLES: AppRole[] = ["pruefer", "lehrer"];
 
 export interface MyProfile extends Profile {
   role: AppRole;
+  /** Darf die Plattform verwalten (Ausbildungsleitung oder Verwaltungs-Team). */
+  is_team: boolean;
+  is_team_owner: boolean;
 }
 
 export function useMyProfile() {
@@ -36,16 +46,25 @@ export function useMyProfile() {
       const user = session?.user;
       if (!user) return null;
       const db = openUserDb(user.id);
-      const cached = async () => ((await db.lookups.get("profile"))?.value as MyProfile | undefined) ?? null;
+      const cached = async () => {
+        const v = (await db.lookups.get("profile"))?.value as MyProfile | undefined;
+        return v ? { ...v, is_team: !!v.is_team, is_team_owner: !!v.is_team_owner } : null;
+      };
       if (!getNetworkStatus().online) return cached();
       try {
-        const [{ data: profile, error }, { data: roleRow }] = await Promise.all([
+        const [{ data: profile, error }, { data: roleRow }, { data: teamRow }] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
           supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle(),
+          supabase.from("team_members").select("is_owner").eq("user_id", user.id).maybeSingle(),
         ]);
         if (error) throw error;
         if (!profile) return null;
-        const me = { ...profile, role: (roleRow?.role ?? "azubi") as AppRole };
+        const me: MyProfile = {
+          ...profile,
+          role: (roleRow?.role ?? "azubi") as AppRole,
+          is_team: !!teamRow || roleRow?.role === "ausbildungsleitung",
+          is_team_owner: !!teamRow?.is_owner,
+        };
         await db.lookups.put({ key: "profile", value: me, updated_at: new Date().toISOString() });
         return me;
       } catch (e) {

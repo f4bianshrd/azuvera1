@@ -25,7 +25,7 @@ export function PlansAdmin({ planParam }: { planParam: string | undefined }) {
   const online = useOnline();
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const isLeitung = me?.role === "ausbildungsleitung";
+  const isLeitung = !!me?.is_team;
   const { data: professions = [] } = useProfessions();
   const codes = professions.map((p) => p.code).filter((c): c is string => !!c);
   const { data: plans, isLoading, error } = useQuery({ queryKey: ["plan", "admin-list"], queryFn: listPlansAdmin, enabled: isLeitung && online });

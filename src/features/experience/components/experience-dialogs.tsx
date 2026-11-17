@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ConfirmDialog, ResponsiveDialog } from "@/components/dialogs";
 import { OnlineButton } from "@/features/sync/online-button";
+import { NoReviewerSubmitHint } from "@/features/access/components/reviewer-hints";
 import { DictationButton } from "@/features/dictation/dictation-button";
 import { readPunctuationPreference } from "@/features/dictation/api";
 import { SignaturePad } from "@/features/reports/signature-pad";
@@ -53,6 +54,7 @@ export function SubmitExperienceSheet({ report, attachmentCount, requirement, op
   return <>
     <ResponsiveDialog open={open} onOpenChange={onOpenChange} title="Erfahrungsbericht einreichen" description={experienceTitle(report)}>
       <div className="space-y-4">
+        <NoReviewerSubmitHint />
         <dl className="grid grid-cols-2 gap-x-3 gap-y-1 rounded-xl border bg-muted/40 p-3 text-sm">
           <dt className="text-muted-foreground">Art</dt><dd>{kindLabel(report.kind)}</dd>
           <dt className="text-muted-foreground">Titel</dt><dd className="break-words">{report.title || "—"}</dd>

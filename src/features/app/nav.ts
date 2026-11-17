@@ -1,9 +1,9 @@
 import {
   Bell,
   BookOpen,
-  Building2,
   CalendarDays,
   CalendarOff,
+  Building2,
   ClipboardCheck,
   FileText,
   GraduationCap,
@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   UserRound,
   Users,
-  type LucideIcon, RefreshCw, ScrollText, QrCode, NotebookPen, Scale } from "lucide-react";
+  type LucideIcon, RefreshCw, ScrollText, KeyRound, NotebookPen, Scale } from "lucide-react";
 import type { AppRole } from "./session";
 import { REVIEWER_ROLES, VIEWER_ROLES } from "./session";
 
@@ -28,6 +28,8 @@ export interface NavItem {
   to?: string;
   /** Rollen, die den Punkt sehen; undefined = alle. */
   roles?: AppRole[];
+  /** Nur für Mitglieder des Azuvera-Teams (Verwaltung). */
+  team?: boolean;
 }
 
 const TEAM_ROLES: AppRole[] = [...REVIEWER_ROLES, ...VIEWER_ROLES];
@@ -41,24 +43,24 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Berichte", icon: FileText, section: "arbeit", to: "/reports" },
   { label: "Erfahrungsberichte", icon: NotebookPen, section: "arbeit", to: "/erfahrungsberichte" },
   { label: "Ausbilderportal", icon: ClipboardCheck, section: "arbeit", to: "/ausbilder", roles: TEAM_ROLES },
-  { label: "Team", icon: Users, section: "arbeit", to: "/team", roles: TEAM_ROLES },
+  { label: "Meine Azubis", icon: Users, section: "arbeit", to: "/team", roles: TEAM_ROLES },
   { label: "Ausbildungsplan", icon: CalendarDays, section: "arbeit", to: "/ausbildungsplan" },
   { label: "Unterweisungen", icon: ClipboardCheck, section: "arbeit", to: "/unterweisungen" },
   { label: "Abwesenheiten", icon: CalendarOff, section: "arbeit", to: "/abwesenheiten" },
   { label: "Schulnoten", icon: GraduationCap, section: "arbeit", to: "/noten" },
   { label: "Erinnerungen", icon: Bell, section: "arbeit", to: "/erinnerungen", roles: REVIEWER_ROLES },
-  { label: "Verknüpfungen", icon: QrCode, section: "konto", to: "/verknuepfungen" },
   { label: "Benachrichtigungen", icon: Bell, section: "konto", to: "/notifications" },
+  { label: "Zugriff", icon: KeyRound, section: "konto", to: "/zugriff" },
   { label: "Änderungsprotokoll", icon: ScrollText, section: "konto", to: "/protokoll" },
   { label: "Mein Profil", icon: UserRound, section: "konto", to: "/profil" },
   { label: "Synchronisation", icon: RefreshCw, section: "konto", to: "/sync" },
-  { label: "Administration", icon: Settings2, section: "verwaltung", to: "/admin", roles: ["ausbildungsleitung"] },
-  { label: "Betriebe", icon: Building2, section: "verwaltung", to: "/stammdaten/betriebe", roles: ["ausbildungsleitung"] },
-  { label: "Berufe", icon: BookOpen, section: "verwaltung", to: "/stammdaten/berufe", roles: ["ausbildungsleitung"] },
-  { label: "Vorgaben Erfahrungsberichte", icon: Scale, section: "verwaltung", to: "/admin/erfahrungsberichte", roles: ["ausbildungsleitung"] },
-  { label: "Ausbildungspläne", icon: ListTree, section: "verwaltung", to: "/stammdaten/ausbildungsplaene", roles: ["ausbildungsleitung"] },
-  { label: "Unterweisungs-Kataloge", icon: ShieldCheck, section: "verwaltung", to: "/stammdaten/unterweisungen", roles: ["ausbildungsleitung"] },
-  { label: "Einstellungen", icon: Settings, section: "verwaltung", to: "/admin/einstellungen", roles: ["ausbildungsleitung"] },
+  { label: "Administration", icon: Settings2, section: "verwaltung", to: "/admin", team: true },
+  { label: "Betriebe", icon: Building2, section: "verwaltung", to: "/stammdaten/betriebe", team: true },
+  { label: "Berufe", icon: BookOpen, section: "verwaltung", to: "/stammdaten/berufe", team: true },
+  { label: "Vorgaben Erfahrungsberichte", icon: Scale, section: "verwaltung", to: "/admin/erfahrungsberichte", team: true },
+  { label: "Ausbildungspläne", icon: ListTree, section: "verwaltung", to: "/stammdaten/ausbildungsplaene", team: true },
+  { label: "Unterweisungs-Kataloge", icon: ShieldCheck, section: "verwaltung", to: "/stammdaten/unterweisungen", team: true },
+  { label: "Einstellungen", icon: Settings, section: "verwaltung", to: "/admin/einstellungen", team: true },
 ];
 
 export const SECTION_LABELS: Record<NavSection, string> = {
@@ -67,8 +69,8 @@ export const SECTION_LABELS: Record<NavSection, string> = {
   verwaltung: "Verwaltung",
 };
 
-export function visibleNav(role: AppRole): NavItem[] {
-  return NAV_ITEMS.filter((i) => i.to && (!i.roles || i.roles.includes(role)));
+export function visibleNav(role: AppRole, isTeam = false): NavItem[] {
+  return NAV_ITEMS.filter((i) => i.to && (i.team ? isTeam : !i.roles || i.roles.includes(role)));
 }
 
 export interface TabItem {
@@ -93,7 +95,7 @@ export function mobileTabs(role: AppRole): (TabItem | null)[] {
   return [
     { label: "Start", icon: Home, to: "/dashboard" },
     { label: "Prüfung", icon: ClipboardCheck, to: "/ausbilder" },
-    { label: "Team", icon: Users, to: "/team" },
+    { label: "Azubis", icon: Users, to: "/team" },
     { label: "Plan", icon: CalendarDays, to: "/ausbildungsplan" },
     null,
   ];
@@ -107,7 +109,7 @@ export function titleForPath(pathname: string): string {
   if (pathname.startsWith("/stammdaten/berufe")) return "Berufe";
   if (pathname.startsWith("/stammdaten/ausbildungsplaene")) return "Ausbildungspläne";
   if (pathname.startsWith("/ausbildungsplan")) return "Ausbildungsplan";
-  if (pathname.startsWith("/verknuepfungen")) return "Verknüpfungen";
+  if (pathname.startsWith("/zugriff")) return "Zugriff & Einladungen";
   if (pathname.startsWith("/stammdaten/unterweisungen")) return "Unterweisungs-Kataloge";
   return "Azuvera";
 }

@@ -35,11 +35,18 @@ import { initials, useMyProfile, ROLE_LABELS, type AppRole, type MyProfile } fro
 import { mobileTabs, SECTION_LABELS, titleForPath, visibleNav, type NavSection } from "./nav";
 import { listReviewQueue } from "@/features/review/api";
 
-function RoleBadge({ role }: { role: AppRole }) {
+function RoleBadge({ role, team = false }: { role: AppRole; team?: boolean }) {
   return (
-    <Badge variant="secondary" className="text-xs">
-      {ROLE_LABELS[role]}
-    </Badge>
+    <span className="inline-flex flex-wrap gap-1">
+      <Badge variant="secondary" className="text-xs">
+        {ROLE_LABELS[role]}
+      </Badge>
+      {team && (
+        <Badge variant="outline" className="text-xs">
+          Team
+        </Badge>
+      )}
+    </span>
   );
 }
 
@@ -54,7 +61,7 @@ function AccountBlock({ profile, onSignOut }: { profile: MyProfile; onSignOut: (
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-sidebar-foreground">{profile.full_name || profile.email}</p>
         <p className="truncate text-xs text-sidebar-foreground/60">{profile.email}</p>
-        <RoleBadge role={profile.role} />
+        <RoleBadge role={profile.role} team={profile.is_team} />
       </div>
       <Button
         variant="ghost"
@@ -73,7 +80,7 @@ function SidebarNav({ role, collapsed, reviewCount = 0 }: { role: AppRole; colla
   const { data: me } = useMyProfile();
   const { data: unread = 0 } = useUnreadCount(me?.id);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const items = visibleNav(role);
+  const items = visibleNav(role, !!me?.is_team);
   const sections: NavSection[] = ["arbeit", "konto", "verwaltung"];
   return (
     <nav className="flex-1 space-y-4 overflow-y-auto px-2 py-4">
@@ -204,7 +211,7 @@ export function AppShell() {
           <p className="truncate font-medium">{profile.full_name || profile.email}</p>
           <p className="truncate text-xs font-normal text-muted-foreground">{profile.email}</p>
           <div className="mt-1">
-            <RoleBadge role={profile.role} />
+            <RoleBadge role={profile.role} team={profile.is_team} />
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

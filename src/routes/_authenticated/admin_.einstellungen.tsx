@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { EmptyState, PageHeader } from "@/components/shared";
 import { useMyProfile } from "@/features/app/session";
-import { deputySelfService, saveDeputySetting } from "@/features/deputies/api";
 import { fetchPrivacyTexts, savePrivacyTexts } from "@/features/public/api";
 import { PROVIDER_TEXT_MAX, validProviderText } from "@/lib/legal";
 import { NotificationStatusBlock } from "@/features/notifications/notification-status-block";
@@ -42,8 +41,7 @@ function EinstellungenPage() {
   const [aiEnabled, setAiEnabled] = useState(true);
   const [dailyLimit, setDailyLimit] = useState("500");
   const [busy, setBusy] = useState(false);
-  const { data: deputySetting = false } = useQuery({ queryKey: ["deputies", "setting"], queryFn: deputySelfService, enabled: me?.role === "ausbildungsleitung" });
-  const isLeitung = me?.role === "ausbildungsleitung";
+  const isLeitung = !!me?.is_team;
 
   const { data: setting } = useQuery({
     queryKey: ["app-settings", "privacy-texts"],
@@ -133,7 +131,6 @@ function EinstellungenPage() {
         <Button className="mt-4 h-11" onClick={() => void save()} disabled={busy}>Speichern</Button>
       </section>
 
-      <section className="border-t py-5"><h2 className="text-lg font-semibold">Vertretung</h2><div className="mt-4 flex items-center justify-between gap-4"><Label htmlFor="deputy-self">Ausbilder:innen dürfen Vertretungen selbst eintragen</Label><Switch id="deputy-self" checked={deputySetting} onCheckedChange={value => { void saveDeputySetting(value).then(() => queryClient.invalidateQueries({ queryKey: ["deputies"] })).then(() => toast.success("Einstellung gespeichert")).catch(() => toast.error("Einstellung konnte nicht gespeichert werden.")); }} /></div></section>
       <section className="rounded-2xl border bg-card p-5 shadow-sm sm:p-6">
         <h2 className="text-lg font-semibold">KI-Text</h2>
         <div className="mt-4 flex items-center justify-between gap-4 rounded-xl border p-4">

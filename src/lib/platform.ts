@@ -305,6 +305,26 @@ export function writeDeviceString(key: string, value: string): void {
   }
 }
 
+/** Kurzlebiger Wert nur für diesen Tab (sessionStorage in try/catch). */
+export function readSessionString(key: string): string | null {
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+export function writeSessionString(key: string, value: string | null): void {
+  try {
+    if (value === null) sessionStorage.removeItem(key);
+    else sessionStorage.setItem(key, value);
+  } catch {
+    /* privat */
+  }
+}
+export function canShareNatively(): boolean {
+  return typeof navigator !== "undefined" && typeof navigator.share === "function";
+}
+
 /** Datei auf dem Gerät speichern (Download). */
 export function saveFile(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);

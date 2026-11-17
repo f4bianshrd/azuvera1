@@ -22,6 +22,7 @@ import { CoverageDonut } from "@/features/reports/coverage-donut";
 import { isoWeekOf } from "@/features/reports/report-editor";
 import { currentTrainingYear, defaultPeriodForYear, trainingYears } from "@/lib/training-year";
 import { StaffDashboard } from "@/features/team/staff-dashboard";
+import { NoReviewerDashboardCard } from "@/features/access/components/reviewer-hints";
 import { listAbsentDays } from "@/features/absences/api";
 
 const TITLE = "Dashboard – Azuvera";
@@ -176,6 +177,7 @@ function Dashboard() {
 
   return (
     <div className="space-y-5">
+      <NoReviewerDashboardCard />
       {/* Hero */}
       <section className="bg-gradient-primary rounded-2xl p-6 text-primary-foreground" style={{ boxShadow: "var(--shadow-elegant)" }}>
         <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-medium">Dashboard</span>
@@ -443,7 +445,7 @@ function OnboardingDialog({
       )}
       {step === 2 && (
         <p className="text-sm text-muted-foreground">
-          Betrieb und zuständige:r Ausbilder:in werden von der Ausbildungsleitung zugewiesen.
+          Trage deinen Betrieb im Profil ein und lade deine Ausbilder:in unter ‚Zugriff‘ ein.
         </p>
       )}
       <div className="mt-5 flex justify-between gap-2">

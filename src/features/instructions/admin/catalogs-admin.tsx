@@ -23,7 +23,7 @@ export function CatalogsAdmin({ catalogParam }: { catalogParam: string | undefin
   const online = useOnline();
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const isLeitung = me?.role === "ausbildungsleitung";
+  const isLeitung = !!me?.is_team;
   const { data: professions = [] } = useProfessions();
   const codes = professions.map((p) => p.code).filter((c): c is string => !!c);
   const { data: list, isLoading, error } = useQuery({ queryKey: ["instructions", "admin-list"], queryFn: listCatalogsAdmin, enabled: isLeitung && online });

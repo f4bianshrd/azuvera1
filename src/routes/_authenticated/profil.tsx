@@ -1,6 +1,6 @@
 import { BundeslandField } from "@/features/experience/components/bundesland-field";
 import { useEffect, useState, type ReactNode } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -124,7 +124,7 @@ function ProfilPage() {
   const { data: professions } = useProfessions();
 
   const [form, setForm] = useState<ProfileForm>(emptyProfileForm);
-  const [code, setCode] = useState("");
+  const [organization, setOrganization] = useState("");
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [busy, setBusy] = useState(false);
@@ -150,6 +150,7 @@ function ProfilPage() {
       ausbildungsbeginn: profile.ausbildungsbeginn ?? "",
       ausbildungsende: profile.ausbildungsende ?? "",
     });
+    setOrganization(profile.organization ?? "");
     setTraining({ professionId: profile.profession_id ?? "", companyId: profile.company_id ?? "", newName: "", newAddress: "" });
     setYear(profile.ausbildungsbeginn ? String(currentTrainingYear(new Date(`${profile.ausbildungsbeginn}T00:00:00`), profile.ausbildungsende ? new Date(`${profile.ausbildungsende}T00:00:00`) : undefined)) : "");
   }, [profile]);
@@ -216,16 +217,21 @@ function ProfilPage() {
     toast.success("Profil gespeichert");
   };
 
-  const redeem = async () => {
-    if (!code.trim()) return;
-    const { data, error } = await supabase.rpc("redeem_invite_code", { _code: code.trim() });
-    if (error) {
-      toast.error("Der Einladungs-Code ist ungültig, abgelaufen oder bereits eingelöst. Bitte prüfe ihn oder frage die Ausbildungsleitung.");
+  const saveOrganization = async () => {
+    const org = organization.trim();
+    if (org.length < 2 || org.length > 120) {
+      toast.error("Die Organisation muss 2 bis 120 Zeichen lang sein.");
       return;
     }
-    setCode("");
+    setBusy(true);
+    const { error } = await supabase.from("profiles").update({ organization: org }).eq("id", profile.id);
+    setBusy(false);
+    if (error) {
+      toast.error("Organisation konnte nicht gespeichert werden.");
+      return;
+    }
     await queryClient.invalidateQueries({ queryKey: ["my-profile"] });
-    toast.success(`Neue Rolle: ${ROLE_LABELS[data]}`);
+    toast.success("Organisation gespeichert");
   };
 
   const changePassword = async () => {
@@ -267,18 +273,15 @@ function ProfilPage() {
           )}
         </div>
         {profile.role !== "azubi" && (
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <Input
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="z. B. A1B2C3D4E5"
-              maxLength={10}
-              className="h-11 font-mono text-base uppercase tracking-widest sm:max-w-xs"
-              aria-label="Einladungs-Code einlösen"
-            />
-            <Button variant="outline" className="h-11" onClick={() => void redeem()} disabled={code.trim().length !== 10}>
-              Einladungs-Code einlösen
-            </Button>
+          <div className="mt-4 space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="organization">Organisation</Label>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Input id="organization" value={organization} onChange={(e) => setOrganization(e.target.value)} minLength={2} maxLength={120} className="h-11 text-base sm:max-w-sm" />
+                <Button variant="outline" className="h-11" disabled={busy || !online || organization.trim() === (profile.organization ?? "")} onClick={() => void saveOrganization()}>Speichern</Button>
+              </div>
+            </div>
+            <Link to="/zugriff" className="inline-flex min-h-11 items-center text-sm font-medium text-primary underline-offset-4 hover:underline">Zugriff & Einladungen</Link>
           </div>
         )}
       </Card>

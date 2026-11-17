@@ -28,7 +28,7 @@ import { READ_ONLY_TOAST } from "./year-cell";
 export function PlanPage({ azubiParam }: { azubiParam: string | undefined }) {
   const { data: me } = useMyProfile();
   const isAzubi = me?.role === "azubi";
-  const isLeitung = me?.role === "ausbildungsleitung";
+  const isLeitung = me?.role === "ausbildungsleitung" || !!me?.is_team;
   const navigate = useNavigate();
   const [settings, setSettings] = useState<PlanSettings>(() => loadLastSettings());
   useEffect(() => { saveLastSettings(settings); }, [settings]);
@@ -146,7 +146,7 @@ function PlanView({ data, settings, isAzubi, isLeitung, filterTab }: {
       ? <EmptyState icon={NotebookTabs} title="Kein Ausbildungsberuf hinterlegt" description="Trage zuerst deinen Ausbildungsberuf ein, damit dein Ausbildungsplan erscheint." action={<Button asChild><Link to="/profil">Mein Profil</Link></Button>} />
       : <EmptyState icon={NotebookTabs} title="Kein Ausbildungsberuf hinterlegt" description="Für diese Person ist noch kein Ausbildungsberuf eingetragen." />;
   } else if (!tree && data.selectable.length === 0) {
-    empty = <EmptyState icon={NotebookTabs} title="Noch kein Ausbildungsplan zugeordnet" description="Für deinen Beruf ist noch kein Ausbildungsplan hinterlegt. Die Ausbildungsleitung kann einen anlegen." />;
+    empty = <EmptyState icon={NotebookTabs} title="Noch kein Ausbildungsplan zugeordnet" description="Für deinen Beruf ist noch kein Ausbildungsplan hinterlegt. Das Azuvera-Team legt Pläne an." />;
   } else if (!tree) {
     empty = <EmptyState icon={NotebookTabs} title="Noch kein Ausbildungsplan zugeordnet" description="Wähle deinen Plan, damit du Inhalte planen und abhaken kannst." action={planPicker} />;
   }
@@ -257,7 +257,7 @@ function PlanView({ data, settings, isAzubi, isLeitung, filterTab }: {
               <li><span className="font-semibold text-destructive">– Nein</span> – Noch nicht ausreichend beherrscht.</li>
             </ul>
             <p className="text-muted-foreground">Die Einstellungen unter ‚Filter & Konfiguration‘ wirken auf Diagramme, Listen, Kalender und Export. Der Export erzeugt ein PDF (mit Diagrammen) oder eine ODT-Datei für Word/LibreOffice.</p>
-            <p className="text-muted-foreground">Änderungen werden automatisch gespeichert. Ausbilder:in bzw. Ausbildungsleitung sehen deinen Fortschritt.</p>
+            <p className="text-muted-foreground">Änderungen werden automatisch gespeichert. Deine Ausbilder:in und weitere eingeladene Personen sehen deinen Fortschritt.</p>
           </section>
         </TabsContent>
         <TabsContent value="filter" className="mt-4">{filterTab(duration)}</TabsContent>

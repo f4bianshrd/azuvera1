@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
 const features = [
   { icon: FileSignature, title: "Strukturierte Berichte", text: "Tages- und Wochenberichte mit allen wichtigen Feldern – Tätigkeiten, Berufsschule, Unterweisungen." },
   { icon: CheckCircle2, title: "Freigabe-Workflow", text: "Einreichen, prüfen, freigeben oder zurückweisen – mit klarem Status und Kommentaren." },
-  { icon: Users, title: "Rollen für alle", text: "Azubis, Ausbilder und Ausbildungsleitung arbeiten in einem System zusammen." },
+  { icon: Users, title: "Rollen für alle", text: "Azubis, Ausbilder:innen, Betriebe, Kammern und Prüfer:innen arbeiten in einem System zusammen." },
 ];
 
 const overview = [

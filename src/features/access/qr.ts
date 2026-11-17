@@ -1,4 +1,4 @@
-/** Gestalteter QR-Code (SVG) und Teil-Karte (PNG) für Verknüpfungscodes – alles im Browser. */
+/** Gestalteter QR-Code (SVG) und Teil-Karte (PNG) für Einladungs-Codes – alles im Browser. */
 import QRCode from "qrcode";
 import iconUrl from "@/assets/azuvera-icon.png";
 import { BRAND, oklchToRgb, rgbToHex } from "@/features/plan/export/color";
@@ -73,7 +73,7 @@ export async function qrCardPng(args: { url: string; code: string; name: string;
   if (logo) ctx.drawImage(await loadImage(logo), 70, 52, 72, 72);
   ctx.fillStyle = "#ffffff"; ctx.font = `700 44px ${font}`; ctx.textBaseline = "middle"; ctx.fillText("Azuvera", 160, 90);
   ctx.textAlign = "center"; ctx.fillStyle = MUTED_TEXT; ctx.font = `600 30px ${font}`;
-  ctx.fillText("VERKNÜPFUNG MIT", W / 2, 230);
+  ctx.fillText("EINLADUNG VON", W / 2, 230);
   ctx.fillStyle = QR_INK; ctx.font = `700 54px ${font}`;
   ctx.fillText(args.name.length > 30 ? `${args.name.slice(0, 29)}…` : args.name, W / 2, 300);
   ctx.font = `600 32px ${font}`; const pill = `${args.access} · ${args.who}`;

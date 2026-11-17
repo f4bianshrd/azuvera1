@@ -1,4 +1,4 @@
-import { canCommentFor } from "@/features/links/api";
+import { canCommentFor } from "@/features/access/api";
 import { ReportLinksBlock } from "@/features/plan/components/report-links";
 import { ReportInstructionChips } from "@/features/instructions/components/report-chips";
 import { useEffect, useState } from "react";

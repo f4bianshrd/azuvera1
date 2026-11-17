@@ -50,7 +50,7 @@ function BerufePage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const isLeitung = me?.role === "ausbildungsleitung";
+  const isLeitung = !!me?.is_team;
 
   if (me && !isLeitung) {
     return (

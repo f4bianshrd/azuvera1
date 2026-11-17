@@ -74,6 +74,77 @@ export type Database = {
           },
         ]
       }
+      access_grants: {
+        Row: {
+          azubi_id: string
+          can_review: boolean
+          created_at: string
+          deputy_allowed: boolean
+          grantee_id: string
+          id: string
+          invitation_id: string | null
+          revoked_at: string | null
+          revoked_by: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          valid_until: string | null
+        }
+        Insert: {
+          azubi_id: string
+          can_review?: boolean
+          created_at?: string
+          deputy_allowed?: boolean
+          grantee_id: string
+          id?: string
+          invitation_id?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          valid_until?: string | null
+        }
+        Update: {
+          azubi_id?: string
+          can_review?: boolean
+          created_at?: string
+          deputy_allowed?: boolean
+          grantee_id?: string
+          id?: string
+          invitation_id?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_grants_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "access_grants_grantee_id_fkey"
+            columns: ["grantee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "access_grants_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "access_grants_revoked_by_fkey"
+            columns: ["revoked_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_usage: {
         Row: {
           created_at: string
@@ -343,6 +414,7 @@ export type Database = {
           legal_form: string | null
           logo_url: string | null
           name: string
+          owner_id: string | null
           training_number: string | null
           updated_at: string
         }
@@ -358,6 +430,7 @@ export type Database = {
           legal_form?: string | null
           logo_url?: string | null
           name: string
+          owner_id?: string | null
           training_number?: string | null
           updated_at?: string
         }
@@ -373,6 +446,7 @@ export type Database = {
           legal_form?: string | null
           logo_url?: string | null
           name?: string
+          owner_id?: string | null
           training_number?: string | null
           updated_at?: string
         }
@@ -383,6 +457,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "bundeslaender"
             referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "companies_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1302,6 +1383,63 @@ export type Database = {
         }
         Relationships: []
       }
+      invitations: {
+        Row: {
+          access_days: number | null
+          azubi_id: string
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          note: string | null
+          revoked_at: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          access_days?: number | null
+          azubi_id: string
+          code: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          note?: string | null
+          revoked_at?: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          access_days?: number | null
+          azubi_id?: string
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          note?: string | null
+          revoked_at?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_used_by_fkey"
+            columns: ["used_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invite_codes: {
         Row: {
           code: string
@@ -1698,6 +1836,7 @@ export type Database = {
           nachname: string
           notfallkontakt_name: string | null
           notfallkontakt_telefon: string | null
+          organization: string | null
           ort: string | null
           personalnummer: string | null
           plz: string | null
@@ -1722,6 +1861,7 @@ export type Database = {
           nachname?: string
           notfallkontakt_name?: string | null
           notfallkontakt_telefon?: string | null
+          organization?: string | null
           ort?: string | null
           personalnummer?: string | null
           plz?: string | null
@@ -1746,6 +1886,7 @@ export type Database = {
           nachname?: string
           notfallkontakt_name?: string | null
           notfallkontakt_telefon?: string | null
+          organization?: string | null
           ort?: string | null
           personalnummer?: string | null
           plz?: string | null
@@ -2336,6 +2477,27 @@ export type Database = {
           },
         ]
       }
+      team_members: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          is_owner: boolean
+          user_id: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          is_owner?: boolean
+          user_id: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          is_owner?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       training_plans: {
         Row: {
           code: string
@@ -2501,6 +2663,7 @@ export type Database = {
         Args: { _azubi: string; _reviewer: string }
         Returns: string
       }
+      admin_add_team_member: { Args: { p_email: string }; Returns: undefined }
       admin_anonymize_user: {
         Args: { p_actor?: string; p_user: string }
         Returns: undefined
@@ -2517,16 +2680,25 @@ export type Database = {
         Args: { p_code: string; p_plan: string; p_title: string }
         Returns: string
       }
+      admin_list_team: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          full_name: string
+          is_owner: boolean
+          user_id: string
+        }[]
+      }
       admin_list_users: {
         Args: never
         Returns: {
-          ausbilder_id: string
-          company_id: string
           created_at: string
           email: string
           full_name: string
           id: string
-          profession_id: string
+          is_team: boolean
+          organization: string
           role: Database["public"]["Enums"]["app_role"]
         }[]
       }
@@ -2537,6 +2709,7 @@ export type Database = {
           used: boolean
         }[]
       }
+      admin_remove_team_member: { Args: { p_user: string }; Returns: undefined }
       admin_save_instruction_catalog: {
         Args: { p_catalog: Json }
         Returns: string
@@ -2552,19 +2725,12 @@ export type Database = {
       }
       admin_set_user_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
+          p_role: Database["public"]["Enums"]["app_role"]
+          p_user: string
         }
         Returns: undefined
       }
-      admin_set_viewers: {
-        Args: { _azubi_id: string; _viewer_ids: string[] }
-        Returns: undefined
-      }
-      admin_update_azubi: {
-        Args: { _azubi_id: string; _patch: Json }
-        Returns: undefined
-      }
+      admin_stats: { Args: never; Returns: Json }
       approve_experience: {
         Args: {
           p_client_signed_at?: string
@@ -2650,18 +2816,14 @@ export type Database = {
         Args: { p_expected_version: number; p_id: string; p_note: string }
         Returns: undefined
       }
-      create_invite_code: {
+      create_invitation: {
         Args: {
-          _note?: string
-          _role: Database["public"]["Enums"]["app_role"]
-          _valid_days?: number
+          p_access_days?: number
+          p_note: string
+          p_role: Database["public"]["Enums"]["app_role"]
+          p_valid_days?: number
         }
-        Returns: string
-      }
-      create_link_code: {
-        Args: { p_access: string; p_hours?: number }
         Returns: {
-          access: string
           code: string
           expires_at: string
           id: string
@@ -2684,6 +2846,15 @@ export type Database = {
           id: string
         }[]
       }
+      display_people: {
+        Args: { _ids: string[] }
+        Returns: {
+          full_name: string
+          id: string
+          organization: string
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
       display_roles: {
         Args: { _ids: string[] }
         Returns: {
@@ -2703,6 +2874,7 @@ export type Database = {
           quiet_to: string
         }[]
       }
+      end_access: { Args: { p_grant: string }; Returns: undefined }
       experience_canonical: { Args: { p_id: string }; Returns: string }
       experience_hash: { Args: { p_id: string }; Returns: string }
       experience_requirement_for: {
@@ -2781,6 +2953,14 @@ export type Database = {
       export_my_data: { Args: never; Returns: Json }
       export_my_data_base: { Args: never; Returns: Json }
       export_plan_json: { Args: { p_plan: string }; Returns: Json }
+      find_possible_deputy: {
+        Args: { p_email: string }
+        Returns: {
+          full_name: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
+      }
       finish_delivery: {
         Args: { p_error: string; p_id: number; p_ok: boolean; p_skip: boolean }
         Returns: undefined
@@ -2814,8 +2994,12 @@ export type Database = {
         }
         Returns: string
       }
-      has_link: {
-        Args: { _azubi: string; _member: string; _min: string }
+      grant_status: {
+        Args: { g: Database["public"]["Tables"]["access_grants"]["Row"] }
+        Returns: string
+      }
+      has_active_grant: {
+        Args: { p_azubi: string; p_grantee: string; p_review?: boolean }
         Returns: boolean
       }
       has_my_consent: {
@@ -2870,42 +3054,21 @@ export type Database = {
         }[]
       }
       instruction_role_label: { Args: { p_user: string }; Returns: string }
+      invitation_code_new: { Args: never; Returns: string }
       is_active_deputy: {
         Args: { _deputy: string; _on_date?: string; _principal: string }
         Returns: boolean
       }
       is_leitung: { Args: { _user_id: string }; Returns: boolean }
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
+      is_team: { Args: { _uid: string }; Returns: boolean }
+      is_team_owner: { Args: { _uid: string }; Returns: boolean }
       kw_list: { Args: { weeks: string[] }; Returns: string }
-      link_access_rank: { Args: { _access: string }; Returns: number }
-      link_code_new: { Args: never; Returns: string }
-      link_role_max: { Args: { _user: string }; Returns: number }
       list_company_choices: {
         Args: never
         Returns: {
           id: string
           name: string
-        }[]
-      }
-      list_links: {
-        Args: never
-        Returns: {
-          access: string
-          azubi_id: string
-          azubi_name: string
-          created_at: string
-          is_primary: boolean
-          member_id: string
-          member_name: string
-          member_role: Database["public"]["Enums"]["app_role"]
-        }[]
-      }
-      list_possible_deputies: {
-        Args: never
-        Returns: {
-          full_name: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
         }[]
       }
       list_selectable_plans: {
@@ -2960,6 +3123,8 @@ export type Database = {
           week_start: string
         }[]
       }
+      my_access_overview: { Args: never; Returns: Json }
+      name_visible: { Args: { _id: string; _me: string }; Returns: boolean }
       notification_group: { Args: { _type: string }; Returns: string }
       notification_recipients: {
         Args: { _azubi: string }
@@ -2969,29 +3134,28 @@ export type Database = {
         }[]
       }
       plan_visible: { Args: { p_plan: string }; Returns: boolean }
-      preview_link_code: {
-        Args: { p_code: string }
-        Returns: {
-          access: string
-          allowed: boolean
-          azubi_name: string
-          expires_at: string
-        }[]
-      }
       push_quiet_until: {
         Args: { _at?: string; _uid: string }
         Returns: string
       }
-      redeem_invite_code: {
-        Args: { _code: string }
-        Returns: Database["public"]["Enums"]["app_role"]
-      }
-      redeem_link_code: {
+      redeem_invitation: {
         Args: { p_code: string }
         Returns: {
-          access: string
           azubi_id: string
-          azubi_name: string
+          error: string
+          grant_id: string
+          ok: boolean
+        }[]
+      }
+      redeem_invitation_core: {
+        Args: {
+          p_code: string
+          p_role: Database["public"]["Enums"]["app_role"]
+          p_user: string
+        }
+        Returns: {
+          azubi_id: string
+          grant_id: string
         }[]
       }
       register_push_subscription: {
@@ -3017,10 +3181,6 @@ export type Database = {
       }
       reject_report: {
         Args: { _expected_version: number; _note: string; _report_id: string }
-        Returns: undefined
-      }
-      remove_link: {
-        Args: { p_azubi: string; p_member: string }
         Returns: undefined
       }
       remove_push_device: { Args: { p_id: string }; Returns: undefined }
@@ -3080,8 +3240,11 @@ export type Database = {
         Returns: undefined
       }
       revoke_deputy: { Args: { _id: string }; Returns: undefined }
-      revoke_invite_code: { Args: { _code: string }; Returns: undefined }
-      revoke_link_code: { Args: { p_id: string }; Returns: undefined }
+      revoke_invitation: { Args: { p_id: string }; Returns: undefined }
+      role_label: {
+        Args: { _role: Database["public"]["Enums"]["app_role"] }
+        Returns: string
+      }
       save_my_notification_prefs: {
         Args: {
           p_groups: Json
@@ -3113,8 +3276,8 @@ export type Database = {
         }
         Returns: string
       }
-      set_deputy_self_service: {
-        Args: { _enabled: boolean }
+      set_deputy_allowed: {
+        Args: { p_allowed: boolean; p_grant: string }
         Returns: undefined
       }
       set_my_profession: {
@@ -3123,7 +3286,7 @@ export type Database = {
       }
       set_my_training: {
         Args: {
-          p_company: string
+          p_company?: string
           p_new_company_address?: string
           p_new_company_name?: string
           p_profession: string
@@ -3195,6 +3358,7 @@ export type Database = {
         Args: { p_end: string; p_start: string }
         Returns: number
       }
+      try_uuid: { Args: { _t: string }; Returns: string }
       verify_audit_chain: {
         Args: { p_chain?: string }
         Returns: {
@@ -3252,6 +3416,7 @@ export type Database = {
         | "ausbildungsberater"
         | "lehrer"
         | "ausbildungsleitung"
+        | "pruefer"
       consent_kind: "dictation" | "ai_text"
       grade_kind: "klausur" | "muendlich" | "test" | "sonstige"
       report_status: "draft" | "submitted" | "approved" | "rejected"
@@ -3392,6 +3557,7 @@ export const Constants = {
         "ausbildungsberater",
         "lehrer",
         "ausbildungsleitung",
+        "pruefer",
       ],
       consent_kind: ["dictation", "ai_text"],
       grade_kind: ["klausur", "muendlich", "test", "sonstige"],

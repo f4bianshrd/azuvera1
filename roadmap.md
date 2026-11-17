@@ -98,5 +98,9 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [x] Zusatz C1–C4: Erfahrungsberichte (Vorgaben, Datenmodell, Seiten, Prüf-Tab, Verwaltung, Export, Protokoll, Erinnerungen, Datenschutz)
 - [ ] C4 Rest: gemeinsamer Export „Berichte und Erfahrungsberichte“ in einem Dialog/Sammel-PDF (derzeit getrennte Exporte)
 - [ ] C Abnahme im Browser: Einreichen/Freigeben mit zwei Konten, PDF-Export, Handy-Ansicht – noch nicht durchgespielt
-- [ ] Zusatz D1, Zwischenschritt, D2, D3: offene Registrierung, Einladungen, Zugriff
+- [ ] Zusatz D1, D2, D3: offene Registrierung, Einladungen, Zugriff — mit Abweichungen des Nutzers:
+  - [ ] Ausbildungsleitung bleibt (verwaltet und sieht alles), Betriebe bleiben als Stammdaten
+  - [ ] Ausbildungsberater:innen prüfen und kommentieren wie Ausbilder:innen; Prüfer:innen/Lehrkräfte nur lesen
+  - [ ] QR-Code anzeigen und scannen für Einladungs-Codes
+  - [ ] Registrierung mit Rollenwahl, /einladung, /zugriff, „Meine Azubis“, Verwaltung anpassen
 - [ ] Abnahme-Prompt 1 und 2

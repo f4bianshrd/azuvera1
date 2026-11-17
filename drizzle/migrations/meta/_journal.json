@@ -309,6 +309,55 @@
       "when": 1794847011922,
       "tag": "0043_c4_erfahrungsberichte_export_erinnerungen_auskunft",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1794957853838,
+      "tag": "0044_add_role_pruefer",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1794958210182,
+      "tag": "0045_d1_team_invitations_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1794958392377,
+      "tag": "0046_d1_team_admin_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1794958453391,
+      "tag": "0047_d1_migrate_data_drop_old",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1794958604706,
+      "tag": "0048_d3_switch_to_team",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1794958787027,
+      "tag": "0049_d_restore_leitung_companies_berater",
+      "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1794959179237,
+      "tag": "0050_d_social_signup_default_azubi",
+      "breakpoints": true
     }
   ]
 }

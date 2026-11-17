@@ -10,6 +10,7 @@ import { ResponsiveDialog } from "@/components/dialogs";
 import { reportTitle, submitReport, ReportConflictError, type Report } from "./api";
 import { SignaturePad } from "./signature-pad";
 import { getNetworkStatus } from "@/lib/platform";
+import { NoReviewerSubmitHint } from "@/features/access/components/reviewer-hints";
 
 const SECTIONS: { key: keyof Pick<Report, "activities" | "school_content" | "instructions" | "summary">; label: string }[] = [
   { key: "activities", label: "Tätigkeiten" },
@@ -74,6 +75,7 @@ export function SubmitSheet({
       description={reportTitle(report)}
     >
       <div className="space-y-4">
+        <NoReviewerSubmitHint />
         <div className="rounded-xl border bg-muted/40 p-3 text-sm">
           <p>
             {filled.length} von 4 Abschnitten ausgefüllt ·{" "}

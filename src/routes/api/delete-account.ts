@@ -22,8 +22,8 @@ export const Route = createFileRoute("/api/delete-account")({
           const me = await userFromRequest(request);
           if (!me) return reply({ error: "Nicht angemeldet." }, 401);
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-          const { data: myRole } = await supabaseAdmin.from("user_roles").select("role").eq("user_id", me.user.id).maybeSingle();
-          if (myRole?.role !== "ausbildungsleitung") return reply({ error: "Dazu fehlt dir die Berechtigung." }, 403);
+          const { data: isTeam } = await supabaseAdmin.rpc("is_team", { _uid: me.user.id });
+          if (isTeam !== true) return reply({ error: "Dazu fehlt dir die Berechtigung." }, 403);
 
           const parsed = Body.safeParse(await request.json().catch(() => null));
           if (!parsed.success) return reply({ error: "Die Angaben sind unvollständig." }, 400);
@@ -36,6 +36,8 @@ export const Route = createFileRoute("/api/delete-account")({
           if (!target || !targetRole) return reply({ error: "Konto nicht gefunden." }, 404);
           if (!sameEmail(confirmEmail, target.email)) return reply({ error: "Die E-Mail-Adresse stimmt nicht." }, 400);
           if (userId === me.user.id) return reply({ error: "Das eigene Konto lässt sich hier nicht löschen." }, 400);
+          const { data: targetTeam } = await supabaseAdmin.from("team_members").select("user_id").eq("user_id", userId).maybeSingle();
+          if (targetTeam) return reply({ error: "Team-Mitglieder erst aus dem Team entfernen." }, 400);
           if (targetRole.role === "ausbildungsleitung") {
             const { data: leads } = await supabaseAdmin.from("user_roles").select("user_id").eq("role", "ausbildungsleitung");
             const ids = (leads ?? []).map((l) => l.user_id);

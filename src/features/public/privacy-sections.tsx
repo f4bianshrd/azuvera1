@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Bell, Clock, Cookie, Database, FileText, History, Mail, Mic, Paperclip, Scale, Server, ShieldCheck, Sparkles, WifiOff, type LucideIcon } from "lucide-react";
+import { Bell, Clock, Cookie, Database, FileText, History, Mail, Mic, Paperclip, Scale, Server, ShieldCheck, Sparkles, UserCheck, WifiOff, type LucideIcon } from "lucide-react";
 import { PRIVACY_TEXT_DEFAULTS, type PrivacyTexts } from "@/lib/legal";
 import { linkCls } from "./public-layout";
 
@@ -34,7 +34,7 @@ export function privacySections(texts: PrivacyTexts = PRIVACY_TEXT_DEFAULTS): Pr
       id: "erhebung", title: "Erhebung und Verarbeitung von Daten", icon: Database,
       content: (<>
         <p>Bei der Nutzung von Azuvera werden personenbezogene Daten erhoben, die für den Betrieb des digitalen Berichtshefts erforderlich sind. Dazu gehören:</p>
-        <List items={["Name und E-Mail-Adresse (zur Authentifizierung)", "Ausbildungsberuf, Ausbildungsjahr, Ausbildungsbeginn und Bundesland des Ausbildungsbetriebs", "Berichte, Erfahrungsberichte, Abwesenheiten und Schulnoten", "Fotos und PDF-Dateien, die an Berichte und Erfahrungsberichte angehängt werden", "Kommentare und Freigabeinformationen", "Unterweisungsnachweise (Thema, Datum, Dauer, unterweisende Person, Notiz)", "Elektronische Unterschriften (beim Einreichen und bei der Freigabe)", "Einstellungen für Benachrichtigungen und technische Gerätekennungen für Push-Mitteilungen"]} />
+        <List items={["Name und E-Mail-Adresse (zur Authentifizierung)", "Ausbildungsberuf, Ausbildungsjahr, Ausbildungsbeginn und Bundesland des Ausbildungsbetriebs", "Berichte, Erfahrungsberichte, Abwesenheiten und Schulnoten", "Fotos und PDF-Dateien, die an Berichte und Erfahrungsberichte angehängt werden", "Kommentare und Freigabeinformationen", "Rolle und Organisation (bei Ausbilderinnen, Betrieben, Kammern, Prüfern und Schulen)", "Einladungs-Codes und Zugriffe auf Berichtshefte", "Unterweisungsnachweise (Thema, Datum, Dauer, unterweisende Person, Notiz)", "Elektronische Unterschriften (beim Einreichen und bei der Freigabe)", "Einstellungen für Benachrichtigungen und technische Gerätekennungen für Push-Mitteilungen"]} />
         <p>Die Daten werden ausschließlich für die Verwaltung und Dokumentation der Ausbildung verwendet.</p>
       </>),
     },
@@ -68,7 +68,7 @@ export function privacySections(texts: PrivacyTexts = PRIVACY_TEXT_DEFAULTS): Pr
       id: "speicherdauer", title: "Speicherdauer und Löschung", icon: Clock,
       content: (<>
         <p>Personenbezogene Daten werden nur so lange gespeichert, wie es für die Nutzung der Plattform oder gesetzliche Aufbewahrungsfristen erforderlich ist. Nach Vertragsende oder Löschung des Kontos werden die Daten innerhalb angemessener Fristen gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
-        <p>Die Löschung eines Kontos können Sie in der App unter Mein Profil beantragen; die Ausbildungsleitung führt sie aus.</p>
+        <p>Die Löschung eines Kontos können Sie in der App unter Mein Profil beantragen; das Azuvera-Team führt sie aus.</p>
       </>),
     },
     {
@@ -96,6 +96,14 @@ export function privacySections(texts: PrivacyTexts = PRIVACY_TEXT_DEFAULTS): Pr
     {
       id: "anhaenge", title: "Anhänge (Fotos und Dateien)", icon: Paperclip,
       content: <p>An Berichte und Erfahrungsberichte lassen sich je bis zu 10 Fotos oder PDF-Dateien anhängen (je Datei höchstens 10 MB). Fotos werden vor dem Hochladen im Browser neu codiert; dabei gehen Metadaten wie der Aufnahmeort verloren. Die Dateien liegen in einem nicht öffentlichen Speicher und sind nur für Personen abrufbar, die den Bericht einsehen dürfen; Entwürfe sieht ausschließlich die Azubi-Person (Art. 6 Abs. 1 lit. b DSGVO). Bitte laden Sie keine Dateien mit Gesundheitsdaten oder Daten Dritter hoch.</p>,
+    },
+    {
+      id: "zugriff", title: "Zugriff durch eingeladene Personen", icon: UserCheck,
+      content: (<>
+        <p>Auszubildende entscheiden selbst, wer ihr Berichtsheft einsehen darf. Dafür erzeugen sie einen Einladungs-Code für eine Ausbilderin oder einen Ausbilder, eine Betriebsleiterin oder einen Betriebsleiter, eine Ausbildungsberaterin oder einen Ausbildungsberater, eine Prüferin oder einen Prüfer oder eine Lehrerin oder einen Lehrer. Wer den Code einlöst, sieht die eingereichten und freigegebenen Berichte und Erfahrungsberichte mit Anhängen, Kommentaren und Unterschriften, die Abwesenheiten, die Schulnoten, den Ausbildungsplan und die Profilangaben der Azubi-Person; Entwürfe sieht ausschließlich die Azubi-Person. Der Zugriff lässt sich jederzeit beenden und endet bei Prüferinnen und Prüfern automatisch (Art. 6 Abs. 1 lit. a DSGVO).</p>
+        <p>Ausbilderinnen und Ausbilder, Betriebsleiterinnen und Betriebsleiter sowie Ausbildungsberaterinnen und Ausbildungsberater dürfen Berichte prüfen, kommentieren und freigeben; Prüferinnen und Prüfer sowie Lehrerinnen und Lehrer lesen nur. Die Ausbildungsleitung betreut die Ausbildung und kann dafür alle eingereichten Berichtshefte einsehen und prüfen.</p>
+        <p>Das Azuvera-Team verwaltet Konten, Berufe, Pläne und Einstellungen. Team-Mitglieder ohne die Rolle Ausbildungsleitung haben keinen Zugriff auf Berichte, Erfahrungsberichte, Kommentare, Unterschriften oder Profilangaben der Auszubildenden. Azuvera prüft nicht, ob die Angaben einer eingeladenen Person zu Rolle und Organisation zutreffen; die Azubi-Person entscheidet, wem sie ihren Code gibt.</p>
+      </>),
     },
     {
       id: "offline", title: "Offline-Nutzung und lokale Speicherung", icon: WifiOff,
