@@ -41,7 +41,8 @@ function Impressum() {
           </InfoCard>
           <InfoCard title="Kontakt" icon={<Mail className={ic} aria-hidden />}>
             <p>Telefon: <a className={linkCls} href="tel:+4915569490721">+49 155 69490721</a></p>
-            <p>E-Mail: <a className={linkCls} href="mailto:management@stage-spotlight.de">management@stage-spotlight.de</a></p>
+            <p>E-Mail: <a className={linkCls} href="mailto:info@azuvera.de">info@azuvera.de</a></p>
+            <p>Web: <a className={linkCls} href="https://www.stage-spotlight.de" target="_blank" rel="noreferrer">www.stage-spotlight.de</a></p>
           </InfoCard>
           <InfoCard title="Haftung & Rechtliches" icon={<Scale className={ic} aria-hidden />}>
             <p>Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</p>

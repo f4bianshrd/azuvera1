@@ -55,6 +55,7 @@ export const AzuveraEmail = ({ preview, label, tone = 'info', title, children, c
           <Hr style={s.hr} />
           <Text style={s.footText}>
             Azuvera · Das digitale Berichtsheft für die Ausbildung<br />
+            Eine Marke der Stage &amp; Spotlight · <Link href="https://www.stage-spotlight.de" style={s.footLink}>www.stage-spotlight.de</Link><br />
             <Link href={APP_URL} style={s.footLink}>get.azuvera.de</Link> · Fragen? <Link href="mailto:info@azuvera.de" style={s.footLink}>info@azuvera.de</Link>
           </Text>
         </Section>

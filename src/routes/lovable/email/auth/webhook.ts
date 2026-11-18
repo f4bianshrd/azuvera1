@@ -9,7 +9,7 @@ import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 // Configuration
-const SITE_NAME = "AzuVera - by fabian.shrd"
+const SITE_NAME = "Azuvera – Stage & Spotlight"
 const SENDER_DOMAIN = "notify.get.azuvera.de"
 const ROOT_DOMAIN = "get.azuvera.de"
 const FROM_DOMAIN = "get.azuvera.de"
