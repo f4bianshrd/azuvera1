@@ -42,7 +42,7 @@ export function AccessPage({ openNew, code }: { openNew?: boolean; code?: string
   const isAzubi = me.role === "azubi";
   return (
     <div className="space-y-8 pb-24">
-      <PageHeader title="Zugriff & Einladungen" subtitle={isAzubi ? "Du entscheidest, wer dein Berichtsheft sehen darf." : "Auszubildende, die dich eingeladen haben."} />
+      <PageHeader title="Zugriff & Einladungen" subtitle={isAzubi ? "Du entscheidest, wer dein Berichtsheft sehen darf." : me.role === "ausbildungsleitung" ? "Einladungen betreffen Ausbilder:innen, Berater:innen, Prüfer:innen und Lehrkräfte." : "Auszubildende, die dich eingeladen haben."} />
       {isAzubi ? <AzubiView me={me} openNew={!!openNew} /> : me.role === "ausbildungsleitung" ? (
         <EmptyState icon={ShieldCheck} title="Du siehst als Ausbildungsleitung alle Berichtshefte." description="Einladungs-Codes brauchst du nicht." />
       ) : <GranteeView initialCode={code} />}

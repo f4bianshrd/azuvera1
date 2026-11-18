@@ -103,4 +103,5 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
   - [x] Ausbildungsberater:innen prüfen und kommentieren wie Ausbilder:innen; Prüfer:innen/Lehrkräfte nur lesen
   - [x] QR-Code anzeigen und scannen für Einladungs-Codes
   - [x] Registrierung mit Rollenwahl, /einladung, /zugriff, „Meine Azubis“, Verwaltung anpassen
+- [ ] Leittexte von leittexte.de: interaktiv ausfüllen, speichern, wieder bearbeiten oder nur ansehen, in der Prüfungsmappe und einzeln exportieren
 - [ ] Abnahme-Prompt 1 und 2
