@@ -42,7 +42,7 @@ function RoleBadge({ role, team = false }: { role: AppRole; team?: boolean }) {
         {ROLE_LABELS[role]}
       </Badge>
       {team && (
-        <Badge variant="outline" className="text-xs">
+        <Badge variant="outline" className="border-brand-teal/60 bg-brand-teal/15 text-xs text-current">
           Team
         </Badge>
       )}
