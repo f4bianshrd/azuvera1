@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Code2, Copy, Globe, Mail, MonitorSmartphone, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LegalHeader, PublicLayout } from "@/features/public/public-layout";
+import { Logo } from "@/components/shared";
+import { PublicLayout } from "@/features/public/public-layout";
 
 const TITLE = "E-Mail-Signatur – Azuvera";
 const DESC = "Azuvera E-Mail-Signatur zum Kopieren für Outlook, Apple Mail und Gmail.";
@@ -22,60 +23,167 @@ export const Route = createFileRoute("/signatur")({
   component: Signatur,
 });
 
-// E-Mail-Programme verstehen nur feste Farben direkt im Text.
-const A = 'style="color:#2f6b4f;text-decoration:none;"';
-const SIG = `<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#1f2937;background:#ffffff;padding:12px;">
-<tr><td style="padding-bottom:6px;"><span style="font-size:16px;font-weight:bold;color:#2f6b4f;">Azuvera</span> <span style="color:#64748b;">· Eine Marke der Stage &amp; Spotlight</span></td></tr>
-<tr><td>Inhaber: Fabian Schröder</td></tr>
-<tr><td>Hüdepohlweg 8, D-49326 Melle</td></tr>
-<tr><td style="padding-top:6px;"><a href="mailto:info@azuvera.de" ${A}>✉ info@azuvera.de</a> &nbsp;·&nbsp; <a href="tel:+4915569490721" ${A}>☎ +49 155 69490721</a></td></tr>
-<tr><td><a href="https://instagram.com/getazuvera" ${A}>Instagram: getazuvera</a> &nbsp;·&nbsp; <a href="https://wa.me/4915569490721" ${A}>WhatsApp</a></td></tr>
-<tr><td style="padding-top:6px;"><a href="https://azuvera.de" ${A}>🌐 azuvera.de</a> &nbsp;·&nbsp; <a href="https://get.azuvera.de" ${A}>📱 Azuvera WebApp</a></td></tr>
-<tr><td style="padding-top:6px;font-size:11px;"><a href="https://get.azuvera.de/impressum" style="color:#64748b;">Impressum</a> · <a href="https://get.azuvera.de/datenschutz" style="color:#64748b;">Datenschutz</a></td></tr>
+const LIVE = "https://get.azuvera.de";
+
+/*
+ * E-Mail-Programme kennen keine Design-Tokens: Die Signatur braucht feste Farben,
+ * Tabellen und Bilder mit voller Adresse. Farben = Azuvera-Verlauf in Hex.
+ */
+const C = { blue: "#0056c5", mid: "#0093c1", teal: "#06bfa8", ink: "#091123", muted: "#677284", line: "#e3ebf5" };
+const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
+
+function buildSignature(base: string) {
+  const img = (n: string, s: number, alt: string) =>
+    `<img src="${base}/brand/sig-${n}.png" width="${s}" height="${s}" alt="${alt}" style="display:block;border:0;width:${s}px;height:${s}px;" />`;
+  const row = (icon: string, alt: string, html: string) =>
+    `<tr><td style="padding:0 10px 6px 0;vertical-align:middle;">${img(icon, 18, alt)}</td><td style="padding:0 0 6px 0;vertical-align:middle;font-size:13px;color:${C.ink};">${html}</td></tr>`;
+  const a = (href: string, text: string, color = C.ink) =>
+    `<a href="${href}" style="color:${color};text-decoration:none;">${text}</a>`;
+  const pill = (href: string, icon: string, label: string, sub: string) =>
+    `<td style="padding:0 8px 0 0;"><a href="${href}" style="text-decoration:none;"><table cellpadding="0" cellspacing="0" border="0" style="border:1px solid ${C.line};border-radius:10px;"><tr>
+<td style="padding:8px 8px 8px 10px;vertical-align:middle;">${img(icon, 22, "")}</td>
+<td style="padding:7px 12px 7px 0;vertical-align:middle;font-family:${FONT};"><div style="font-size:12px;font-weight:600;color:${C.ink};line-height:1.2;">${label}</div><div style="font-size:11px;color:${C.muted};line-height:1.2;">${sub}</div></td>
+</tr></table></a></td>`;
+
+  return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:${FONT};color:${C.ink};background:#ffffff;max-width:520px;">
+<tr><td style="padding:0 0 14px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr>
+<td style="vertical-align:top;padding:2px 18px 0 0;"><a href="https://azuvera.de"><img src="${base}/brand/sig-logo.png" width="76" height="76" alt="Azuvera" style="display:block;border:0;width:76px;height:76px;border-radius:16px;" /></a></td>
+<td width="3" bgcolor="${C.mid}" style="width:3px;background:${C.mid};background-image:linear-gradient(180deg,${C.blue},${C.mid},${C.teal});font-size:0;line-height:0;">&nbsp;</td>
+<td style="vertical-align:top;padding:0 0 0 18px;">
+<div style="font-size:18px;font-weight:700;letter-spacing:-0.2px;color:${C.ink};line-height:1.25;">Fabian Schröder</div>
+<div style="font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:${C.blue};padding:3px 0 2px;">Inhaber · Azuvera</div>
+<div style="font-size:12px;color:${C.muted};padding:0 0 10px;">Eine Marke der Stage &amp; Spotlight</div>
+<table cellpadding="0" cellspacing="0" border="0">
+${row("mail", "E-Mail", a("mailto:info@azuvera.de", "info@azuvera.de"))}
+${row("phone", "Telefon", a("tel:+4915569490721", "+49 155 69490721"))}
+</table>
+<div style="font-size:12px;color:${C.muted};padding:2px 0 10px;">Hüdepohlweg 8 · D-49326 Melle</div>
+<table cellpadding="0" cellspacing="0" border="0"><tr>
+<td style="padding:0 8px 0 0;"><a href="https://instagram.com/getazuvera">${img("instagram", 26, "Instagram @getazuvera")}</a></td>
+<td style="padding:0 10px 0 0;"><a href="https://wa.me/4915569490721">${img("whatsapp", 26, "WhatsApp")}</a></td>
+<td style="font-size:12px;color:${C.muted};vertical-align:middle;">${a("https://instagram.com/getazuvera", "@getazuvera", C.muted)}</td>
+</tr></table>
+</td></tr></table></td></tr>
+<tr><td style="padding:0 0 14px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr>
+${pill("https://azuvera.de", "globe", "azuvera.de", "Website")}
+${pill(LIVE, "smartphone", "Azuvera WebApp", "Digitales Berichtsheft")}
+</tr></table></td></tr>
+<tr><td height="3" bgcolor="${C.mid}" style="height:3px;background:${C.mid};background-image:linear-gradient(90deg,${C.blue},${C.mid},${C.teal});font-size:0;line-height:0;">&nbsp;</td></tr>
+<tr><td style="padding:8px 0 0 0;font-size:10.5px;color:${C.muted};">
+${a(`${LIVE}/impressum`, "Impressum", C.muted)} &nbsp;·&nbsp; ${a(`${LIVE}/datenschutz`, "Datenschutz", C.muted)}
+</td></tr>
 </table>`;
-const TEXT = `Azuvera · Eine Marke der Stage & Spotlight
-Inhaber: Fabian Schröder
-Hüdepohlweg 8, D-49326 Melle
-info@azuvera.de · +49 155 69490721
-Instagram: getazuvera · WhatsApp: wa.me/4915569490721
-azuvera.de · get.azuvera.de
+}
+
+const SIG_LIVE = buildSignature(LIVE);
+const TEXT = `Fabian Schröder
+Inhaber · Azuvera – Eine Marke der Stage & Spotlight
+Hüdepohlweg 8 · D-49326 Melle
+E-Mail: info@azuvera.de · Tel.: +49 155 69490721
+Instagram: @getazuvera · WhatsApp: wa.me/4915569490721
+Website: azuvera.de · WebApp: get.azuvera.de
 Impressum: get.azuvera.de/impressum · Datenschutz: get.azuvera.de/datenschutz`;
 
+const STEPS = [
+  { app: "Outlook (Mac)", text: "Outlook → Einstellungen → Signaturen → „+“ → ins Feld klicken → Cmd + V → Speichern." },
+  { app: "Apple Mail", text: "Mail → Einstellungen → Signaturen → „+“ → Haken „Immer meiner Standardschrift entsprechen“ entfernen → Cmd + V." },
+  { app: "Gmail & Outlook Web", text: "Einstellungen → Signatur → Neu → ins Feld klicken → Strg / Cmd + V → Speichern." },
+];
+
 function Signatur() {
+  // Vorschau zeigt Bilder vom aktuellen Server, kopiert wird immer mit der Live-Adresse.
+  const [preview, setPreview] = useState(SIG_LIVE);
+  useEffect(() => setPreview(buildSignature(window.location.origin)), []);
   const [done, setDone] = useState<"" | "sig" | "html">("");
-  const flash = (k: "sig" | "html") => { setDone(k); setTimeout(() => setDone(""), 2000); };
+  const flash = (k: "sig" | "html") => { setDone(k); setTimeout(() => setDone(""), 2200); };
+
   async function copySig() {
     try {
       await navigator.clipboard.write([new ClipboardItem({
-        "text/html": new Blob([SIG], { type: "text/html" }),
+        "text/html": new Blob([SIG_LIVE], { type: "text/html" }),
         "text/plain": new Blob([TEXT], { type: "text/plain" }),
       })]);
     } catch {
-      const el = document.getElementById("sig-preview");
-      if (el) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s?.removeAllRanges(); s?.addRange(r); document.execCommand("copy"); s?.removeAllRanges(); }
+      const box = document.createElement("div");
+      box.innerHTML = SIG_LIVE;
+      box.style.position = "fixed"; box.style.left = "-9999px";
+      document.body.appendChild(box);
+      const r = document.createRange(); r.selectNodeContents(box);
+      const s = getSelection(); s?.removeAllRanges(); s?.addRange(r);
+      document.execCommand("copy"); s?.removeAllRanges(); box.remove();
     }
     flash("sig");
   }
-  async function copyHtml() { await navigator.clipboard.writeText(SIG); flash("html"); }
+  async function copyHtml() { await navigator.clipboard.writeText(SIG_LIVE); flash("html"); }
 
   return (
     <PublicLayout>
-      <LegalHeader chip="Intern" title="E-Mail-Signatur" subtitle="Mit einem Klick kopieren und in dein E-Mail-Programm einfügen." />
-      <div className="mx-auto max-w-3xl space-y-6 px-4 py-10">
-        <div className="rounded-xl border bg-card p-6">
-          <div id="sig-preview" className="overflow-x-auto rounded-lg border p-4" style={{ background: "#ffffff" }} dangerouslySetInnerHTML={{ __html: SIG }} />
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Button onClick={copySig}>{done === "sig" ? <Check /> : <Copy />} {done === "sig" ? "Kopiert!" : "Signatur kopieren"}</Button>
-            <Button variant="outline" onClick={copyHtml}>{done === "html" ? <Check /> : <Copy />} {done === "html" ? "Kopiert!" : "HTML-Code kopieren"}</Button>
+      <section className="relative overflow-hidden border-b bg-gradient-subtle">
+        <div aria-hidden className="pointer-events-none absolute -right-32 -top-32 size-[28rem] rounded-full bg-gradient-primary opacity-20 blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-40 -left-24 size-80 rounded-full bg-brand-teal opacity-15 blur-3xl" />
+        <div className="relative mx-auto max-w-5xl px-4 py-14 sm:py-20">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-teal/40 bg-background/70 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary backdrop-blur">
+            <Sparkles className="size-3.5" aria-hidden /> Brand Kit
+          </span>
+          <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl">
+            Deine Azuvera <span className="whitespace-nowrap bg-gradient-primary bg-clip-text text-transparent">E-Mail-Signatur</span>
+          </h1>
+          <p className="mt-4 max-w-xl text-lg text-muted-foreground">
+            Einmal klicken, in Outlook, Apple Mail oder Gmail einfügen – fertig.
+          </p>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-5xl px-4 py-12">
+        <div className="overflow-hidden rounded-3xl border bg-card shadow-elegant">
+          <div className="flex items-center justify-between gap-3 border-b px-5 py-3">
+            <div className="flex items-center gap-1.5" aria-hidden>
+              <span className="size-3 rounded-full bg-muted-foreground/25" />
+              <span className="size-3 rounded-full bg-muted-foreground/25" />
+              <span className="size-3 rounded-full bg-muted-foreground/25" />
+            </div>
+            <span className="truncate text-xs text-muted-foreground">Neue E-Mail · info@azuvera.de</span>
+            <Mail className="size-4 text-muted-foreground" aria-hidden />
+          </div>
+          {/* Weiß wie in einer echten E-Mail – unabhängig vom hellen/dunklen Modus. */}
+          <div className="overflow-x-auto px-6 py-8 sm:px-10" style={{ background: "#ffffff" }}>
+            <p className="mb-6 text-sm" style={{ color: "#677284", fontFamily: "Helvetica, Arial, sans-serif" }}>
+              Viele Grüße
+            </p>
+            <div dangerouslySetInnerHTML={{ __html: preview }} />
+          </div>
+          <div className="flex flex-col gap-3 border-t bg-muted/40 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">Bilder und Links sind schon eingebaut.</p>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button size="lg" className="h-11 bg-gradient-primary text-primary-foreground shadow-elegant" onClick={copySig}>
+                {done === "sig" ? <Check /> : <Copy />} {done === "sig" ? "Kopiert" : "Signatur kopieren"}
+              </Button>
+              <Button size="lg" variant="outline" className="h-11" onClick={copyHtml}>
+                {done === "html" ? <Check /> : <Code2 />} {done === "html" ? "Kopiert" : "HTML-Code"}
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="space-y-4 rounded-xl border bg-card p-6 text-sm text-muted-foreground">
-          <div><p className="font-semibold text-foreground">Outlook auf dem Mac</p>
-            <p>Auf „Signatur kopieren“ klicken → Outlook → Einstellungen → Signaturen → „+“ → ins Feld klicken → Cmd + V → speichern.</p></div>
-          <div><p className="font-semibold text-foreground">Apple Mail</p>
-            <p>Mail → Einstellungen → Signaturen → „+“ → Haken bei „Immer meiner Standardschrift entsprechen“ entfernen → Cmd + V.</p></div>
-          <div><p className="font-semibold text-foreground">Gmail / Outlook im Browser</p>
-            <p>Einstellungen → Signatur → neue Signatur → ins Feld klicken → Strg/Cmd + V → speichern.</p></div>
+
+        <h2 className="mt-14 text-2xl font-bold tracking-tight">So fügst du sie ein</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {STEPS.map((s, i) => (
+            <div key={s.app} className="rounded-2xl border bg-card p-6">
+              <div className="flex items-center gap-3">
+                <span className="grid size-9 place-items-center rounded-xl bg-gradient-primary text-sm font-bold text-primary-foreground">{i + 1}</span>
+                <h3 className="font-semibold">{s.app}</h3>
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.text}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-gradient-subtle p-6">
+          <Logo />
+          <div className="flex gap-5 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5"><Globe className="size-4" aria-hidden /> azuvera.de</span>
+            <span className="inline-flex items-center gap-1.5"><MonitorSmartphone className="size-4" aria-hidden /> get.azuvera.de</span>
+          </div>
         </div>
       </div>
     </PublicLayout>
