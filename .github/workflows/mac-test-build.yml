@@ -1,0 +1,150 @@
+# Mac-Testversion (Mac Catalyst) OHNE Apple-Entwicklerkonto: ad-hoc signiert, nicht notarisiert.
+# Nur zum Ausprobieren/intern weitergeben – nicht verkaufen. Verkaufsversion: native-build.yml.
+# Startet automatisch, wenn diese Datei oder .github/mac-test-build-trigger.txt auf main geändert wird,
+# oder manuell: GitHub → Actions → „Mac-Testversion“ → „Run workflow“.
+name: Mac-Testversion (ohne Apple-Konto)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ziel:
+        description: "Für welche Macs?"
+        type: choice
+        options: [mac-universal, mac-silicon, mac-intel]
+        default: mac-universal
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/mac-test-build.yml"
+      - ".github/mac-test-build-trigger.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mac-test-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mac:
+    name: Mac-Testversion (.dmg)
+    runs-on: macos-14
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Version und Ziel bestimmen
+        env:
+          ZIEL: ${{ github.event.inputs.ziel || 'mac-universal' }}
+        run: |
+          set -euo pipefail
+          version=$(sed -nE 's/.*APP_VERSION: "([^"]+)".*/\1/p' src/config/native-license.ts | head -1)
+          [ -n "$version" ] || { echo "::error::Keine Version gefunden"; exit 1; }
+          case "$ZIEL" in
+            mac-silicon)   archs="arm64" ;;
+            mac-intel)     archs="x86_64" ;;
+            mac-universal) archs="arm64 x86_64" ;;
+            *) echo "::error::Unbekanntes Ziel: $ZIEL"; exit 1 ;;
+          esac
+          {
+            echo "VERSION=$version"
+            echo "BUILD=${{ github.run_number }}"
+            echo "ARCHS_WANTED=$archs"
+            echo "LABEL=$ZIEL"
+          } >> "$GITHUB_ENV"
+          echo "Version $version, Build ${{ github.run_number }}, Ziel $ZIEL ($archs)"
+
+      - name: Abhängigkeiten installieren
+        run: bun install --frozen-lockfile
+      - name: Web-App für die native Version bauen (inkl. cap sync ios)
+        run: bun run build:native
+
+      - name: Mac-App bauen (Mac Catalyst, ohne Apple-Signierung)
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/xcodebuild.log"
+          if ! xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+              -destination 'generic/platform=macOS,variant=Mac Catalyst' \
+              -derivedDataPath "$RUNNER_TEMP/dd" \
+              ARCHS="$ARCHS_WANTED" ONLY_ACTIVE_ARCH=NO \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+              MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD" \
+              build > "$log" 2>&1; then
+            grep -E "error:|\*\* BUILD FAILED" "$log" | head -50 || true
+            tail -n 150 "$log"
+            echo "::error::Mac-App konnte nicht gebaut werden"; exit 1
+          fi
+          tail -n 15 "$log"
+          app=$(ls -d "$RUNNER_TEMP"/dd/Build/Products/Release-maccatalyst/*.app | head -1)
+          [ -d "$app" ] || { echo "::error::Keine .app gefunden"; exit 1; }
+          echo "APP=$app" >> "$GITHUB_ENV"
+
+      - name: Architekturen prüfen
+        run: |
+          set -euo pipefail
+          exe=$(/usr/libexec/PlistBuddy -c "Print :CFBundleExecutable" "$APP/Contents/Info.plist")
+          got=$(lipo -archs "$APP/Contents/MacOS/$exe" | tr ' ' '\n' | sort | xargs)
+          want=$(echo "$ARCHS_WANTED" | tr ' ' '\n' | sort | xargs)
+          echo "Gefunden: $got – erwartet: $want"
+          [ "$got" = "$want" ] || { echo "::error::Architekturen stimmen nicht"; exit 1; }
+          echo "ARCHS_FOUND=$got" >> "$GITHUB_ENV"
+
+      - name: Ad-hoc signieren (damit die App auf Apple Silicon startet)
+        run: |
+          set -euo pipefail
+          if [ -d "$APP/Contents/Frameworks" ]; then
+            find "$APP/Contents/Frameworks" -maxdepth 1 \( -name "*.framework" -o -name "*.dylib" \) -print0 \
+              | xargs -0 -I{} codesign --force --sign - {}
+          fi
+          codesign --force --sign - --entitlements ios/App/App/App.entitlements "$APP"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+
+      - name: .dmg erstellen
+        run: |
+          set -euo pipefail
+          stage="$RUNNER_TEMP/dmg"; mkdir -p "$stage" out
+          cp -R "$APP" "$stage/Azuvera.app"
+          ln -s /Applications "$stage/Programme"
+          cat > "$stage/Bitte zuerst lesen.txt" <<'TXT'
+          Azuvera – Testversion für den Mac
+          ==================================
+
+          Diese Testversion ist noch nicht von Apple beglaubigt (kein Apple-Entwicklerkonto).
+          Der Mac warnt deshalb beim ersten Öffnen. So geht es trotzdem:
+
+          1. Azuvera.app in den Ordner „Programme“ ziehen.
+          2. Azuvera einmal per Doppelklick öffnen – es kommt eine Warnung. Auf „Fertig“ bzw. „OK“ klicken.
+          3. Systemeinstellungen → Datenschutz & Sicherheit → ganz nach unten scrollen
+             → bei „Azuvera“ auf „Trotzdem öffnen“ klicken und bestätigen.
+
+          Danach startet Azuvera ganz normal.
+          Die App fragt nach einem Lizenzschlüssel (www.azuvera.de → Mein Konto).
+          TXT
+          dmg="out/Azuvera-${VERSION}-${LABEL}-test.dmg"
+          hdiutil create -volname "Azuvera" -srcfolder "$stage" -ov -format UDZO "$dmg"
+          echo "DMG=$dmg" >> "$GITHUB_ENV"
+
+      - name: Zusammenfassung
+        run: |
+          sum=$(shasum -a 256 "$DMG" | cut -d' ' -f1)
+          {
+            echo "### Mac-Testversion (nicht von Apple beglaubigt)"
+            echo "| Datei | Version | Build | Architekturen | SHA-256 |"
+            echo "|---|---|---|---|---|"
+            echo "| $(basename "$DMG") | $VERSION | $BUILD | $ARCHS_FOUND | \`$sum\` |"
+            echo ""
+            echo "Herunterladen: unten bei **Artifacts**. Öffnen: siehe „Bitte zuerst lesen.txt“ in der .dmg."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Azuvera-${{ env.VERSION }}-${{ env.LABEL }}-test.dmg
+          path: out/*.dmg
+          if-no-files-found: error
+          retention-days: 30

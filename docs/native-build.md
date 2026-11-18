@@ -20,6 +20,18 @@ bun run build:native   # = VITE_NATIVE_BUILD=true vite build → index.html vorb
   im App-Paket, weil die App unter `capacitor://localhost/` läuft.
 - Danach in Xcode öffnen: `ios/App/App.xcodeproj`, Ziel „App“, Gerät iPhone/iPad oder „My Mac (Mac Catalyst)“.
 
+## Mac-Testversion ohne Apple-Konto
+
+Datei: `.github/workflows/mac-test-build.yml`. Baut eine **ad-hoc signierte, nicht notarisierte** `.dmg`
+(Mac Catalyst, standardmäßig Universal) – ganz ohne Apple-Secrets. Nur zum Ausprobieren und für Testpersonen,
+nicht zum Verkauf.
+
+- Start automatisch, sobald `.github/mac-test-build-trigger.txt` (oder der Workflow) auf `main` geändert wird,
+  oder manuell: GitHub → Actions → „Mac-Testversion (ohne Apple-Konto)“ → „Run workflow“.
+- Download: im Lauf unten bei **Artifacts** (`Azuvera-{version}-mac-universal-test.dmg`, 30 Tage aufbewahrt).
+- Erstes Öffnen: Warnung bestätigen, dann Systemeinstellungen → Datenschutz & Sicherheit → „Trotzdem öffnen“
+  (steht auch in „Bitte zuerst lesen.txt“ in der .dmg). Die Lizenzprüfung ist wie in der Verkaufsversion aktiv.
+
 ## Pflichten vor jeder nativen Version
 
 1. `src/config/native-license.ts`: `APP_VERSION` erhöhen; `SHOW_PURCHASE_LINKS` passend zum Vertriebsweg
