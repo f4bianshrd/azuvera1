@@ -28,3 +28,4 @@ Disallow: /verknuepfungen
 Disallow: /zugriff
 
 Sitemap: https://get.azuvera.de/sitemap.xml
+Disallow: /signatur

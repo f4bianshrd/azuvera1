@@ -16,6 +16,7 @@ import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as EinladungRouteImport } from './routes/einladung'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SignaturRouteImport } from './routes/signatur'
 import { Route as AuthenticatedAbwesenheitenRouteImport } from './routes/_authenticated/abwesenheiten'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAenderungsprotokollRouteImport } from './routes/_authenticated/aenderungsprotokoll'
@@ -100,6 +101,11 @@ const ImpressumRoute = ImpressumRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignaturRoute = SignaturRouteImport.update({
+  id: '/signatur',
+  path: '/signatur',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAbwesenheitenRoute =
@@ -394,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/einladung': typeof EinladungRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/signatur': typeof SignaturRoute
   '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
@@ -453,6 +460,7 @@ export interface FileRoutesByTo {
   '/einladung': typeof EinladungRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/signatur': typeof SignaturRoute
   '/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
@@ -510,6 +518,7 @@ export interface FileRoutesById {
   '/einladung': typeof EinladungRoute
   '/impressum': typeof ImpressumRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/signatur': typeof SignaturRoute
   '/_authenticated/abwesenheiten': typeof AuthenticatedAbwesenheitenRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/aenderungsprotokoll': typeof AuthenticatedAenderungsprotokollRoute
@@ -571,6 +580,7 @@ export interface FileRouteTypes {
     | '/einladung'
     | '/impressum'
     | '/reset-password'
+    | '/signatur'
     | '/abwesenheiten'
     | '/admin'
     | '/aenderungsprotokoll'
@@ -630,6 +640,7 @@ export interface FileRouteTypes {
     | '/einladung'
     | '/impressum'
     | '/reset-password'
+    | '/signatur'
     | '/abwesenheiten'
     | '/admin'
     | '/aenderungsprotokoll'
@@ -686,6 +697,7 @@ export interface FileRouteTypes {
     | '/einladung'
     | '/impressum'
     | '/reset-password'
+    | '/signatur'
     | '/_authenticated/abwesenheiten'
     | '/_authenticated/admin'
     | '/_authenticated/aenderungsprotokoll'
@@ -747,6 +759,7 @@ export interface RootRouteChildren {
   EinladungRoute: typeof EinladungRoute
   ImpressumRoute: typeof ImpressumRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SignaturRoute: typeof SignaturRoute
   ApiDeleteAccountRoute: typeof ApiDeleteAccountRoute
   ApiEmailTestRoute: typeof ApiEmailTestRoute
   ApiNotificationStatusRoute: typeof ApiNotificationStatusRoute
@@ -808,6 +821,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signatur': {
+      id: '/signatur'
+      path: '/signatur'
+      fullPath: '/signatur'
+      preLoaderRoute: typeof SignaturRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/abwesenheiten': {
@@ -1322,6 +1342,7 @@ const rootRouteChildren: RootRouteChildren = {
   EinladungRoute: EinladungRoute,
   ImpressumRoute: ImpressumRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SignaturRoute: SignaturRoute,
   ApiDeleteAccountRoute: ApiDeleteAccountRoute,
   ApiEmailTestRoute: ApiEmailTestRoute,
   ApiNotificationStatusRoute: ApiNotificationStatusRoute,
