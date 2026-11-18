@@ -124,8 +124,8 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [x] Datenschutzerklärung: neue Funktionen ergänzt (Anmeldemethoden, Besucherstatistik, Beschwerderecht) + formale Prüfung
 
 ## Apple-Apps (18.11.2026)
-- [ ] Prompt L: Lizenzprüfung nur in der nativen App (Erkennung, Schlüssel/Lease-Prüfung, Dienst, Sperr-/Freischaltseiten, Hinweisleiste, Profil-Karte, Tests)
-- [ ] Nativer Build: Capacitor, iOS-Projekt mit Mac Catalyst, Icons, Info.plist/PrivacyInfo, GitHub-Workflow, Doku
-- [ ] Kostenlose Lizenzen (einmalig/befristet/dauerhaft) durch Admins vergeben, Admins selbst immer dauerhaft kostenlos, in Stripe ohne Abbuchung – gehört ins Website-Projekt (www.azuvera.de: Lizenz-Datenbank + Stripe); hier nur Anleitung für das Website-Projekt
-- [ ] Google Search Console: Verifikations-Tag auf get.azuvera.de, prüfen lassen, Sitemap einreichen
-- [ ] Startseite live für „Berichtsheft Landwirtschaft/Pferdewirtschaft“, „Ausbildungsberichtsheft“ (Inhalte schon gebaut, braucht Veröffentlichen)
+- [x] Prompt L: Lizenzprüfung nur in der nativen App (Erkennung, Schlüssel/Lease-Prüfung, Dienst, Sperr-/Freischaltseiten, Hinweisleiste, Profil-Karte, Tests)
+- [x] Nativer Build: Capacitor, iOS-Projekt mit Mac Catalyst, Icons, Info.plist/PrivacyInfo, GitHub-Workflow, Doku
+- [ ] Kostenlose Lizenzen (einmalig/befristet/dauerhaft) durch Admins vergeben, Admins selbst immer dauerhaft kostenlos, in Stripe ohne Abbuchung – gehört ins Website-Projekt (www.azuvera.de: Lizenz-Datenbank + Stripe); hier nur Anleitung für das Website-Projekt (Datei Azuvera-Website-Prompt-Kostenlose-Lizenzen.md in Files)
+- [ ] Google Search Console: Verifikations-Tag auf get.azuvera.de, prüfen lassen, Sitemap einreichen – wartet auf Google-Verbindung (Karte wurde abgelehnt)
+- [ ] Startseite live für „Berichtsheft Landwirtschaft/Pferdewirtschaft“, „Ausbildungsberichtsheft“ (Inhalte schon gebaut, wartet auf Veröffentlichen durch Nutzer)
