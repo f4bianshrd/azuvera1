@@ -114,3 +114,4 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [ ] Abnahme-Prompt 1 und 2
 
 - [x] SEO: Suchmaschinen für öffentliche Seiten zulassen, Seitenliste mit vollständigen Adressen
+- [x] Datenschutzerklärung: neue Funktionen ergänzt (Anmeldemethoden, Besucherstatistik, Beschwerderecht) + formale Prüfung

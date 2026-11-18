@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Bell, Clock, Cookie, Database, FileText, History, Mail, Mic, Paperclip, Scale, Server, ShieldCheck, Sparkles, UserCheck, WifiOff, type LucideIcon } from "lucide-react";
+import { BarChart3, Bell, Clock, Cookie, Database, FileText, History, KeyRound, Mail, Mic, Paperclip, Scale, Server, ShieldCheck, Sparkles, UserCheck, WifiOff, type LucideIcon } from "lucide-react";
 import { PRIVACY_TEXT_DEFAULTS, type PrivacyTexts } from "@/lib/legal";
 import { linkCls } from "./public-layout";
 
@@ -54,7 +54,21 @@ export function privacySections(texts: PrivacyTexts = PRIVACY_TEXT_DEFAULTS): Pr
     },
     {
       id: "cookies", title: "Cookies und Analyse", icon: Cookie,
-      content: <p>Azuvera verwendet technisch notwendige Cookies, um die Anmeldung und Sicherheit zu gewährleisten. Es werden keine Tracking- oder Marketing-Cookies ohne Einwilligung eingesetzt. Zur lokalen Speicherung für den Offline-Betrieb siehe den Abschnitt „Offline-Nutzung und lokale Speicherung“.</p>,
+      content: <p>Azuvera verwendet technisch notwendige Cookies, um die Anmeldung und Sicherheit zu gewährleisten. Es werden keine Tracking- oder Marketing-Cookies ohne Einwilligung eingesetzt. Zur lokalen Speicherung für den Offline-Betrieb siehe den Abschnitt „Offline-Nutzung und lokale Speicherung“. Zur anonymen Besucherstatistik siehe den Abschnitt „Besucherstatistik“.</p>,
+    },
+    {
+      id: "anmeldung", title: "Anmeldung über Drittanbieter und E-Mail-Änderung", icon: KeyRound,
+      content: (<>
+        <p>Sie können sich wahlweise mit E-Mail-Adresse und Passwort oder über Ihr Konto bei Google, Apple oder Microsoft anmelden. Wenn Sie einen Drittanbieter wählen, übermittelt dieser uns nach Ihrer Freigabe Ihren Namen und Ihre E-Mail-Adresse; wir erhalten kein Passwort von Ihnen. Sie können im Profil weitere Anmeldemöglichkeiten mit derselben E-Mail-Adresse verbinden oder ein Passwort festlegen (Art. 6 Abs. 1 lit. b DSGVO).</p>
+        <p>Wenn Sie Ihre E-Mail-Adresse im Profil ändern, senden wir einen Bestätigungslink an die neue Adresse. Erst nach der Bestätigung gilt die neue Adresse.</p>
+      </>),
+    },
+    {
+      id: "besucherstatistik", title: "Besucherstatistik", icon: BarChart3,
+      content: (<>
+        <p>Auf dieser Website nutzen wir die Besucherstatistik von Lovable. Sie verwendet keine Cookies, speichert nichts auf Ihrem Gerät, speichert keine IP-Adressen und kann Sie nicht als Person wiedererkennen. Lovable erhebt diese Daten für uns. <a className={linkCls} href="https://lovable.dev/privacy" target="_blank" rel="noreferrer">Die Datenschutzerklärung von Lovable</a> erklärt, wie Lovable damit umgeht.</p>
+        <p>Aufgezeichnet werden bei jedem Besuch: die besuchten Seiten, woher Sie kamen, Ihr Land, Browser, Betriebssystem und Geräteart, wie lange Sie bleiben, wie schnell die Seiten laden, Fehler sowie welche Schaltflächen und Links Sie anklicken. Die Einzeldaten werden 90 Tage aufbewahrt, tägliche Zusammenfassungen ein Jahr.</p>
+      </>),
     },
     {
       id: "rechte", title: "Betroffenenrechte", icon: FileText,
@@ -62,6 +76,7 @@ export function privacySections(texts: PrivacyTexts = PRIVACY_TEXT_DEFAULTS): Pr
         <p>Nutzer:innen haben folgende Rechte nach der DSGVO:</p>
         <List items={["Recht auf Auskunft (Art. 15 DSGVO)", "Recht auf Berichtigung (Art. 16 DSGVO)", "Recht auf Löschung (Art. 17 DSGVO)", "Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO)", "Recht auf Datenübertragbarkeit (Art. 20 DSGVO)", "Recht auf Widerspruch (Art. 21 DSGVO)"]} />
         <p>Anfragen zu diesen Rechten können per E-Mail an <Mailto /> gestellt werden. Auskunft, Datenexport und Löschantrag stehen auch in der App unter Mein Profil im Bereich „Meine Daten“ bereit.</p>
+        <p>Außerdem haben Sie das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren (Art. 77 DSGVO), zum Beispiel bei der Behörde Ihres Wohnorts oder Ihres Bundeslands.</p>
       </>),
     },
     {
