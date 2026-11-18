@@ -57,6 +57,9 @@ export const ACTION_LABELS: Record<string, string> = {
   deputy_set: "Vertretung eingetragen",
   deputy_revoke: "Vertretung beendet",
   pdf_export: "PDF exportiert",
+  certificate_request: "Zeugnis beantragt",
+  certificate_issue: "Zeugnis ausgestellt",
+  certificate_revise: "Zeugnis überarbeitet",
   reminder_sent: "Erinnerung gesendet",
   consent_granted: "Einwilligung erteilt",
   consent_revoked: "Einwilligung widerrufen",
@@ -103,6 +106,8 @@ export const ENTITY_LABELS: Record<string, string> = {
   account: "Konto",
   instruction: "Unterweisung",
   catalog: "Unterweisungskatalog",
+  certificate: "Ausbildungszeugnis",
+  exam_application: "Prüfungsantrag",
 };
 
 export const HISTORY_FILTERS = {

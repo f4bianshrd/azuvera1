@@ -46,6 +46,8 @@ import { Route as AuthenticatedErfahrungsberichteIndexRouteImport } from './rout
 import { Route as AuthenticatedErfahrungsberichteIdRouteImport } from './routes/_authenticated/erfahrungsberichte.$id'
 import { Route as AuthenticatedErfahrungsberichteNewRouteImport } from './routes/_authenticated/erfahrungsberichte.new'
 import { Route as AuthenticatedLeittexteIndexRouteImport } from './routes/_authenticated/leittexte.index'
+import { Route as AuthenticatedPruefungsantragIndexRouteImport } from './routes/_authenticated/pruefungsantrag.index'
+import { Route as AuthenticatedPruefungsantragAzubiIdRouteImport } from './routes/_authenticated/pruefungsantrag.$azubiId'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
 import { Route as AuthenticatedReportsNewRouteImport } from './routes/_authenticated/reports.new'
@@ -55,6 +57,8 @@ import { Route as AuthenticatedStammdatenBetriebeRouteImport } from './routes/_a
 import { Route as AuthenticatedStammdatenUnterweisungenRouteImport } from './routes/_authenticated/stammdaten.unterweisungen'
 import { Route as AuthenticatedTeamIndexRouteImport } from './routes/_authenticated/team.index'
 import { Route as AuthenticatedTeamAzubiIdRouteImport } from './routes/_authenticated/team.$azubiId'
+import { Route as AuthenticatedZeugnisIndexRouteImport } from './routes/_authenticated/zeugnis.index'
+import { Route as AuthenticatedZeugnisAzubiIdRouteImport } from './routes/_authenticated/zeugnis.$azubiId'
 import { Route as ApiPublicDispatchNotificationsRouteImport } from './routes/api/public/dispatch-notifications'
 import { Route as ApiPublicPushConfigRouteImport } from './routes/api/public/push-config'
 import { Route as ApiPublicRunRemindersRouteImport } from './routes/api/public/run-reminders'
@@ -263,6 +267,18 @@ const AuthenticatedLeittexteIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedLeittexteRoute,
   } as any)
+const AuthenticatedPruefungsantragIndexRoute =
+  AuthenticatedPruefungsantragIndexRouteImport.update({
+    id: '/pruefungsantrag/',
+    path: '/pruefungsantrag/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPruefungsantragAzubiIdRoute =
+  AuthenticatedPruefungsantragAzubiIdRouteImport.update({
+    id: '/pruefungsantrag/$azubiId',
+    path: '/pruefungsantrag/$azubiId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReportsIndexRoute =
   AuthenticatedReportsIndexRouteImport.update({
     id: '/',
@@ -313,6 +329,18 @@ const AuthenticatedTeamAzubiIdRoute =
     id: '/$azubiId',
     path: '/$azubiId',
     getParentRoute: () => AuthenticatedTeamRoute,
+  } as any)
+const AuthenticatedZeugnisIndexRoute =
+  AuthenticatedZeugnisIndexRouteImport.update({
+    id: '/zeugnis/',
+    path: '/zeugnis/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedZeugnisAzubiIdRoute =
+  AuthenticatedZeugnisAzubiIdRouteImport.update({
+    id: '/zeugnis/$azubiId',
+    path: '/zeugnis/$azubiId',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const ApiPublicDispatchNotificationsRoute =
   ApiPublicDispatchNotificationsRouteImport.update({
@@ -394,6 +422,7 @@ export interface FileRoutesByFullPath {
   '/admin/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
   '/erfahrungsberichte/$id': typeof AuthenticatedErfahrungsberichteIdRoute
   '/erfahrungsberichte/new': typeof AuthenticatedErfahrungsberichteNewRoute
+  '/pruefungsantrag/$azubiId': typeof AuthenticatedPruefungsantragAzubiIdRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -401,13 +430,16 @@ export interface FileRoutesByFullPath {
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/stammdaten/unterweisungen': typeof AuthenticatedStammdatenUnterweisungenRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
+  '/zeugnis/$azubiId': typeof AuthenticatedZeugnisAzubiIdRoute
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
   '/erfahrungsberichte/': typeof AuthenticatedErfahrungsberichteIndexRoute
   '/leittexte/': typeof AuthenticatedLeittexteIndexRoute
+  '/pruefungsantrag/': typeof AuthenticatedPruefungsantragIndexRoute
   '/reports/': typeof AuthenticatedReportsIndexRoute
   '/team/': typeof AuthenticatedTeamIndexRoute
+  '/zeugnis/': typeof AuthenticatedZeugnisIndexRoute
   '/leittexte/arbeit/$workId': typeof AuthenticatedLeittexteArbeitWorkIdRoute
   '/leittexte/vorschau/$leittextId': typeof AuthenticatedLeittexteVorschauLeittextIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -445,6 +477,7 @@ export interface FileRoutesByTo {
   '/admin/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
   '/erfahrungsberichte/$id': typeof AuthenticatedErfahrungsberichteIdRoute
   '/erfahrungsberichte/new': typeof AuthenticatedErfahrungsberichteNewRoute
+  '/pruefungsantrag/$azubiId': typeof AuthenticatedPruefungsantragAzubiIdRoute
   '/reports/$id': typeof AuthenticatedReportsIdRoute
   '/reports/new': typeof AuthenticatedReportsNewRoute
   '/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -452,13 +485,16 @@ export interface FileRoutesByTo {
   '/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/stammdaten/unterweisungen': typeof AuthenticatedStammdatenUnterweisungenRoute
   '/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
+  '/zeugnis/$azubiId': typeof AuthenticatedZeugnisAzubiIdRoute
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
   '/erfahrungsberichte': typeof AuthenticatedErfahrungsberichteIndexRoute
   '/leittexte': typeof AuthenticatedLeittexteIndexRoute
+  '/pruefungsantrag': typeof AuthenticatedPruefungsantragIndexRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/team': typeof AuthenticatedTeamIndexRoute
+  '/zeugnis': typeof AuthenticatedZeugnisIndexRoute
   '/leittexte/arbeit/$workId': typeof AuthenticatedLeittexteArbeitWorkIdRoute
   '/leittexte/vorschau/$leittextId': typeof AuthenticatedLeittexteVorschauLeittextIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -502,6 +538,7 @@ export interface FileRoutesById {
   '/_authenticated/admin_/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
   '/_authenticated/erfahrungsberichte/$id': typeof AuthenticatedErfahrungsberichteIdRoute
   '/_authenticated/erfahrungsberichte/new': typeof AuthenticatedErfahrungsberichteNewRoute
+  '/_authenticated/pruefungsantrag/$azubiId': typeof AuthenticatedPruefungsantragAzubiIdRoute
   '/_authenticated/reports/$id': typeof AuthenticatedReportsIdRoute
   '/_authenticated/reports/new': typeof AuthenticatedReportsNewRoute
   '/_authenticated/stammdaten/ausbildungsplaene': typeof AuthenticatedStammdatenAusbildungsplaeneRoute
@@ -509,13 +546,16 @@ export interface FileRoutesById {
   '/_authenticated/stammdaten/betriebe': typeof AuthenticatedStammdatenBetriebeRoute
   '/_authenticated/stammdaten/unterweisungen': typeof AuthenticatedStammdatenUnterweisungenRoute
   '/_authenticated/team/$azubiId': typeof AuthenticatedTeamAzubiIdRoute
+  '/_authenticated/zeugnis/$azubiId': typeof AuthenticatedZeugnisAzubiIdRoute
   '/api/public/dispatch-notifications': typeof ApiPublicDispatchNotificationsRoute
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
   '/_authenticated/erfahrungsberichte/': typeof AuthenticatedErfahrungsberichteIndexRoute
   '/_authenticated/leittexte/': typeof AuthenticatedLeittexteIndexRoute
+  '/_authenticated/pruefungsantrag/': typeof AuthenticatedPruefungsantragIndexRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/_authenticated/team/': typeof AuthenticatedTeamIndexRoute
+  '/_authenticated/zeugnis/': typeof AuthenticatedZeugnisIndexRoute
   '/_authenticated/leittexte/arbeit/$workId': typeof AuthenticatedLeittexteArbeitWorkIdRoute
   '/_authenticated/leittexte/vorschau/$leittextId': typeof AuthenticatedLeittexteVorschauLeittextIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -559,6 +599,7 @@ export interface FileRouteTypes {
     | '/admin/erfahrungsberichte'
     | '/erfahrungsberichte/$id'
     | '/erfahrungsberichte/new'
+    | '/pruefungsantrag/$azubiId'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/ausbildungsplaene'
@@ -566,13 +607,16 @@ export interface FileRouteTypes {
     | '/stammdaten/betriebe'
     | '/stammdaten/unterweisungen'
     | '/team/$azubiId'
+    | '/zeugnis/$azubiId'
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
     | '/api/public/run-reminders'
     | '/erfahrungsberichte/'
     | '/leittexte/'
+    | '/pruefungsantrag/'
     | '/reports/'
     | '/team/'
+    | '/zeugnis/'
     | '/leittexte/arbeit/$workId'
     | '/leittexte/vorschau/$leittextId'
     | '/lovable/email/auth/preview'
@@ -610,6 +654,7 @@ export interface FileRouteTypes {
     | '/admin/erfahrungsberichte'
     | '/erfahrungsberichte/$id'
     | '/erfahrungsberichte/new'
+    | '/pruefungsantrag/$azubiId'
     | '/reports/$id'
     | '/reports/new'
     | '/stammdaten/ausbildungsplaene'
@@ -617,13 +662,16 @@ export interface FileRouteTypes {
     | '/stammdaten/betriebe'
     | '/stammdaten/unterweisungen'
     | '/team/$azubiId'
+    | '/zeugnis/$azubiId'
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
     | '/api/public/run-reminders'
     | '/erfahrungsberichte'
     | '/leittexte'
+    | '/pruefungsantrag'
     | '/reports'
     | '/team'
+    | '/zeugnis'
     | '/leittexte/arbeit/$workId'
     | '/leittexte/vorschau/$leittextId'
     | '/lovable/email/auth/preview'
@@ -666,6 +714,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin_/erfahrungsberichte'
     | '/_authenticated/erfahrungsberichte/$id'
     | '/_authenticated/erfahrungsberichte/new'
+    | '/_authenticated/pruefungsantrag/$azubiId'
     | '/_authenticated/reports/$id'
     | '/_authenticated/reports/new'
     | '/_authenticated/stammdaten/ausbildungsplaene'
@@ -673,13 +722,16 @@ export interface FileRouteTypes {
     | '/_authenticated/stammdaten/betriebe'
     | '/_authenticated/stammdaten/unterweisungen'
     | '/_authenticated/team/$azubiId'
+    | '/_authenticated/zeugnis/$azubiId'
     | '/api/public/dispatch-notifications'
     | '/api/public/push-config'
     | '/api/public/run-reminders'
     | '/_authenticated/erfahrungsberichte/'
     | '/_authenticated/leittexte/'
+    | '/_authenticated/pruefungsantrag/'
     | '/_authenticated/reports/'
     | '/_authenticated/team/'
+    | '/_authenticated/zeugnis/'
     | '/_authenticated/leittexte/arbeit/$workId'
     | '/_authenticated/leittexte/vorschau/$leittextId'
     | '/lovable/email/auth/preview'
@@ -968,6 +1020,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLeittexteIndexRouteImport
       parentRoute: typeof AuthenticatedLeittexteRoute
     }
+    '/_authenticated/pruefungsantrag/': {
+      id: '/_authenticated/pruefungsantrag/'
+      path: '/pruefungsantrag'
+      fullPath: '/pruefungsantrag/'
+      preLoaderRoute: typeof AuthenticatedPruefungsantragIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pruefungsantrag/$azubiId': {
+      id: '/_authenticated/pruefungsantrag/$azubiId'
+      path: '/pruefungsantrag/$azubiId'
+      fullPath: '/pruefungsantrag/$azubiId'
+      preLoaderRoute: typeof AuthenticatedPruefungsantragAzubiIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/reports/': {
       id: '/_authenticated/reports/'
       path: '/'
@@ -1030,6 +1096,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/team/$azubiId'
       preLoaderRoute: typeof AuthenticatedTeamAzubiIdRouteImport
       parentRoute: typeof AuthenticatedTeamRoute
+    }
+    '/_authenticated/zeugnis/': {
+      id: '/_authenticated/zeugnis/'
+      path: '/zeugnis'
+      fullPath: '/zeugnis/'
+      preLoaderRoute: typeof AuthenticatedZeugnisIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/zeugnis/$azubiId': {
+      id: '/_authenticated/zeugnis/$azubiId'
+      path: '/zeugnis/$azubiId'
+      fullPath: '/zeugnis/$azubiId'
+      preLoaderRoute: typeof AuthenticatedZeugnisAzubiIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/dispatch-notifications': {
       id: '/api/public/dispatch-notifications'
@@ -1182,10 +1262,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedZugriffRoute: typeof AuthenticatedZugriffRoute
   AuthenticatedAdminEinstellungenRoute: typeof AuthenticatedAdminEinstellungenRoute
   AuthenticatedAdminErfahrungsberichteRoute: typeof AuthenticatedAdminErfahrungsberichteRoute
+  AuthenticatedPruefungsantragAzubiIdRoute: typeof AuthenticatedPruefungsantragAzubiIdRoute
   AuthenticatedStammdatenAusbildungsplaeneRoute: typeof AuthenticatedStammdatenAusbildungsplaeneRoute
   AuthenticatedStammdatenBerufeRoute: typeof AuthenticatedStammdatenBerufeRoute
   AuthenticatedStammdatenBetriebeRoute: typeof AuthenticatedStammdatenBetriebeRoute
   AuthenticatedStammdatenUnterweisungenRoute: typeof AuthenticatedStammdatenUnterweisungenRoute
+  AuthenticatedZeugnisAzubiIdRoute: typeof AuthenticatedZeugnisAzubiIdRoute
+  AuthenticatedPruefungsantragIndexRoute: typeof AuthenticatedPruefungsantragIndexRoute
+  AuthenticatedZeugnisIndexRoute: typeof AuthenticatedZeugnisIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -1213,12 +1297,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminEinstellungenRoute: AuthenticatedAdminEinstellungenRoute,
   AuthenticatedAdminErfahrungsberichteRoute:
     AuthenticatedAdminErfahrungsberichteRoute,
+  AuthenticatedPruefungsantragAzubiIdRoute:
+    AuthenticatedPruefungsantragAzubiIdRoute,
   AuthenticatedStammdatenAusbildungsplaeneRoute:
     AuthenticatedStammdatenAusbildungsplaeneRoute,
   AuthenticatedStammdatenBerufeRoute: AuthenticatedStammdatenBerufeRoute,
   AuthenticatedStammdatenBetriebeRoute: AuthenticatedStammdatenBetriebeRoute,
   AuthenticatedStammdatenUnterweisungenRoute:
     AuthenticatedStammdatenUnterweisungenRoute,
+  AuthenticatedZeugnisAzubiIdRoute: AuthenticatedZeugnisAzubiIdRoute,
+  AuthenticatedPruefungsantragIndexRoute:
+    AuthenticatedPruefungsantragIndexRoute,
+  AuthenticatedZeugnisIndexRoute: AuthenticatedZeugnisIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

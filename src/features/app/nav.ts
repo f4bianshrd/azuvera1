@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   UserRound,
   Users,
-  type LucideIcon, BookOpenCheck, RefreshCw, ScrollText, KeyRound, NotebookPen, Scale } from "lucide-react";
+  type LucideIcon, Award, FileCheck2, BookOpenCheck, RefreshCw, ScrollText, KeyRound, NotebookPen, Scale } from "lucide-react";
 import type { AppRole } from "./session";
 import { REVIEWER_ROLES, VIEWER_ROLES } from "./session";
 
@@ -49,6 +49,8 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Unterweisungen", icon: ClipboardCheck, section: "arbeit", to: "/unterweisungen" },
   { label: "Abwesenheiten", icon: CalendarOff, section: "arbeit", to: "/abwesenheiten" },
   { label: "Schulnoten", icon: GraduationCap, section: "arbeit", to: "/noten" },
+  { label: "Prüfungsantrag", icon: FileCheck2, section: "arbeit", to: "/pruefungsantrag" },
+  { label: "Ausbildungszeugnis", icon: Award, section: "arbeit", to: "/zeugnis" },
   { label: "Erinnerungen", icon: Bell, section: "arbeit", to: "/erinnerungen", roles: REVIEWER_ROLES },
   { label: "Benachrichtigungen", icon: Bell, section: "konto", to: "/notifications" },
   { label: "Zugriff", icon: KeyRound, section: "konto", to: "/zugriff" },

@@ -1,12 +1,16 @@
-/** Prüfungsmappe: Deckblatt, Inhalt, Übersicht, Prüfungen/Noten, Abwesenheiten, Berichte, Nachweis – ein PDF. */
+/** Prüfungsmappe: Deckblatt, Inhalt, Übersicht, Prüfungsantrag, Zeugnis, Noten, Abwesenheiten, Unterweisungen, Berichte, Erfahrungsberichte, Leittexte – ein PDF. */
 import { loadBundle } from "../api";
 import { ABSENCE_TYPE_DE, GRADE_KIND_DE, absenceDays, gradeAverages, type FolderAbsence, type FolderGrade } from "../folder-summary";
 import type { ExportHeader, ExportReport, ReportBundle } from "../types";
 import { check, logo, pause, type BuildOptions } from "./build";
 import { A4, C, CONTENT_BOTTOM, Doc, MARGIN } from "./doc";
-import { STATUS_DE, integrityOk, renderReport, reportPdfTitle, reportPeriodLabel } from "./report";
+import { STATUS_DE, belegNr, integrityOk, renderReport, reportPdfTitle, reportPeriodLabel } from "./report";
 import { berlinDateTime, dateDe } from "./text";
 import { renderLeittext, type LeittextPdfInput } from "./leittext";
+import { renderApplication, renderCertificate, type ApplicationPdfInput, type CertificatePdfInput } from "./certificate";
+import { renderInstructions, type InstructionPdfInput } from "./instructions";
+import { EXPERIENCE_KIND_DE, experienceVariant, type ExperienceContext } from "./experienceReport";
+import { loadExperienceBundle, type ExportExperience } from "../experience-api";
 
 export interface FolderInput {
   header: ExportHeader;
@@ -17,9 +21,14 @@ export interface FolderInput {
   from: string | null;
   to: string | null;
   compiledBy: string;
-  include: { grades: boolean; absences: boolean; reports: boolean; leittexte?: boolean };
+  include: { grades: boolean; absences: boolean; reports: boolean; leittexte?: boolean; experiences?: boolean; instructions?: boolean; certificate?: boolean; application?: boolean };
   /** Leittexte (bereits mit Bildern geladen), erscheinen nach den Berichten. */
   leittexte?: LeittextPdfInput[];
+  /** Erfahrungsberichte mit Kontext (Lehrjahr, Bundesland). */
+  experiences?: { items: ExportExperience[]; ctx: ExperienceContext } | null;
+  instructions?: InstructionPdfInput | null;
+  certificate?: CertificatePdfInput | null;
+  application?: ApplicationPdfInput | null;
 }
 
 const META = { beleg: "Prüfungsmappe" };
@@ -57,7 +66,8 @@ export async function buildExamFolder(inp: FolderInput, o: BuildOptions): Promis
   // Inhaltsverzeichnis reservieren
   const perPage = 26;
   const ltCount = inp.include.leittexte ? inp.leittexte?.length ?? 0 : 0;
-  const tocPages = Math.max(1, Math.ceil(((inp.include.reports ? inp.reports.length : 0) + ltCount + 8) / perPage));
+  const exCount = inp.include.experiences ? inp.experiences?.items.length ?? 0 : 0;
+  const tocPages = Math.max(1, Math.ceil(((inp.include.reports ? inp.reports.length : 0) + ltCount + exCount + 13) / perPage));
   const tocStart = doc.pages.length;
   for (let i = 0; i < tocPages; i++) doc.newPage(META);
   const sections: { label: string; page: number }[] = [];
@@ -86,6 +96,16 @@ export async function buildExamFolder(inp: FolderInput, o: BuildOptions): Promis
   const statusRows = (["approved", "submitted", "rejected"] as const).map((s) => [STATUS_DE[s] ?? s, inp.reports.filter((r) => r.status === s).length] as const);
   doc.text("Berichte nach Status", MARGIN, doc.y, 10, doc.f.bold); doc.y -= 16;
   for (const [l, n] of statusRows) { doc.text(l, MARGIN + 6, doc.y, 9.5); doc.textRight(String(n), MARGIN + 220, doc.y, 9.5, doc.f.bold); doc.y -= 14; }
+
+  // Antrag auf Prüfungszulassung und Ausbildungszeugnis
+  if (inp.include.application && inp.application) {
+    sections.push({ label: `Antrag auf Prüfungszulassung (${inp.application.application.exam_term || "ohne Termin"})`, page: doc.pages.length + 1 });
+    renderApplication(doc, inp.application);
+  }
+  if (inp.include.certificate && inp.certificate) {
+    sections.push({ label: "Ausbildungszeugnis", page: doc.pages.length + 1 });
+    renderCertificate(doc, inp.certificate);
+  }
 
   // Prüfungen und Noten
   if (inp.include.grades) {
@@ -142,6 +162,12 @@ export async function buildExamFolder(inp: FolderInput, o: BuildOptions): Promis
     }
   }
 
+  // Unterweisungen
+  if (inp.include.instructions && inp.instructions) {
+    const start = renderInstructions(doc, inp.instructions, { full: true, meta: META });
+    sections.push({ label: `Unterweisungen (${inp.instructions.records.length})`, page: start });
+  }
+
   // Berichte
   const starts: number[] = [];
   const bundles: ReportBundle[] = [];
@@ -172,6 +198,22 @@ export async function buildExamFolder(inp: FolderInput, o: BuildOptions): Promis
     }
   }
 
+  // Erfahrungsberichte
+  const exStarts: { title: string; sub: string; status: string; page: number }[] = [];
+  if (inp.include.experiences && inp.experiences?.items.length) {
+    const { items, ctx } = inp.experiences;
+    sections.push({ label: `Erfahrungsberichte (${items.length})`, page: doc.pages.length + 1 });
+    for (const e of items) {
+      check(o.signal);
+      const b = await loadExperienceBundle(e, { embedImages: o.embedImages, withFiles: false, blankSignatures: o.blankSignatures });
+      check(o.signal);
+      exStarts.push({ title: dateDe(e.written_on), sub: `${EXPERIENCE_KIND_DE[e.kind] ?? "Erfahrungsbericht"}: ${e.title}`, status: STATUS_DE[e.status] ?? "", page: doc.pages.length + 1 });
+      await renderReport(doc, b, inp.header, { embedImages: o.embedImages, blankSignatures: o.blankSignatures, withProtocol: false, variant: experienceVariant(e, ctx), belegOverride: belegNr(e.id) });
+      b.signatureImages.clear(); b.attachmentPng.clear();
+      await pause();
+    }
+  }
+
   // Leittexte
   const ltStarts: { title: string; status: string; page: number }[] = [];
   if (inp.include.leittexte && inp.leittexte?.length) {
@@ -188,6 +230,7 @@ export async function buildExamFolder(inp: FolderInput, o: BuildOptions): Promis
   const entries: { label: string; sub?: string; status?: string; page: number; strong: boolean }[] = [];
   for (const s of sections) {
     entries.push({ label: s.label, page: s.page, strong: true });
+    if (s.label.startsWith("Erfahrungsberichte")) exStarts.forEach((x) => entries.push({ label: x.title, sub: x.sub, status: x.status, page: x.page, strong: false }));
     if (s.label.startsWith("Leittexte")) ltStarts.forEach((l) => entries.push({ label: l.title, status: l.status, page: l.page, strong: false }));
     if (s.label.startsWith("Berichte")) bundles.forEach((b, i) => entries.push({ label: reportPeriodLabel(b), sub: reportPdfTitle(b), status: STATUS_DE[b.report.status] ?? "", page: starts[i]!, strong: false }));
   }

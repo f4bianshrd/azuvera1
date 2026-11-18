@@ -29,6 +29,11 @@ const T: Record<string, [string, string]> = {
   leittext_rejected: ["Leittext zurückgegeben", "Dein Leittext wurde zurückgegeben. Lies die Notiz in der App."],
   leittext_reopened: ["Leittext wieder geöffnet", "Einer deiner Leittexte wurde wieder geöffnet."],
   leittext_comment: ["Neuer Kommentar", "Zu einem Leittext gibt es einen neuen Kommentar."],
+  certificate_requested: ["Ausbildungszeugnis beantragt", "Eine Azubi-Person bittet um ihr Ausbildungszeugnis."],
+  certificate_issued: ["Ausbildungszeugnis ausgestellt", "Dein Ausbildungszeugnis ist fertig. Öffne Azuvera, um es anzusehen."],
+  exam_application_submitted: ["Prüfungsantrag zur Bestätigung", "Ein Antrag auf Prüfungszulassung wartet auf deine Bestätigung."],
+  exam_application_confirmed: ["Prüfungsantrag bestätigt", "Dein Antrag auf Prüfungszulassung wurde vom Betrieb bestätigt."],
+  exam_application_returned: ["Prüfungsantrag zurückgegeben", "Dein Antrag auf Prüfungszulassung wurde zurückgegeben. Lies die Notiz in der App."],
   deputy_assigned: ["Vertretung eingetragen", "Für dich wurde eine Vertretung eingetragen."],
   deputy_ended: ["Vertretung beendet", "Eine Vertretung wurde beendet."],
 };

@@ -1,10 +1,10 @@
 # Azuvera – Roadmap
 
 # Neue Wünsche (18.11.2026)
-- [ ] Prüfungsmappe enthält alles: Berichte, Erfahrungsberichte, Leittexte, Ausbildungszeugnis, Antrag Prüfungszulassung
-- [ ] Ausbildungszeugnis: Azubi beantragt, Betrieb füllt in der App aus
-- [ ] Antrag auf Zulassung zur Abschlussprüfung (Kammer) in der App vorbereiten
-- [ ] Startseite für „Berichtsheft Landwirtschaft“, „Berichtsheft Pferdewirtschaft“, „Ausbildungsberichtsheft“ optimieren
+- [x] Prüfungsmappe enthält alles: Berichte, Erfahrungsberichte, Leittexte, Ausbildungszeugnis, Antrag Prüfungszulassung
+- [x] Ausbildungszeugnis: Azubi beantragt, Betrieb füllt in der App aus
+- [x] Antrag auf Zulassung zur Abschlussprüfung (Kammer) in der App vorbereiten
+- [x] Startseite für „Berichtsheft Landwirtschaft“, „Berichtsheft Pferdewirtschaft“, „Ausbildungsberichtsheft“ optimieren
 
 ## Baustein 4B – Benachrichtigungsversand
 - [x] Tabellen, Einstellungen, Geräteschutz und Zustell-Warteschlange

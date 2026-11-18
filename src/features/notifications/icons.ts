@@ -1,4 +1,4 @@
-import { NotebookPen, Bell, BellRing, CalendarOff, CheckCircle2, ClipboardCheck, ClipboardList, FileText, MessageSquare, RotateCcw, Undo2, UserRoundCog, type LucideIcon } from 'lucide-react';
+import { Award, FileCheck2, NotebookPen, Bell, BellRing, CalendarOff, CheckCircle2, ClipboardCheck, ClipboardList, FileText, MessageSquare, RotateCcw, Undo2, UserRoundCog, type LucideIcon } from 'lucide-react';
 
 export const NOTIFICATION_ICONS: Record<string, LucideIcon> = {
   report_submitted: FileText, report_approved: CheckCircle2, report_rejected: RotateCcw, report_reopened: Undo2,
@@ -8,6 +8,7 @@ export const NOTIFICATION_ICONS: Record<string, LucideIcon> = {
   instruction_due: ClipboardCheck, instruction_submitted: ClipboardList, instruction_confirmed: CheckCircle2, instruction_rejected: RotateCcw,
   experience_submitted: NotebookPen, experience_approved: CheckCircle2, experience_rejected: RotateCcw, experience_reopened: Undo2, experience_comment: MessageSquare, experience_due: BellRing,
   leittext_submitted: NotebookPen, leittext_approved: CheckCircle2, leittext_rejected: RotateCcw, leittext_reopened: Undo2, leittext_comment: MessageSquare,
+  certificate_requested: Award, certificate_issued: Award, exam_application_submitted: FileCheck2, exam_application_confirmed: CheckCircle2, exam_application_returned: RotateCcw,
 };
 export const iconFor = (type: string): LucideIcon => NOTIFICATION_ICONS[type] ?? Bell;
 

@@ -4,8 +4,24 @@ import { Button } from "@/components/ui/button";
 import { Chip, PublicLayout } from "@/features/public/public-layout";
 import { useSignedIn } from "@/features/auth/use-signed-in";
 
-const TITLE = "Azuvera – Digitales Berichtsheft für die Ausbildung";
-const DESC = "Azuvera: Tages- und Wochenberichte digital erfassen, einreichen und vom Ausbilder freigeben lassen.";
+const SITE_URL = "https://get.azuvera.de/";
+const TITLE = "Digitales Ausbildungsberichtsheft für Landwirtschaft & Pferdewirtschaft | Azuvera";
+const DESC =
+  "Kostenloses digitales Berichtsheft für Azubis in der Landwirtschaft und Pferdewirtschaft: Ausbildungsnachweise schreiben, auch offline, vom Ausbilder freigeben lassen und als PDF für die Kammer exportieren.";
+
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Azuvera",
+  url: SITE_URL,
+  applicationCategory: "EducationalApplication",
+  operatingSystem: "Web, Android, iOS",
+  inLanguage: "de",
+  description: DESC,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+  audience: { "@type": "EducationalAudience", educationalRole: "Auszubildende, Ausbilder:innen" },
+  publisher: { "@type": "Organization", name: "Stage & Spotlight", url: "https://www.stage-spotlight.de" },
+};
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,9 +31,11 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: SITE_URL },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: SITE_URL }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify(JSON_LD) }],
   }),
   component: Home,
 });
@@ -37,6 +55,40 @@ const overview = [
   { icon: FileDown, title: "PDF für die Kammer", text: "Das ganze Berichtsheft als PDF mit Signaturprotokoll exportieren." },
 ];
 
+const berufe = [
+  {
+    title: "Berichtsheft Landwirtschaft",
+    text: "Für Landwirt:innen in Ausbildung: Wochenberichte zu Ackerbau, Tierhaltung und Technik, dazu alle Leittexte für Landwirt/in direkt in der App ausfüllen.",
+  },
+  {
+    title: "Berichtsheft Pferdewirtschaft",
+    text: "Für Pferdewirt:innen in Ausbildung: Pflege, Fütterung, Haltung und Ausbildung von Pferden dokumentieren – inklusive Leittexten für Pferdewirt/in.",
+  },
+  {
+    title: "Berichtsheft Gartenbau",
+    text: "Für Gärtner:innen in Ausbildung: Tätigkeiten und Berufsschulinhalte strukturiert festhalten und vom Betrieb freigeben lassen.",
+  },
+];
+
+const fragen = [
+  {
+    q: "Ist ein digitales Berichtsheft erlaubt?",
+    a: "Ja. Seit 2020 darf der schriftliche Ausbildungsnachweis nach dem Berufsbildungsgesetz auch elektronisch geführt werden, wenn das im Ausbildungsvertrag so vereinbart ist.",
+  },
+  {
+    q: "Was kostet Azuvera?",
+    a: "Die Web-App ist für Azubis und Betriebe kostenlos – im Browser auf Handy, Tablet und PC.",
+  },
+  {
+    q: "Kann ich das Berichtsheft der Kammer vorlegen?",
+    a: "Ja. Berichte, Erfahrungsberichte und Leittexte lassen sich als PDF exportieren und zu einer Prüfungsmappe zusammenstellen.",
+  },
+  {
+    q: "Funktioniert das Berichtsheft auch ohne Internet?",
+    a: "Ja. Nach der ersten Anmeldung kannst du Berichte auch im Stall oder auf dem Feld ohne Empfang schreiben. Sie werden gesendet, sobald wieder Internet da ist.",
+  },
+];
+
 function Home() {
   const signedIn = useSignedIn();
   return (
@@ -50,11 +102,11 @@ function Home() {
             <Chip>Für Azubis dauerhaft kostenlos</Chip>
           </div>
           <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            Azuvera – das digitale Berichtsheft für Ihre Ausbildung
+            Azuvera – das digitale Ausbildungsberichtsheft
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-            Tages- und Wochenberichte erfassen, beim Ausbilder einreichen, prüfungssicher archivieren – alles an
-            einem Ort, jederzeit verfügbar.
+            Das Berichtsheft für die Landwirtschaft und Pferdewirtschaft: Tages- und Wochenberichte erfassen, beim
+            Ausbilder einreichen, prüfungssicher archivieren – alles an einem Ort, jederzeit verfügbar.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             {signedIn ? (
@@ -101,6 +153,38 @@ function Home() {
           <p className="mx-auto mt-8 max-w-2xl text-center text-xs text-muted-foreground">
             Hinweis: Die Freigabe ist eine einfache elektronische Bestätigung mit Zeitstempel und Prüfsumme, keine qualifizierte elektronische Signatur.
           </p>
+        </div>
+      </section>
+      <section aria-labelledby="berufe-title" className="border-t">
+        <div className="mx-auto max-w-6xl px-4 py-16">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 id="berufe-title" className="text-3xl font-bold tracking-tight">Berichtsheft für grüne Berufe</h2>
+            <p className="mt-3 text-muted-foreground">
+              Azuvera ist auf die Ausbildung in Landwirtschaft, Pferdewirtschaft und Gartenbau zugeschnitten – mit passenden
+              Ausbildungsplänen, Leittexten und Unterweisungen.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {berufe.map((b) => (
+              <article key={b.title} className="rounded-2xl border bg-card p-6 shadow-sm">
+                <h3 className="text-lg font-semibold">{b.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{b.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section aria-labelledby="fragen-title" className="border-t bg-muted/40">
+        <div className="mx-auto max-w-3xl px-4 py-16">
+          <h2 id="fragen-title" className="text-center text-3xl font-bold tracking-tight">Häufige Fragen zum Ausbildungsberichtsheft</h2>
+          <dl className="mt-10 space-y-6">
+            {fragen.map((f) => (
+              <div key={f.q} className="rounded-2xl border bg-card p-6 shadow-sm">
+                <dt className="font-semibold">{f.q}</dt>
+                <dd className="mt-2 text-sm text-muted-foreground">{f.a}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
     </PublicLayout>

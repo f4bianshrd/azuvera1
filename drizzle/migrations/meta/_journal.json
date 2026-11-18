@@ -393,6 +393,20 @@
       "when": 1794965166698,
       "tag": "0055_themenbericht_150000_zeichen",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1794966174056,
+      "tag": "0056_ausbildungszeugnis_pruefungsantrag",
+      "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1794966472398,
+      "tag": "0057_notification_group_zeugnis_antrag",
+      "breakpoints": true
     }
   ]
 }

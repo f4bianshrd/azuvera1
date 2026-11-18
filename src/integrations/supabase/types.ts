@@ -694,6 +694,66 @@ export type Database = {
           },
         ]
       }
+      exam_applications: {
+        Row: {
+          azubi_id: string
+          confirmed_at: string | null
+          confirmer_id: string | null
+          created_at: string
+          data: Json
+          exam_term: string
+          id: string
+          review_note: string | null
+          status: string
+          submitted_at: string | null
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          azubi_id: string
+          confirmed_at?: string | null
+          confirmer_id?: string | null
+          created_at?: string
+          data?: Json
+          exam_term?: string
+          id: string
+          review_note?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          azubi_id?: string
+          confirmed_at?: string | null
+          confirmer_id?: string | null
+          created_at?: string
+          data?: Json
+          exam_term?: string
+          id?: string
+          review_note?: string | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_applications_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_applications_confirmer_id_fkey"
+            columns: ["confirmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       experience_attachments: {
         Row: {
           azubi_id: string
@@ -2746,6 +2806,66 @@ export type Database = {
         }
         Relationships: []
       }
+      training_certificates: {
+        Row: {
+          azubi_id: string
+          content: Json
+          created_at: string
+          id: string
+          issued_at: string | null
+          issuer_id: string | null
+          kind: string
+          request_note: string | null
+          requested_at: string | null
+          status: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          azubi_id: string
+          content?: Json
+          created_at?: string
+          id?: string
+          issued_at?: string | null
+          issuer_id?: string | null
+          kind?: string
+          request_note?: string | null
+          requested_at?: string | null
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          azubi_id?: string
+          content?: Json
+          created_at?: string
+          id?: string
+          issued_at?: string | null
+          issuer_id?: string | null
+          kind?: string
+          request_note?: string | null
+          requested_at?: string | null
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_certificates_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "training_certificates_issuer_id_fkey"
+            columns: ["issuer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       training_plans: {
         Row: {
           code: string
@@ -3065,6 +3185,10 @@ export type Database = {
           week_start: string
         }[]
       }
+      confirm_exam_application: {
+        Args: { p_expected_version: number; p_id: string; p_note?: string }
+        Returns: undefined
+      }
       confirm_instruction: {
         Args: { p_expected_version: number; p_id: string; p_note: string }
         Returns: undefined
@@ -3084,6 +3208,7 @@ export type Database = {
       }
       default_notification_groups: { Args: never; Returns: Json }
       default_reminder_rules: { Args: never; Returns: Json }
+      delete_exam_application: { Args: { p_id: string }; Returns: undefined }
       delivery_health: {
         Args: never
         Returns: {
@@ -3240,6 +3365,7 @@ export type Database = {
         }[]
       }
       get_reminder_rules: { Args: never; Returns: Json }
+      get_training_certificate: { Args: { p_azubi: string }; Returns: Json }
       grant_consent: {
         Args: {
           _kind: Database["public"]["Enums"]["consent_kind"]
@@ -3316,6 +3442,10 @@ export type Database = {
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
       is_team: { Args: { _uid: string }; Returns: boolean }
       is_team_owner: { Args: { _uid: string }; Returns: boolean }
+      issue_training_certificate: {
+        Args: { p_azubi: string; p_expected_version: number }
+        Returns: undefined
+      }
       kw_list: { Args: { weeks: string[] }; Returns: string }
       leittext_hash: { Args: { p_id: string }; Returns: string }
       leittext_review_queue: {
@@ -3479,6 +3609,10 @@ export type Database = {
       report_hash: { Args: { _report_id: string }; Returns: string }
       report_title: { Args: { _report_id: string }; Returns: string }
       request_account_deletion: { Args: { p_note: string }; Returns: string }
+      request_training_certificate: {
+        Args: { p_kind: string; p_note: string }
+        Returns: undefined
+      }
       resolve_instruction_catalogs: {
         Args: { p_azubi: string }
         Returns: {
@@ -3492,6 +3626,10 @@ export type Database = {
         }[]
       }
       resolve_plan: { Args: { p_azubi: string }; Returns: string }
+      return_exam_application: {
+        Args: { p_id: string; p_note: string }
+        Returns: undefined
+      }
       review_absence: {
         Args: {
           _absence_id: string
@@ -3520,6 +3658,15 @@ export type Database = {
         Args: { _role: Database["public"]["Enums"]["app_role"] }
         Returns: string
       }
+      save_exam_application: {
+        Args: {
+          p_data: Json
+          p_expected_version: number
+          p_id: string
+          p_term: string
+        }
+        Returns: number
+      }
       save_my_notification_prefs: {
         Args: {
           p_groups: Json
@@ -3532,6 +3679,15 @@ export type Database = {
         Returns: undefined
       }
       save_reminder_rules: { Args: { p_rules: Json }; Returns: undefined }
+      save_training_certificate: {
+        Args: {
+          p_azubi: string
+          p_content: Json
+          p_expected_version: number
+          p_kind: string
+        }
+        Returns: number
+      }
       seed_leittext_catalog: { Args: { p_raw: string }; Returns: string }
       send_report_reminder: {
         Args: { azubi_id: string; message: string; period_label: string }
@@ -3567,6 +3723,10 @@ export type Database = {
           p_new_company_name?: string
           p_profession: string
         }
+        Returns: undefined
+      }
+      submit_exam_application: {
+        Args: { p_expected_version: number; p_id: string }
         Returns: undefined
       }
       submit_experience: {
