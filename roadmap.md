@@ -112,3 +112,5 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
 - [ ] Abmeldung beim Neuladen in der Vorschau/Live-Seite vom Nutzer bestätigen lassen (lokal nicht nachstellbar)
 - [x] Übersicht: Was fehlt zu einem professionellen, gesetzeskonformen Berichtsheft (BBiG/Ausbildungsnachweis)
 - [ ] Abnahme-Prompt 1 und 2
+
+- [x] SEO: Suchmaschinen für öffentliche Seiten zulassen, Seitenliste mit vollständigen Adressen
