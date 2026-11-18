@@ -24,7 +24,7 @@ export const Route = createFileRoute("/signatur")({
 
 // E-Mail-Programme verstehen nur feste Farben direkt im Text.
 const A = 'style="color:#2f6b4f;text-decoration:none;"';
-const SIG = `<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#1f2937;">
+const SIG = `<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#1f2937;background:#ffffff;padding:12px;">
 <tr><td style="padding-bottom:6px;"><span style="font-size:16px;font-weight:bold;color:#2f6b4f;">Azuvera</span> <span style="color:#64748b;">· Eine Marke der Stage &amp; Spotlight</span></td></tr>
 <tr><td>Inhaber: Fabian Schröder</td></tr>
 <tr><td>Hüdepohlweg 8, D-49326 Melle</td></tr>
