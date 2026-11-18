@@ -1,9 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Check, Code2, Copy, Globe, Mail, MonitorSmartphone, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shared";
 import { PublicLayout } from "@/features/public/public-layout";
+import logoAsset from "@/assets/signature/sig-logo.png.asset.json";
+import mailAsset from "@/assets/signature/sig-mail.png.asset.json";
+import phoneAsset from "@/assets/signature/sig-phone.png.asset.json";
+import globeAsset from "@/assets/signature/sig-globe.png.asset.json";
+import smartphoneAsset from "@/assets/signature/sig-smartphone.png.asset.json";
+import instagramAsset from "@/assets/signature/sig-instagram.png.asset.json";
+import whatsappAsset from "@/assets/signature/sig-whatsapp.png.asset.json";
 
 const TITLE = "E-Mail-Signatur – Azuvera";
 const DESC = "Azuvera E-Mail-Signatur zum Kopieren für Outlook, Apple Mail und Gmail.";
@@ -25,6 +32,13 @@ export const Route = createFileRoute("/signatur")({
 
 const LIVE = "https://get.azuvera.de";
 
+// Bilder liegen auf dem Azuvera-CDN und sind über die Live-Adresse sofort erreichbar.
+const ICONS: Record<string, string> = {
+  logo: logoAsset.url, mail: mailAsset.url, phone: phoneAsset.url, globe: globeAsset.url,
+  smartphone: smartphoneAsset.url, instagram: instagramAsset.url, whatsapp: whatsappAsset.url,
+};
+const src = (n: string) => `${LIVE}${ICONS[n]}`;
+
 /*
  * E-Mail-Programme kennen keine Design-Tokens: Die Signatur braucht feste Farben,
  * Tabellen und Bilder mit voller Adresse. Farben = Azuvera-Verlauf in Hex.
@@ -32,9 +46,9 @@ const LIVE = "https://get.azuvera.de";
 const C = { blue: "#0056c5", mid: "#0093c1", teal: "#06bfa8", ink: "#091123", muted: "#677284", line: "#e3ebf5" };
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 
-function buildSignature(base: string) {
+function buildSignature() {
   const img = (n: string, s: number, alt: string) =>
-    `<img src="${base}/brand/sig-${n}.png" width="${s}" height="${s}" alt="${alt}" style="display:block;border:0;width:${s}px;height:${s}px;" />`;
+    `<img src="${src(n)}" width="${s}" height="${s}" alt="${alt}" style="display:block;border:0;width:${s}px;height:${s}px;" />`;
   const row = (icon: string, alt: string, html: string) =>
     `<tr><td style="padding:0 10px 6px 0;vertical-align:middle;">${img(icon, 18, alt)}</td><td style="padding:0 0 6px 0;vertical-align:middle;font-size:13px;color:${C.ink};">${html}</td></tr>`;
   const a = (href: string, text: string, color = C.ink) =>
@@ -47,7 +61,7 @@ function buildSignature(base: string) {
 
   return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:${FONT};color:${C.ink};background:#ffffff;max-width:520px;">
 <tr><td style="padding:0 0 14px 0;"><table cellpadding="0" cellspacing="0" border="0"><tr>
-<td style="vertical-align:top;padding:2px 18px 0 0;"><a href="https://azuvera.de"><img src="${base}/brand/sig-logo.png" width="76" height="76" alt="Azuvera" style="display:block;border:0;width:76px;height:76px;border-radius:16px;" /></a></td>
+<td style="vertical-align:top;padding:2px 18px 0 0;"><a href="https://azuvera.de"><img src="${src("logo")}" width="76" height="76" alt="Azuvera" style="display:block;border:0;width:76px;height:76px;border-radius:16px;" /></a></td>
 <td width="3" bgcolor="${C.mid}" style="width:3px;background:${C.mid};background-image:linear-gradient(180deg,${C.blue},${C.mid},${C.teal});font-size:0;line-height:0;">&nbsp;</td>
 <td style="vertical-align:top;padding:0 0 0 18px;">
 <div style="font-size:18px;font-weight:700;letter-spacing:-0.2px;color:${C.ink};line-height:1.25;">Fabian Schröder</div>
@@ -75,7 +89,7 @@ ${a(`${LIVE}/impressum`, "Impressum", C.muted)} &nbsp;·&nbsp; ${a(`${LIVE}/date
 </table>`;
 }
 
-const SIG_LIVE = buildSignature(LIVE);
+const SIG_LIVE = buildSignature();
 const TEXT = `Fabian Schröder
 Inhaber · Azuvera – Eine Marke der Stage & Spotlight
 Hüdepohlweg 8 · D-49326 Melle
@@ -91,9 +105,6 @@ const STEPS = [
 ];
 
 function Signatur() {
-  // Vorschau zeigt Bilder vom aktuellen Server, kopiert wird immer mit der Live-Adresse.
-  const [preview, setPreview] = useState(SIG_LIVE);
-  useEffect(() => setPreview(buildSignature(window.location.origin)), []);
   const [done, setDone] = useState<"" | "sig" | "html">("");
   const flash = (k: "sig" | "html") => { setDone(k); setTimeout(() => setDone(""), 2200); };
 
@@ -150,7 +161,7 @@ function Signatur() {
             <p className="mb-6 text-sm" style={{ color: "#677284", fontFamily: "Helvetica, Arial, sans-serif" }}>
               Viele Grüße
             </p>
-            <div dangerouslySetInnerHTML={{ __html: preview }} />
+            <div dangerouslySetInnerHTML={{ __html: SIG_LIVE }} />
           </div>
           <div className="flex flex-col gap-3 border-t bg-muted/40 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">Bilder und Links sind schon eingebaut.</p>
