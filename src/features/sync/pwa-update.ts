@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { isInIframe, isLovablePreviewHost } from "@/lib/platform";
+import { isInIframe, isLovablePreviewHost, isNative } from "@/lib/platform";
 
 let started = false;
 
@@ -10,6 +10,8 @@ let started = false;
 export async function registerAppServiceWorker(): Promise<void> {
   if (started || typeof window === "undefined" || !("serviceWorker" in navigator)) return;
   started = true;
+  // Native App: Dateien liegen im App-Paket, kein Service Worker.
+  if (isNative()) return;
   const refused = !import.meta.env.PROD || isInIframe() || isLovablePreviewHost() || new URLSearchParams(window.location.search).get("sw") === "off";
   if (refused) {
     // Alte Registrierungen in der Vorschau entfernen, damit keine alten Zwischenstände bleiben.

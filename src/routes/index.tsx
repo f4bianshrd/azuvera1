@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { isNativeBuild } from "@/lib/platform";
 import { BellRing, Camera, CheckCircle2, FileDown, FileSignature, Mic, PenLine, Users, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Chip, PublicLayout } from "@/features/public/public-layout";
@@ -24,6 +25,10 @@ const JSON_LD = {
 };
 
 export const Route = createFileRoute("/")({
+  // Native App (iPhone/iPad/Mac): keine Werbe-Startseite, direkt in die App (ohne Anmeldung weiter zu /auth).
+  beforeLoad: () => {
+    if (typeof window !== "undefined" && isNativeBuild()) throw redirect({ to: "/dashboard" });
+  },
   head: () => ({
     meta: [
       { title: TITLE },
@@ -99,7 +104,7 @@ function Home() {
         <div className="relative mx-auto max-w-4xl px-4 py-16 text-center sm:py-24">
           <div className="flex flex-wrap justify-center gap-2">
             <Chip>Privat entwickelt auf Initiative der LWK Niedersachsen</Chip>
-            <Chip>Für Azubis dauerhaft kostenlos</Chip>
+            <Chip>Web-App dauerhaft kostenlos</Chip>
           </div>
           <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Azuvera – das digitale Ausbildungsberichtsheft

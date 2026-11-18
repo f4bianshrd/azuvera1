@@ -15,6 +15,8 @@ import { ThemeProvider, themeInitScript } from "../lib/theme";
 import { Toaster } from "../components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
+import { applyNativeTestFlag } from "../lib/platform";
+import { NativeLicenseGate } from "@/features/license/gate";
 
 function NotFoundComponent() {
   return (
@@ -128,6 +130,11 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  // Testhilfe für die Lizenzsperre der nativen App (?native=1 / ?native=0).
+  useEffect(() => {
+    applyNativeTestFlag();
+  }, []);
+
   // Sitzungsänderungen (An-/Abmeldung) invalidieren Router und Cache. Gefiltert auf
   // Identitätswechsel, damit TOKEN_REFRESHED und INITIAL_SESSION keine Schleifen auslösen.
   useEffect(() => {
@@ -145,7 +152,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <ThemeProvider>
-        <Outlet />
+        <NativeLicenseGate>
+          <Outlet />
+        </NativeLicenseGate>
         <Toaster richColors position="top-center" />
       </ThemeProvider>
     </QueryClientProvider>

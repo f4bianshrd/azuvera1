@@ -1,0 +1,300 @@
+# Baut die native Azuvera-App für iPhone/iPad (.ipa) und Mac (notarisierte .dmg).
+# Anleitung: docs/native-build.md. Secrets werden nie ausgegeben.
+name: Native Build (iOS, iPadOS, macOS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ziel:
+        description: "Was soll gebaut werden?"
+        type: choice
+        options: [ios, mac-silicon, mac-intel, mac-universal, alle]
+        default: alle
+  push:
+    tags: ["native-v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  vorbereitung:
+    name: Vorbereitung
+    runs-on: macos-14
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      build: ${{ steps.meta.outputs.build }}
+      ios: ${{ steps.meta.outputs.ios }}
+      mac: ${{ steps.meta.outputs.mac }}
+      mac_archs: ${{ steps.meta.outputs.mac_archs }}
+      mac_label: ${{ steps.meta.outputs.mac_label }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Version und Ziele bestimmen
+        id: meta
+        env:
+          ZIEL: ${{ github.event.inputs.ziel || 'alle' }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [ "$REF_TYPE" = "tag" ] && [[ "$REF_NAME" == native-v* ]]; then
+            version="${REF_NAME#native-v}"
+          else
+            version=$(sed -nE 's/.*APP_VERSION: "([^"]+)".*/\1/p' src/config/native-license.ts | head -1)
+          fi
+          [ -n "$version" ] || { echo "::error::Keine Version gefunden"; exit 1; }
+          case "$ZIEL" in
+            ios)           ios=true;  mac=false; archs="";             label="" ;;
+            mac-silicon)   ios=false; mac=true;  archs="arm64";        label="mac-silicon" ;;
+            mac-intel)     ios=false; mac=true;  archs="x86_64";       label="mac-intel" ;;
+            mac-universal) ios=false; mac=true;  archs="arm64 x86_64"; label="mac-universal" ;;
+            alle)          ios=true;  mac=true;  archs="arm64 x86_64"; label="mac-universal" ;;
+            *) echo "::error::Unbekanntes Ziel: $ZIEL"; exit 1 ;;
+          esac
+          {
+            echo "version=$version"
+            echo "build=${{ github.run_number }}"
+            echo "ios=$ios"; echo "mac=$mac"
+            echo "mac_archs=$archs"; echo "mac_label=$label"
+          } >> "$GITHUB_OUTPUT"
+          echo "Version $version, Build ${{ github.run_number }}, Ziel $ZIEL"
+
+  ios:
+    name: iPhone und iPad (.ipa)
+    needs: vorbereitung
+    if: needs.vorbereitung.outputs.ios == 'true'
+    runs-on: macos-14
+    env:
+      VERSION: ${{ needs.vorbereitung.outputs.version }}
+      BUILD: ${{ needs.vorbereitung.outputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+      - name: Abhängigkeiten installieren
+        run: bun install --frozen-lockfile
+      - name: Web-App für die native Version bauen (inkl. cap sync ios)
+        run: bun run build:native
+
+      - name: Signierung vorbereiten
+        env:
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_P8_BASE64 }}
+        run: scripts/ci/signing.sh setup
+      - name: iOS-Profil installieren
+        id: profile
+        env:
+          APPLE_PROVISIONING_PROFILE_IOS_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_IOS_BASE64 }}
+        run: scripts/ci/signing.sh profile ios
+      - name: Signierung im Projekt setzen
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: python3 scripts/ci/set-signing.py --team "$APPLE_TEAM_ID" --ios-profile "${{ steps.profile.outputs.uuid }}"
+
+      - name: Archivieren
+        run: |
+          set -euo pipefail
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Azuvera-ios.xcarchive" \
+            MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD" \
+            archive | tail -n 40
+      - name: .ipa exportieren
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/ExportOptions-ios.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>provisioningProfiles</key><dict><key>de.azuvera.app</key><string>${{ steps.profile.outputs.uuid }}</string></dict>
+            <key>uploadSymbols</key><true/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Azuvera-ios.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions-ios.plist" \
+            -exportPath "$RUNNER_TEMP/out-ios" | tail -n 20
+          mkdir -p out
+          mv "$RUNNER_TEMP"/out-ios/*.ipa "out/Azuvera-${VERSION}-ios.ipa"
+      - name: Optional zu TestFlight hochladen
+        env:
+          TESTFLIGHT_UPLOAD: ${{ secrets.TESTFLIGHT_UPLOAD }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          if [ "${TESTFLIGHT_UPLOAD:-}" != "true" ]; then echo "TestFlight-Upload ist aus (Secret TESTFLIGHT_UPLOAD ≠ true)."; exit 0; fi
+          xcrun altool --upload-app -f "out/Azuvera-${VERSION}-ios.ipa" -t ios \
+            --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
+      - name: Zusammenfassung
+        run: |
+          f="out/Azuvera-${VERSION}-ios.ipa"
+          sum=$(shasum -a 256 "$f" | cut -d' ' -f1)
+          {
+            echo "### iPhone und iPad"
+            echo "| Datei | Version | Build | Architektur | SHA-256 |"
+            echo "|---|---|---|---|---|"
+            echo "| $(basename "$f") | $VERSION | $BUILD | arm64 | \`$sum\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Azuvera-${{ needs.vorbereitung.outputs.version }}-ios.ipa
+          path: out/Azuvera-${{ needs.vorbereitung.outputs.version }}-ios.ipa
+          if-no-files-found: error
+      - name: Aufräumen
+        if: always()
+        run: scripts/ci/signing.sh cleanup
+
+  mac:
+    name: Mac (${{ needs.vorbereitung.outputs.mac_label }}, .dmg)
+    needs: vorbereitung
+    if: needs.vorbereitung.outputs.mac == 'true'
+    runs-on: macos-14
+    env:
+      VERSION: ${{ needs.vorbereitung.outputs.version }}
+      BUILD: ${{ needs.vorbereitung.outputs.build }}
+      ARCHS_WANTED: ${{ needs.vorbereitung.outputs.mac_archs }}
+      LABEL: ${{ needs.vorbereitung.outputs.mac_label }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+      - name: Abhängigkeiten installieren
+        run: bun install --frozen-lockfile
+      - name: Web-App für die native Version bauen (inkl. cap sync ios)
+        run: bun run build:native
+
+      - name: Signierung vorbereiten
+        env:
+          APPLE_CERT_P12_BASE64: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_KEY_P8_BASE64 }}
+        run: scripts/ci/signing.sh setup
+      - name: Mac-Profil installieren
+        id: profile
+        env:
+          APPLE_PROVISIONING_PROFILE_MAC_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_MAC_BASE64 }}
+        run: scripts/ci/signing.sh profile mac
+      - name: Signierung im Projekt setzen
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: python3 scripts/ci/set-signing.py --team "$APPLE_TEAM_ID" --mac-profile "${{ steps.profile.outputs.uuid }}"
+
+      - name: Archivieren (Mac Catalyst)
+        run: |
+          set -euo pipefail
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=macOS,variant=Mac Catalyst' \
+            -archivePath "$RUNNER_TEMP/Azuvera-mac.xcarchive" \
+            ARCHS="$ARCHS_WANTED" ONLY_ACTIVE_ARCH=NO \
+            MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD" \
+            archive | tail -n 40
+      - name: Mit Developer ID exportieren
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/ExportOptions-mac.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>developer-id</string>
+            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Developer ID Application</string>
+            <key>provisioningProfiles</key><dict><key>de.azuvera.app</key><string>${{ steps.profile.outputs.uuid }}</string></dict>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Azuvera-mac.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions-mac.plist" \
+            -exportPath "$RUNNER_TEMP/out-mac" | tail -n 20
+          ls "$RUNNER_TEMP/out-mac"
+      - name: Architekturen prüfen
+        run: |
+          set -euo pipefail
+          bin="$RUNNER_TEMP/out-mac/Azuvera.app/Contents/MacOS/Azuvera"
+          got=$(lipo -archs "$bin" | tr ' ' '\n' | sort | xargs)
+          want=$(echo "$ARCHS_WANTED" | tr ' ' '\n' | sort | xargs)
+          echo "Gefunden: $got – erwartet: $want"
+          [ "$got" = "$want" ] || { echo "::error::Architekturen stimmen nicht (gefunden: $got, erwartet: $want)"; exit 1; }
+          echo "ARCHS_FOUND=$got" >> "$GITHUB_ENV"
+      - name: App notarisieren und heften
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          key="$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+          app="$RUNNER_TEMP/out-mac/Azuvera.app"
+          ditto -c -k --keepParent "$app" "$RUNNER_TEMP/Azuvera-notarize.zip"
+          xcrun notarytool submit "$RUNNER_TEMP/Azuvera-notarize.zip" --key "$key" --key-id "$APP_STORE_CONNECT_KEY_ID" \
+            --issuer "$APP_STORE_CONNECT_ISSUER_ID" --wait --output-format json > "$RUNNER_TEMP/notary-app.json"
+          status=$(/usr/bin/python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("status",""))' "$RUNNER_TEMP/notary-app.json")
+          if [ "$status" != "Accepted" ]; then
+            id=$(/usr/bin/python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("id",""))' "$RUNNER_TEMP/notary-app.json")
+            xcrun notarytool log "$id" --key "$key" --key-id "$APP_STORE_CONNECT_KEY_ID" --issuer "$APP_STORE_CONNECT_ISSUER_ID" || true
+            echo "::error::Notarisierung der App abgelehnt ($status)"; exit 1
+          fi
+          xcrun stapler staple "$app"
+          spctl --assess --type execute --verbose=2 "$app"
+      - name: .dmg erstellen, signieren, notarisieren und heften
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          key="$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+          stage="$RUNNER_TEMP/dmg"; mkdir -p "$stage" out
+          cp -R "$RUNNER_TEMP/out-mac/Azuvera.app" "$stage/"
+          ln -s /Applications "$stage/Programme"
+          dmg="out/Azuvera-${VERSION}-${LABEL}.dmg"
+          hdiutil create -volname "Azuvera" -srcfolder "$stage" -ov -format UDZO "$dmg"
+          identity=$(security find-identity -v -p codesigning | grep "Developer ID Application" | grep "($APPLE_TEAM_ID)" | head -1 | sed -E 's/.*"(.*)"/\1/')
+          [ -n "$identity" ] || { echo "::error::Kein Developer-ID-Application-Zertifikat für das Team gefunden"; exit 1; }
+          codesign --sign "$identity" --timestamp "$dmg"
+          xcrun notarytool submit "$dmg" --key "$key" --key-id "$APP_STORE_CONNECT_KEY_ID" \
+            --issuer "$APP_STORE_CONNECT_ISSUER_ID" --wait --output-format json > "$RUNNER_TEMP/notary-dmg.json"
+          status=$(/usr/bin/python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("status",""))' "$RUNNER_TEMP/notary-dmg.json")
+          [ "$status" = "Accepted" ] || { echo "::error::Notarisierung der .dmg abgelehnt ($status)"; exit 1; }
+          xcrun stapler staple "$dmg"
+          spctl --assess --type open --context context:primary-signature --verbose=2 "$dmg"
+          echo "DMG=$dmg" >> "$GITHUB_ENV"
+      - name: Zusammenfassung
+        run: |
+          sum=$(shasum -a 256 "$DMG" | cut -d' ' -f1)
+          {
+            echo "### Mac"
+            echo "| Datei | Version | Build | Architekturen | SHA-256 |"
+            echo "|---|---|---|---|---|"
+            echo "| $(basename "$DMG") | $VERSION | $BUILD | $ARCHS_FOUND | \`$sum\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Azuvera-${{ needs.vorbereitung.outputs.version }}-${{ needs.vorbereitung.outputs.mac_label }}.dmg
+          path: out/*.dmg
+          if-no-files-found: error
+      - name: Aufräumen
+        if: always()
+        run: scripts/ci/signing.sh cleanup

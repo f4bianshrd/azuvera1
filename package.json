@@ -11,13 +11,16 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:native": "VITE_NATIVE_BUILD=true vite build && node scripts/native-prepare.mjs && npx cap sync ios"
   },
   "overrides": {
     "rolldown": "1.2.1"
   },
   "dependencies": {
     "@block65/webcrypto-web-push": "^2.0.0",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/ios": "^8.6.2",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/ai-gateway": "^0.1.11",
     "@lovable.dev/cloud-auth-js": "^1.1.2",
@@ -94,6 +97,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.2",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "2.27.1",
     "@testing-library/jest-dom": "^6.6.0",

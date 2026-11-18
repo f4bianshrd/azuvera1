@@ -1,3 +1,5 @@
+import { redactSecrets } from "./redact";
+
 type LovableErrorOptions = {
   mechanism?: "manual" | "onerror" | "unhandledrejection" | "react_error_boundary";
   handled?: boolean;
@@ -24,8 +26,24 @@ declare global {
   }
 }
 
-export function reportLovableError(error: unknown, context: Record<string, unknown> = {}) {
+/** Fehler mit Lizenzschlüssel/Lease im Text werden vor dem Melden durch eine geschwärzte Kopie ersetzt. */
+function sanitize(error: unknown): unknown {
+  if (error instanceof Error) {
+    const msg = redactSecrets(error.message);
+    const stack = error.stack ? redactSecrets(error.stack) : undefined;
+    if (msg === error.message && stack === error.stack) return error;
+    const copy = new Error(msg);
+    copy.name = error.name;
+    if (stack !== undefined) copy.stack = stack;
+    return copy;
+  }
+  if (typeof error === "string") return redactSecrets(error);
+  return error;
+}
+
+export function reportLovableError(rawError: unknown, context: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return;
+  const error = sanitize(rawError);
   window.__lovableEvents?.captureException?.(
     error,
     {
@@ -44,7 +62,7 @@ export function reportLovableError(error: unknown, context: Record<string, unkno
   // which is present only inside the editor preview.
   const stack = error instanceof Error ? error.stack : undefined;
   window.__lovableReportRuntimeError?.({
-    message: describeThrown(error),
+    message: redactSecrets(describeThrown(error)),
     ...(stack !== undefined && { stack }),
     filename: window.location.pathname,
   });

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { isIosSafari, isStandalone, readDeviceString, writeDeviceString } from "@/lib/platform";
+import { isIosSafari, isNative, isStandalone, readDeviceString, writeDeviceString } from "@/lib/platform";
 
 interface BeforeInstallPromptEvent extends Event { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> }
 
@@ -18,7 +18,8 @@ export function useInstall() {
   const [, force] = useState(0);
   const [env, setEnv] = useState({ standalone: true, ios: false });
   useEffect(() => {
-    setEnv({ standalone: isStandalone(), ios: isIosSafari() });
+    // Native App: gilt als installiert, damit kein Installationshinweis erscheint.
+    setEnv({ standalone: isNative() || isStandalone(), ios: !isNative() && isIosSafari() });
     const s = () => force((n) => n + 1);
     subs.add(s);
     return () => { subs.delete(s); };

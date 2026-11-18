@@ -23,6 +23,7 @@ import { AppOfflineCard } from "@/features/sync/app-offline-card";
 import { useSignOut } from "@/features/sync/sign-out";
 import { MyDataCard } from "@/features/account/my-data-card";
 import { LoginMethodsCard } from "@/features/account/login-methods-card";
+import { LicenseCard } from "@/features/license/license-card";
 import { OFFLINE_ACTION_HINT, useOnline } from "@/lib/sync/status";
 
 const TITLE = "Mein Profil – Azuvera";
@@ -417,6 +418,8 @@ function ProfilPage() {
       </Card>
 
       <AppOfflineCard />
+
+      <LicenseCard />
       {globalSignOut.dialog}
 
       <Card title="Darstellung">

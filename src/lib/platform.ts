@@ -21,8 +21,82 @@ function connection(): NetworkInformationLike | undefined {
   return (navigator as Navigator & { connection?: NetworkInformationLike }).connection;
 }
 
+// ---------- Native App (Capacitor/iOS/macOS) ----------
+const FORCE_NATIVE_KEY = "azuvera.forceNative";
+const nativeSubs = new Set<() => void>();
+
+/**
+ * Läuft die App als native Version (iPhone, iPad, Mac)? Im Browser immer false –
+ * außer mit der Testhilfe ?native=1 (Marker in localStorage, schaltet nur ein, nie aus).
+ */
 export function isNative(): boolean {
-  return false;
+  if (typeof window === "undefined") return false;
+  if (import.meta.env.VITE_NATIVE_BUILD === "true") return true;
+  try {
+    const cap = (window as Window & { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+    if (typeof cap?.isNativePlatform === "function" && cap.isNativePlatform() === true) return true;
+  } catch {
+    /* kein Capacitor */
+  }
+  const protocol = window.location?.protocol;
+  if (protocol === "capacitor:" || protocol === "ionic:") return true;
+  try {
+    return localStorage.getItem(FORCE_NATIVE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Wert für das erste Rendern (Server/Hydration): nur das feste Build-Kennzeichen. */
+export function isNativeBuild(): boolean {
+  return import.meta.env.VITE_NATIVE_BUILD === "true";
+}
+
+export function onNativeChange(cb: () => void): () => void {
+  nativeSubs.add(cb);
+  return () => {
+    nativeSubs.delete(cb);
+  };
+}
+
+/** Testhilfe: ?native=1 setzt den Marker, ?native=0 entfernt ihn. Einmal beim Start aufrufen. */
+export function applyNativeTestFlag(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const v = new URLSearchParams(window.location.search).get("native");
+    if (v === "1") localStorage.setItem(FORCE_NATIVE_KEY, "1");
+    else if (v === "0") localStorage.removeItem(FORCE_NATIVE_KEY);
+    else return;
+  } catch {
+    return;
+  }
+  nativeSubs.forEach((s) => s());
+}
+
+export type NativePlatformId = "ios" | "ipados" | "macos_arm" | "macos_intel" | "macos_universal";
+
+/** Plattform nur für die Anzeige in der Geräteliste (nicht für Rechte). */
+export function getPlatformId(env: { userAgent: string; platform?: string; maxTouchPoints?: number; arch?: string | null }): NativePlatformId {
+  const ua = env.userAgent || "";
+  const touch = (env.maxTouchPoints ?? 0) > 1;
+  if (/iPhone|iPod/.test(ua)) return "ios";
+  if (/iPad/.test(ua)) return "ipados";
+  const mac = /Macintosh|Mac OS X/.test(ua) || env.platform === "MacIntel";
+  if (mac && touch) return "ipados";
+  if (mac) {
+    const arch = (env.arch ?? "").toLowerCase();
+    if (arch === "arm64" || arch === "arm") return "macos_arm";
+    if (arch === "x86_64" || arch === "x86" || arch === "x64") return "macos_intel";
+    return "macos_universal";
+  }
+  return "ios";
+}
+
+/** Plattform dieses Geräts; die Prozessorart kommt nur, wenn der Wrapper sie meldet. */
+export function currentPlatformId(): NativePlatformId {
+  if (typeof navigator === "undefined") return "ios";
+  const w = typeof window === "undefined" ? undefined : (window as Window & { __AZUVERA_ARCH__?: string });
+  return getPlatformId({ userAgent: navigator.userAgent, platform: navigator.platform, maxTouchPoints: navigator.maxTouchPoints, arch: w?.__AZUVERA_ARCH__ ?? null });
 }
 
 export function getNetworkStatus(): NetworkStatus {
