@@ -18,6 +18,13 @@ export type ReportStatus = Database["public"]["Enums"]["report_status"];
 export type ReportType = Database["public"]["Enums"]["report_type"];
 export type WeeklyMode = "activities" | "topics";
 
+/** Zeichenbegrenzung je Berichtsabschnitt: Themenberichte dürfen deutlich länger sein. */
+export const REPORT_TEXT_MAX = 20000;
+export const TOPIC_REPORT_TEXT_MAX = 150000;
+export function reportTextLimit(mode: WeeklyMode): number {
+  return mode === "topics" ? TOPIC_REPORT_TEXT_MAX : REPORT_TEXT_MAX;
+}
+
 export const STATUS_LABELS: Record<ReportStatus, string> = {
   draft: "Entwurf",
   submitted: "Eingereicht",

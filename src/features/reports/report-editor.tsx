@@ -22,6 +22,7 @@ import {
   type ReportDraftPatch,
   type ReportType,
   type WeeklyMode,
+  reportTextLimit,
 } from "./api";
 
 export const SECTIONS = [
@@ -302,7 +303,9 @@ export function ReportEditor({
         />
       </div>
 
-      {SECTIONS.map((s) => (
+      {SECTIONS.map((s) => {
+        const textLimit = reportTextLimit(state.weeklyMode);
+        return (
         <div key={s.key} className="space-y-1.5">
           <div className="flex items-center justify-between gap-2">
             <Label htmlFor={`sec-${s.key}`}>
@@ -316,6 +319,7 @@ export function ReportEditor({
                 onValueChange={(value) => set(s.key, value)}
                 onInterim={(text) => setInterim((current) => ({ ...current, [s.key]: text }))}
                 spokenPunctuation={spokenPunctuation}
+                limit={textLimit}
               />
               <AiTextButton
                 field={s.key}
@@ -324,6 +328,7 @@ export function ReportEditor({
                 reportId={report?.id}
                 currentValue={state[s.key]}
                 onAccept={(value) => set(s.key, value)}
+                maxChars={textLimit}
               />
             </div>
           </div>
@@ -332,16 +337,17 @@ export function ReportEditor({
             textareaRef={textareaRefs[s.key]}
             value={state[s.key]}
             placeholder={s.placeholder}
-            maxLength={20000}
+            maxLength={textLimit}
             onChange={(v) => set(s.key, v)}
           />
           {interim[s.key] && <p className="text-sm italic text-muted-foreground">{interim[s.key]}</p>}
           {s.key === "instructions" && <ReportInstructionChips azubiId={azubiId} reportType={state.reportType} reportDate={state.reportDate} editable />}
           <p className="text-right text-xs text-muted-foreground tabular-nums">
-            {state[s.key].length.toLocaleString("de-DE")} / 20.000
+            {state[s.key].length.toLocaleString("de-DE")} / {textLimit.toLocaleString("de-DE")}
           </p>
         </div>
-      ))}
+        );
+      })}
 
       {report && <ReportLinksBlock reportId={report.id} azubiId={azubiId} editable />}
 

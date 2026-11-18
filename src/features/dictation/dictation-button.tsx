@@ -17,12 +17,15 @@ export function DictationButton({
   onValueChange,
   onInterim,
   spokenPunctuation,
+  limit = FIELD_LIMIT,
 }: {
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   getValue: () => string;
   onValueChange: (value: string) => void;
   onInterim: (text: string) => void;
   spokenPunctuation: boolean;
+  /** Zeichenbegrenzung des Feldes (Themenberichte: 150.000). */
+  limit?: number;
 }) {
   const queryClient = useQueryClient();
   const { data: consents } = useQuery({ queryKey: ["consents"], queryFn: listMyConsents });
@@ -40,9 +43,9 @@ export function DictationButton({
     if (before && !/\s$/.test(before) && !/^[.,!?;:\n]/.test(insertion)) insertion = ` ${insertion}`;
     if (after && !/^\s/.test(after) && !/\s$/.test(insertion)) insertion = `${insertion} `;
     const next = before + insertion + after;
-    if (next.length > FIELD_LIMIT) {
-      onValueChange(next.slice(0, FIELD_LIMIT));
-      insertAtRef.current = Math.min(before.length + insertion.length, FIELD_LIMIT);
+    if (next.length > limit) {
+      onValueChange(next.slice(0, limit));
+      insertAtRef.current = Math.min(before.length + insertion.length, limit);
       toast.error("Das Feld ist voll.");
       return;
     }

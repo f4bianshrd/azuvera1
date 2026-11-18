@@ -34,6 +34,7 @@ export function AiTextButton({
   reportId,
   currentValue,
   onAccept,
+  maxChars = 20000,
 }: {
   field: AiField;
   reportType: "daily" | "weekly";
@@ -41,6 +42,8 @@ export function AiTextButton({
   reportId?: string | undefined;
   currentValue: string;
   onAccept: (text: string) => void;
+  /** Zeichenbegrenzung des Zielfeldes (Themenberichte: 150.000). */
+  maxChars?: number;
 }) {
   const { data: profile } = useMyProfile();
   const { data: professions } = useProfessions();
@@ -96,7 +99,7 @@ export function AiTextButton({
     const text = suggestion.trim();
     if (!text) return;
     const next = currentValue.trim() ? `${currentValue.trimEnd()}\n\n${text}` : text;
-    onAccept(next.slice(0, 20000));
+    onAccept(next.slice(0, maxChars));
     if (reportId) void logAiAssist(reportId, field).catch(() => undefined);
     toast.success("Text übernommen");
     setOpen(false);
