@@ -167,7 +167,7 @@ function LeittextCard({ leittext, work, isAzubi, loading, onOpen }: { leittext: 
         {work ? <StatusBadge status={work.status} /> : <span className="text-xs text-muted-foreground">{STATUS_LABEL["none"]}</span>}
       </div>
       <h3 className="mt-2 font-semibold leading-snug">{leittext.title}</h3>
-      <p className="mt-1 text-xs text-muted-foreground">{taskCount} Aufgaben{leittext.order_no ? ` · Nr. ${leittext.order_no}` : ""}{leittext.stand ? ` · Stand ${leittext.stand}` : ""}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{leittext.profession_codes.length === 1 ? `${PROFESSION_LABEL[leittext.profession_codes[0]!] ?? ""} · ` : ""}{taskCount} Aufgaben{leittext.order_no ? ` · Nr. ${leittext.order_no}` : ""}{leittext.stand ? ` · Stand ${leittext.stand}` : ""}</p>
       {p && <div className="mt-3"><Progress value={p.percent} aria-label={`${p.percent} Prozent bearbeitet`} /><p className="mt-1 text-xs text-muted-foreground">{p.done} von {p.total} Aufgaben bearbeitet</p></div>}
       <div className="mt-auto pt-3">
         <Button size="sm" variant={editable ? "default" : "outline"} className="w-full" onClick={onOpen} disabled={loading}>

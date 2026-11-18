@@ -71,8 +71,8 @@ export async function renderLeittext(doc: Doc, input: LeittextPdfInput): Promise
 
   // Aufgaben
   for (const section of leittext.content.sections) {
-    ensure(60);
-    doc.y -= 14;
+    ensure(70);
+    doc.y -= 30;
     doc.page.drawRectangle({ x: MARGIN, y: doc.y - 6, width: W, height: 22, color: C.brand });
     doc.text(section.title, MARGIN + 8, doc.y + 1, 11, doc.f.bold, C.surface, W - 16);
     doc.y -= 14;

@@ -267,7 +267,7 @@ export async function personHeader(azubiId: string): Promise<PersonHeader> {
     const p = (await db.lookups.get("profile"))?.value as { full_name?: string } | undefined;
     const c = (await db.lookups.get("company"))?.value as { name?: string } | undefined;
     const pr = (await db.lookups.get("profession"))?.value as { name?: string } | undefined;
-    return { name: p?.full_name ?? "", company: c?.name ?? null, profession: pr?.name ?? null };
+    if (p?.full_name || !getNetworkStatus().online) return { name: p?.full_name ?? "", company: c?.name ?? null, profession: pr?.name ?? null };
   }
   return cachedOnline(`leittext-person:${azubiId}`, async () => {
     const { data } = await supabase.from("profiles").select("full_name, companies(name), professions(name)").eq("id", azubiId).maybeSingle();

@@ -103,9 +103,12 @@ Signierte Testberichte, Kommentare und Erinnerungen bleiben revisionssicher erha
   - [x] Ausbildungsberater:innen prüfen und kommentieren wie Ausbilder:innen; Prüfer:innen/Lehrkräfte nur lesen
   - [x] QR-Code anzeigen und scannen für Einladungs-Codes
   - [x] Registrierung mit Rollenwahl, /einladung, /zugriff, „Meine Azubis“, Verwaltung anpassen
-- [ ] Leittexte von leittexte.de: interaktiv ausfüllen, speichern, wieder bearbeiten oder nur ansehen, in der Prüfungsmappe und einzeln exportieren
-- [ ] Profil: E-Mail-Adresse einsehen und ändern; Google/Apple/Microsoft nachträglich verknüpfen; E-Mail + Passwort als Anmeldung hinzufügen
-- [ ] Abgleich mit allen Plänen/Paketen und kurze Übersicht „Was fehlt noch“ für den Nutzer
-- [ ] Angemeldet bleiben: Abmeldung nach Neuladen beheben + Haken „Angemeldet bleiben“ bei der Anmeldung
-- [ ] Übersicht: Was fehlt zu einem professionellen, gesetzeskonformen Berichtsheft (BBiG/Ausbildungsnachweis)
+- [x] Leittexte von leittexte.de: 65 Leittexte (Landwirt/in, Pferdewirt/in) interaktiv ausfüllen, speichern, wieder bearbeiten oder nur ansehen, prüfen/freigeben, in der Prüfungsmappe und einzeln als PDF
+- [ ] Leittexte: Nutzungserlaubnis der BLE liegt nicht vor (Nutzer trägt Risiko, Quelle + Link überall)
+- [x] Profil: E-Mail-Adresse einsehen und ändern; Google/Apple/Microsoft verbinden (gleiche E-Mail); Passwort festlegen
+- [ ] Verbinden mit Google/Apple/Microsoft und E-Mail-Änderung mit echter Bestätigungs-E-Mail testen – braucht echte Konten
+- [x] Kurze Übersicht „Was fehlt noch“ für den Nutzer (Datei AzuVera_Uebersicht.md)
+- [x] Angemeldet bleiben: Startseite/Anmeldeseite erkennen Anmeldung, Haken „Angemeldet bleiben“
+- [ ] Abmeldung beim Neuladen in der Vorschau/Live-Seite vom Nutzer bestätigen lassen (lokal nicht nachstellbar)
+- [x] Übersicht: Was fehlt zu einem professionellen, gesetzeskonformen Berichtsheft (BBiG/Ausbildungsnachweis)
 - [ ] Abnahme-Prompt 1 und 2
