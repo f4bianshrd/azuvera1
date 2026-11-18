@@ -10,7 +10,7 @@ export interface PrivacySection {
   content: ReactNode;
 }
 
-const Mailto = () => <a className={linkCls} href="mailto:info@azuvera.de">info@azuvera.de</a>;
+const Mailto = () => <a className={linkCls} href="mailto:management@stage-spotlight.de">management@stage-spotlight.de</a>;
 const Tel = () => <a className={linkCls} href="tel:+4915569490721">+49 155 69490721</a>;
 const Block = ({ children }: { children: ReactNode }) => (
   <div className="rounded-xl bg-muted p-4 text-foreground">{children}</div>
@@ -27,7 +27,7 @@ export function privacySections(texts: PrivacyTexts = PRIVACY_TEXT_DEFAULTS): Pr
       id: "verantwortlicher", title: "Verantwortlicher", icon: ShieldCheck,
       content: (<>
         <p>Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) und anderer nationaler Datenschutzgesetze:</p>
-        <Block><p className="font-semibold">Fabian Schröder</p><p>Privat Entwickelt</p><p>Hüdepohlweg 8, 49326 Melle</p><p>E-Mail: <Mailto /></p><p>Telefon: <Tel /></p></Block>
+        <Block><p className="font-semibold">Azuvera – Eine Marke der Stage & Spotlight</p><p>Inh. Fabian Schröder</p><p>Hüdepohlweg 8, 49326 Melle</p><p>E-Mail: <Mailto /></p><p>Telefon: <Tel /></p></Block>
       </>),
     },
     {
