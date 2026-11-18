@@ -63,7 +63,7 @@ function Signatur() {
       <LegalHeader chip="Intern" title="E-Mail-Signatur" subtitle="Mit einem Klick kopieren und in dein E-Mail-Programm einfügen." />
       <div className="mx-auto max-w-3xl space-y-6 px-4 py-10">
         <div className="rounded-xl border bg-card p-6">
-          <div id="sig-preview" className="overflow-x-auto rounded-lg bg-background p-4" dangerouslySetInnerHTML={{ __html: SIG }} />
+          <div id="sig-preview" className="overflow-x-auto rounded-lg border p-4" style={{ background: "#ffffff" }} dangerouslySetInnerHTML={{ __html: SIG }} />
           <div className="mt-4 flex flex-wrap gap-3">
             <Button onClick={copySig}>{done === "sig" ? <Check /> : <Copy />} {done === "sig" ? "Kopiert!" : "Signatur kopieren"}</Button>
             <Button variant="outline" onClick={copyHtml}>{done === "html" ? <Check /> : <Copy />} {done === "html" ? "Kopiert!" : "HTML-Code kopieren"}</Button>
