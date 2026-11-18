@@ -53,10 +53,16 @@ export const AzuveraEmail = ({ preview, label, tone = 'info', title, children, c
         <Section style={s.foot}>
           {footer && <Text style={s.footText}>{footer}</Text>}
           <Hr style={s.hr} />
+          <Text style={{ ...s.footText, color: BRAND.ink, fontWeight: 700 }}>Azuvera – Eine Marke der Stage &amp; Spotlight</Text>
           <Text style={s.footText}>
-            Azuvera · Das digitale Berichtsheft für die Ausbildung<br />
-            Eine Marke der Stage &amp; Spotlight · <Link href="https://www.stage-spotlight.de" style={s.footLink}>www.stage-spotlight.de</Link><br />
-            <Link href={APP_URL} style={s.footLink}>get.azuvera.de</Link> · Fragen? <Link href="mailto:info@azuvera.de" style={s.footLink}>info@azuvera.de</Link>
+            Inhaber: Fabian Schröder<br />
+            Hüdepohlweg 8, D-49326 Melle<br />
+            <Link href="mailto:info@azuvera.de" style={s.footLink}>info@azuvera.de</Link> · <Link href="tel:+4915569490721" style={s.footLink}>+49 155 69490721</Link>
+          </Text>
+          <Text style={s.footText}>
+            <Link href="https://instagram.com/getazuvera" style={s.footLink}>◎ Instagram @getazuvera</Link> · <Link href="https://wa.me/4915569490721" style={s.footLink}>✆ WhatsApp</Link><br />
+            <Link href="https://azuvera.de" style={s.footLink}>⌂ Azuvera Website</Link> · <Link href={APP_URL} style={s.footLink}>▣ Azuvera WebApp</Link><br />
+            <Link href={`${APP_URL}/impressum`} style={s.footLink}>Impressum</Link> · <Link href={`${APP_URL}/datenschutz`} style={s.footLink}>Datenschutz</Link>
           </Text>
         </Section>
       </Container>
