@@ -3532,6 +3532,7 @@ export type Database = {
         Returns: undefined
       }
       save_reminder_rules: { Args: { p_rules: Json }; Returns: undefined }
+      seed_leittext_catalog: { Args: { p_raw: string }; Returns: string }
       send_report_reminder: {
         Args: { azubi_id: string; message: string; period_label: string }
         Returns: string

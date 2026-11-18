@@ -379,6 +379,13 @@
       "when": 1794962399976,
       "tag": "0053_admin_import_leittexte",
       "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1794962549935,
+      "tag": "0054_seed_leittext_catalog",
+      "breakpoints": true
     }
   ]
 }
