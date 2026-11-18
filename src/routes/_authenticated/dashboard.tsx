@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { getNetworkStatus } from "@/lib/platform";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, isAfter } from "date-fns";
@@ -108,7 +109,8 @@ function Dashboard() {
     } catch {
       /* Speicher nicht verfügbar */
     }
-    if (!done && !profile.profession_id) setOnboardingOpen(true);
+    // Offline lässt sich kein Beruf auswählen (Liste kommt aus dem Netz) – dann nicht nachfragen.
+    if (!done && !profile.profession_id && getNetworkStatus().online) setOnboardingOpen(true);
   }, [profile]);
 
   const { data: instr } = useInstructionSummary(isAzubi ? profile?.id : null);

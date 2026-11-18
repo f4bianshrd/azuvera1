@@ -5,6 +5,7 @@ import { currentDb, currentUserId, deleteUserDb, openUserDb } from "@/lib/sync/d
 import { stopSync } from "@/lib/sync/engine";
 import { clearCacheStorage, getNetworkStatus, setAppBadge } from "@/lib/platform";
 import { disablePush } from "@/features/notifications/push";
+import { currentSession } from "@/features/auth/remember";
 
 export type AppRole = Database["public"]["Enums"]["app_role"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -39,10 +40,8 @@ export function useMyProfile() {
   return useQuery({
     queryKey: ["my-profile"],
     queryFn: async (): Promise<MyProfile | null> => {
-      // Sitzung lokal lesen (funktioniert auch ohne Netz).
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      // Sitzung lokal lesen (funktioniert auch ohne Netz, auch mit abgelaufenem Zugangsschlüssel).
+      const session = await currentSession();
       const user = session?.user;
       if (!user) return null;
       const db = openUserDb(user.id);

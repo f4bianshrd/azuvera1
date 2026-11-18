@@ -24,7 +24,12 @@ export default defineConfig({
         injectRegister: null,
         manifest: false,
         devOptions: { enabled: false },
-        injectManifest: { globPatterns: ["**/*.{js,css,html,png,svg,ico,webmanifest,woff2}"], maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 },
+        injectManifest: {
+          // Der Client-Build liegt in dist/client – ohne diesen Präfix-Fix zeigten alle Einträge auf /client/… (404),
+          // dadurch schlug die Installation des Service Workers fehl und die App lief nicht offline.
+          modifyURLPrefix: { "client/": "" },
+          globIgnores: ["server/**", "**/node_modules/**"],
+          globPatterns: ["**/*.{js,css,html,png,svg,ico,webmanifest,woff2}"], maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 },
       }),
     ],
     resolve: {

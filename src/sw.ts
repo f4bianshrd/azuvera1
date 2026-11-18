@@ -1,6 +1,6 @@
 /* Azuvera Service Worker (Workbox, injectManifest).
  * - Precache der App-Hülle (HTML, JS, CSS, Icons), cleanupOutdatedCaches.
- * - Navigations-Fallback auf die App-Hülle (index.html bzw. SPA-Shell).
+ * - Navigations-Fallback auf die App-Hülle (/_shell.html, beim Installieren gesichert).
  * - Statische Dateien: StaleWhileRevalidate.
  * - Backend (Datenbank, Auth, Storage, Funktionen) geht immer direkt ins Netz – nie zwischengespeichert.
  * - skipWaiting nur nach Klick auf „Jetzt aktualisieren“ (Nachricht SKIP_WAITING).
@@ -30,10 +30,33 @@ precacheAndRoute(manifest);
 cleanupOutdatedCaches();
 
 const SHELL_CACHE = "azuvera-shell";
-const shellUrl = (() => {
+/** SPA-Hülle: wird nach dem Client-Build erzeugt und steht deshalb nicht in der Precache-Liste. */
+const SHELL_URL = "/_shell.html";
+const precachedShell = (() => {
   const urls = manifest.map((e) => (typeof e === "string" ? e : e.url));
-  return urls.find((u) => /(^|\/)index\.html$/.test(u)) ?? urls.find((u) => /_shell\.html$/.test(u)) ?? null;
+  return urls.find((u) => /(^|\/)_shell\.html$/.test(u)) ?? urls.find((u) => /(^|\/)index\.html$/.test(u)) ?? null;
 })();
+
+async function refreshShell(): Promise<void> {
+  const res = await fetch(SHELL_URL, { cache: "no-store", credentials: "same-origin" });
+  if (res.ok && (res.headers.get("content-type") ?? "").includes("text/html")) {
+    await (await caches.open(SHELL_CACHE)).put(SHELL_URL, res);
+  }
+}
+
+// Beim Installieren die App-Hülle sichern, damit der allererste Offline-Start klappt.
+sw.addEventListener("install", (event: { waitUntil: (p: Promise<unknown>) => void }) => {
+  event.waitUntil(refreshShell().catch(() => undefined));
+});
+
+async function offlineShell(): Promise<Response | undefined> {
+  const cache = await caches.open(SHELL_CACHE);
+  return (
+    (await cache.match(SHELL_URL)) ??
+    (precachedShell ? await matchPrecache(precachedShell) : undefined) ??
+    (await cache.match("/__shell")) // ältere Versionen
+  );
+}
 
 /** Backend-Anfragen niemals im Service Worker behandeln. */
 function isBackend(url: URL): boolean {
@@ -47,14 +70,11 @@ registerRoute(
   async ({ request }) => {
     try {
       const res = await fetch(request);
-      if (res.ok) {
-        const cache = await caches.open(SHELL_CACHE);
-        await cache.put("/__shell", res.clone());
-      }
+      // Hülle im Hintergrund aktuell halten (passt immer zur gerade geladenen Version).
+      void refreshShell().catch(() => undefined);
       return res;
     } catch {
-      const pre = shellUrl ? await matchPrecache(shellUrl) : undefined;
-      return pre ?? (await (await caches.open(SHELL_CACHE)).match("/__shell")) ?? Response.error();
+      return (await offlineShell()) ?? Response.error();
     }
   },
 );

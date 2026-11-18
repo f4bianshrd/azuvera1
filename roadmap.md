@@ -1,5 +1,11 @@
 # Azuvera – Roadmap
 
+# Neue Wünsche (18.11.2026)
+- [ ] Prüfungsmappe enthält alles: Berichte, Erfahrungsberichte, Leittexte, Ausbildungszeugnis, Antrag Prüfungszulassung
+- [ ] Ausbildungszeugnis: Azubi beantragt, Betrieb füllt in der App aus
+- [ ] Antrag auf Zulassung zur Abschlussprüfung (Kammer) in der App vorbereiten
+- [ ] Startseite für „Berichtsheft Landwirtschaft“, „Berichtsheft Pferdewirtschaft“, „Ausbildungsberichtsheft“ optimieren
+
 ## Baustein 4B – Benachrichtigungsversand
 - [x] Tabellen, Einstellungen, Geräteschutz und Zustell-Warteschlange
 - [x] push-config und email-test (SMTP 465)
@@ -9,6 +15,7 @@
 - [ ] Zustell-Lauf im Live-Betrieb: wartet auf Veröffentlichen
 
 ## Baustein 4A – App-Fähigkeit und Offline
+- [x] Offline-Start reparieren (Live: Service Worker installierte sich nicht; Abmelden offline nach 1 h) – nichts anderes löschen
 - [x] PWA: Manifest, Icons, Service Worker (injectManifest), Update-Hinweis, Vorschau-Schutz
 - [x] Lokaler Speicher je Konto (Dexie) und outbox mit Zusammenfassung
 - [x] Sync-Engine (Senden, Holen, Abgleich, Wiederholungen, WLAN-Regeln)
