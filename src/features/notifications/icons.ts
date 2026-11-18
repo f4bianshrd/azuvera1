@@ -7,6 +7,7 @@ export const NOTIFICATION_ICONS: Record<string, LucideIcon> = {
   deadline_soon: BellRing, deadline_today: BellRing, deadline_overdue: BellRing, review_pending: BellRing, daily_nudge: BellRing,
   instruction_due: ClipboardCheck, instruction_submitted: ClipboardList, instruction_confirmed: CheckCircle2, instruction_rejected: RotateCcw,
   experience_submitted: NotebookPen, experience_approved: CheckCircle2, experience_rejected: RotateCcw, experience_reopened: Undo2, experience_comment: MessageSquare, experience_due: BellRing,
+  leittext_submitted: NotebookPen, leittext_approved: CheckCircle2, leittext_rejected: RotateCcw, leittext_reopened: Undo2, leittext_comment: MessageSquare,
 };
 export const iconFor = (type: string): LucideIcon => NOTIFICATION_ICONS[type] ?? Bell;
 

@@ -16,6 +16,7 @@ import { saveFile } from "@/lib/platform";
 import { getExportHeader, listExportReports, loadFolderExtras, logExport } from "./api";
 import { ExportCancelled, exportBaseName } from "./pdf/build";
 import { dateDe } from "./pdf/text";
+import { listWorksFor } from "@/features/leittexte/api";
 
 const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
@@ -43,6 +44,8 @@ function FolderDialog({ azubiId, onClose }: { azubiId: string; onClose: () => vo
   const [withGrades, setWithGrades] = useState(true);
   const [withAbsences, setWithAbsences] = useState(true);
   const [embed, setEmbed] = useState(false);
+  const [withLt, setWithLt] = useState(true);
+  const [ltApproved, setLtApproved] = useState(true);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const abort = useRef<AbortController | null>(null);
   useEffect(() => () => abort.current?.abort(), []);
@@ -56,8 +59,11 @@ function FolderDialog({ azubiId, onClose }: { azubiId: string; onClose: () => vo
   const sel = { azubiId, from: range.from, to: range.to, statuses: (onlyApproved ? ["approved"] : ["approved", "submitted"]) as ("approved" | "submitted")[], types: ["weekly", "daily"] as ("weekly" | "daily")[] };
   const { data: list, isFetching } = useQuery({ queryKey: ["export", "list", sel], queryFn: () => listExportReports(sel), enabled: online && withReports });
   const { data: extras } = useQuery({ queryKey: ["export", "folder-extras", azubiId, range.from, range.to], queryFn: () => loadFolderExtras(azubiId, range.from, range.to), enabled: online });
+  const { data: works } = useQuery({ queryKey: ["leittexte", "works", azubiId], queryFn: () => listWorksFor(azubiId), enabled: online });
+  const ltStatuses = ltApproved ? ["approved"] : ["approved", "submitted"];
+  const ltCount = (works ?? []).filter((w) => ltStatuses.includes(w.status)).length;
   const n = withReports ? list?.reports.length ?? 0 : 0;
-  const nothing = !withReports && !withGrades && !withAbsences;
+  const nothing = !withReports && !withGrades && !withAbsences && !withLt;
 
   const start = async () => {
     if (!header || !extras || nothing) return;
@@ -65,11 +71,12 @@ function FolderDialog({ azubiId, onClose }: { azubiId: string; onClose: () => vo
     setProgress({ done: 0, total: Math.max(1, n) });
     try {
       const { buildExamFolder } = await import("./pdf/folder");
+      const leittexte = withLt && ltCount ? await (await import("@/features/leittexte/export")).folderLeittexte(azubiId, ltStatuses, embed) : [];
       const bytes = await buildExamFolder({
         header, reports: withReports ? list?.reports ?? [] : [], grades: extras.grades, absences: extras.absences,
         period: range.from || range.to ? `${dateDe(range.from)} – ${dateDe(range.to)}` : "Gesamte Ausbildung",
         from: range.from, to: range.to, compiledBy: me?.full_name || "–",
-        include: { grades: withGrades, absences: withAbsences, reports: withReports },
+        include: { grades: withGrades, absences: withAbsences, reports: withReports, leittexte: withLt }, leittexte,
       }, { embedImages: embed, blankSignatures: false, signal: ctrl.signal, onProgress: setProgress });
       if (ctrl.signal.aborted) return;
       saveFile(new Blob([bytes as BlobPart], { type: "application/pdf" }), `${exportBaseName(header, range.label).replace(/^Berichtsheft_/, "Pruefungsmappe_")}.pdf`);
@@ -87,7 +94,7 @@ function FolderDialog({ azubiId, onClose }: { azubiId: string; onClose: () => vo
   return (
     <ResponsiveDialog open onOpenChange={(v) => { if (!v) { cancel(); onClose(); } }} title="Prüfungsmappe erstellen" description={header?.azubi_name ?? undefined}>
       <div className="max-h-[70vh] space-y-5 overflow-y-auto pr-1 text-sm">
-        <p className="rounded-lg border-l-4 border-primary bg-accent p-3">Ein PDF mit Deckblatt, Inhaltsverzeichnis, Übersicht, Prüfungen und Noten, Abwesenheiten und allen gewählten Berichten.</p>
+        <p className="rounded-lg border-l-4 border-primary bg-accent p-3">Ein PDF mit Deckblatt, Inhaltsverzeichnis, Übersicht, Prüfungen und Noten, Abwesenheiten, allen gewählten Berichten und Leittexten.</p>
         {progress ? (
           <div className="space-y-3 py-4">
             <p className="font-medium">{n ? `Bericht ${Math.min(progress.done + 1, progress.total)} von ${progress.total} …` : "Mappe wird erstellt …"}</p>
@@ -106,8 +113,10 @@ function FolderDialog({ azubiId, onClose }: { azubiId: string; onClose: () => vo
             <Check id="pm-rep" label={`Berichte (${withReports ? (isFetching && !list ? "…" : n) : "aus"})`} checked={withReports} onChange={setWithReports} />
             {withReports && <div className="space-y-2 pl-6">
               <Check id="pm-appr" label="Nur freigegebene Berichte" checked={onlyApproved} onChange={setOnlyApproved} />
-              <Check id="pm-img" label="Bilder als Anlagen einbetten" checked={embed} onChange={setEmbed} />
             </div>}
+            <Check id="pm-lt" label={`Leittexte (${withLt ? (works ? ltCount : "…") : "aus"})`} checked={withLt} onChange={setWithLt} />
+            {withLt && <div className="space-y-2 pl-6"><Check id="pm-lt-appr" label="Nur freigegebene Leittexte" checked={ltApproved} onChange={setLtApproved} /></div>}
+            {(withReports || withLt) && <Check id="pm-img" label="Bilder und Fotos einbetten" checked={embed} onChange={setEmbed} />}
           </fieldset>
           <Button className="h-11 w-full" disabled={!online || !header || !extras || nothing} onClick={() => void start()}>Mappe erstellen</Button>
           {nothing && <p className="text-xs text-muted-foreground">Wähle mindestens einen Inhalt.</p>}

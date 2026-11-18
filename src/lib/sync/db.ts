@@ -47,6 +47,11 @@ export type LocalExperience = Row<"experience_reports"> & SyncFields & {
 };
 export type LocalExperienceAttachment = Row<"experience_attachments"> & SyncFields;
 export type LocalExperienceComment = Row<"experience_comments"> & SyncFields;
+export type LocalLeittextWork = Row<"leittext_works"> & SyncFields & {
+  _submit_pending?: boolean;
+  _server?: Row<"leittext_works"> | null;
+};
+export type LocalLeittextAttachment = Row<"leittext_attachments"> & SyncFields;
 
 export interface LookupRow { key: string; value: unknown; updated_at: string }
 export interface FileRow { key: string; blob: Blob; kind: "original" | "thumb" | "signature"; synced: boolean; size: number; last_used_at: number }
@@ -62,7 +67,9 @@ export type OutboxOp =
   | "instruction.upsert" | "instruction.delete"
   | "experience.upsert" | "experience.delete" | "experience.submit"
   | "experience_attachment.upload" | "experience_attachment.update" | "experience_attachment.delete"
-  | "experience_comment.insert";
+  | "experience_comment.insert"
+  | "leittext.upsert" | "leittext.delete" | "leittext.submit"
+  | "leittext_attachment.upload" | "leittext_attachment.delete";
 
 export interface OutboxPayload {
   id?: string | undefined;
@@ -115,6 +122,8 @@ export class AzuveraDB extends Dexie {
   experience_reports!: Table<LocalExperience, string>;
   experience_attachments!: Table<LocalExperienceAttachment, string>;
   experience_comments!: Table<LocalExperienceComment, string>;
+  leittext_works!: Table<LocalLeittextWork, string>;
+  leittext_attachments!: Table<LocalLeittextAttachment, string>;
 
   constructor(name: string) {
     super(name);
@@ -151,6 +160,11 @@ export class AzuveraDB extends Dexie {
       experience_reports: "id, azubi_id, written_on, status, _sync",
       experience_attachments: "id, experience_id, azubi_id, _sync",
       experience_comments: "id, experience_id, azubi_id, created_at, _sync",
+    });
+    // Version 5: Leittexte (Bearbeitungen und Fotos/Skizzen).
+    this.version(5).stores({
+      leittext_works: "id, azubi_id, leittext_id, status, _sync",
+      leittext_attachments: "id, work_id, azubi_id, _sync",
     });
   }
 }

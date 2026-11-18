@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { BellRing, Camera, CheckCircle2, FileDown, FileSignature, Mic, PenLine, Users, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Chip, PublicLayout } from "@/features/public/public-layout";
+import { useSignedIn } from "@/features/auth/use-signed-in";
 
 const TITLE = "Azuvera – Digitales Berichtsheft für die Ausbildung";
 const DESC = "Azuvera: Tages- und Wochenberichte digital erfassen, einreichen und vom Ausbilder freigeben lassen.";
@@ -37,6 +38,7 @@ const overview = [
 ];
 
 function Home() {
+  const signedIn = useSignedIn();
   return (
     <PublicLayout>
       <section className="relative overflow-hidden bg-gradient-subtle">
@@ -55,12 +57,16 @@ function Home() {
             einem Ort, jederzeit verfügbar.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            {signedIn ? (
+              <Button asChild size="lg" className="h-12 bg-gradient-primary px-8 shadow-elegant"><Link to="/dashboard">Weiter zur App</Link></Button>
+            ) : <>
             <Button asChild size="lg" className="h-12 bg-gradient-primary px-8 shadow-elegant">
               <Link to="/auth" search={{ mode: "signup" }}>Kostenlos starten</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-12 px-8">
               <Link to="/auth" search={{}}>Anmelden</Link>
             </Button>
+            </>}
           </div>
         </div>
       </section>

@@ -24,6 +24,11 @@ const T: Record<string, [string, string]> = {
   experience_reopened: ["Erfahrungsbericht wieder geöffnet", "Einer deiner Erfahrungsberichte wurde wieder geöffnet."],
   experience_comment: ["Neuer Kommentar", "Zu einem Erfahrungsbericht gibt es einen neuen Kommentar."],
   experience_due: ["Erfahrungsberichte fehlen noch", "In deinem Lehrjahr fehlen noch Erfahrungsberichte. Öffne Azuvera, um sie zu schreiben."],
+  leittext_submitted: ["Neuer Leittext zur Prüfung", "Es wartet ein Leittext auf deine Prüfung."],
+  leittext_approved: ["Leittext freigegeben", "Dein Leittext wurde freigegeben."],
+  leittext_rejected: ["Leittext zurückgegeben", "Dein Leittext wurde zurückgegeben. Lies die Notiz in der App."],
+  leittext_reopened: ["Leittext wieder geöffnet", "Einer deiner Leittexte wurde wieder geöffnet."],
+  leittext_comment: ["Neuer Kommentar", "Zu einem Leittext gibt es einen neuen Kommentar."],
   deputy_assigned: ["Vertretung eingetragen", "Für dich wurde eine Vertretung eingetragen."],
   deputy_ended: ["Vertretung beendet", "Eine Vertretung wurde beendet."],
 };

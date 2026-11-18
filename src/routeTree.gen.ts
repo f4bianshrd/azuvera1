@@ -25,6 +25,7 @@ import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_a
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedErfahrungsberichteRouteImport } from './routes/_authenticated/erfahrungsberichte'
 import { Route as AuthenticatedErinnerungenRouteImport } from './routes/_authenticated/erinnerungen'
+import { Route as AuthenticatedLeittexteRouteImport } from './routes/_authenticated/leittexte'
 import { Route as AuthenticatedNotenRouteImport } from './routes/_authenticated/noten'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
@@ -44,6 +45,7 @@ import { Route as AuthenticatedAdminErfahrungsberichteRouteImport } from './rout
 import { Route as AuthenticatedErfahrungsberichteIndexRouteImport } from './routes/_authenticated/erfahrungsberichte.index'
 import { Route as AuthenticatedErfahrungsberichteIdRouteImport } from './routes/_authenticated/erfahrungsberichte.$id'
 import { Route as AuthenticatedErfahrungsberichteNewRouteImport } from './routes/_authenticated/erfahrungsberichte.new'
+import { Route as AuthenticatedLeittexteIndexRouteImport } from './routes/_authenticated/leittexte.index'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports.index'
 import { Route as AuthenticatedReportsIdRouteImport } from './routes/_authenticated/reports.$id'
 import { Route as AuthenticatedReportsNewRouteImport } from './routes/_authenticated/reports.new'
@@ -56,6 +58,8 @@ import { Route as AuthenticatedTeamAzubiIdRouteImport } from './routes/_authenti
 import { Route as ApiPublicDispatchNotificationsRouteImport } from './routes/api/public/dispatch-notifications'
 import { Route as ApiPublicPushConfigRouteImport } from './routes/api/public/push-config'
 import { Route as ApiPublicRunRemindersRouteImport } from './routes/api/public/run-reminders'
+import { Route as AuthenticatedLeittexteArbeitWorkIdRouteImport } from './routes/_authenticated/leittexte.arbeit.$workId'
+import { Route as AuthenticatedLeittexteVorschauLeittextIdRouteImport } from './routes/_authenticated/leittexte.vorschau.$leittextId'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -145,6 +149,11 @@ const AuthenticatedErinnerungenRoute =
     path: '/erinnerungen',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedLeittexteRoute = AuthenticatedLeittexteRouteImport.update({
+  id: '/leittexte',
+  path: '/leittexte',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedNotenRoute = AuthenticatedNotenRouteImport.update({
   id: '/noten',
   path: '/noten',
@@ -248,6 +257,12 @@ const AuthenticatedErfahrungsberichteNewRoute =
     path: '/new',
     getParentRoute: () => AuthenticatedErfahrungsberichteRoute,
   } as any)
+const AuthenticatedLeittexteIndexRoute =
+  AuthenticatedLeittexteIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedLeittexteRoute,
+  } as any)
 const AuthenticatedReportsIndexRoute =
   AuthenticatedReportsIndexRouteImport.update({
     id: '/',
@@ -315,6 +330,18 @@ const ApiPublicRunRemindersRoute = ApiPublicRunRemindersRouteImport.update({
   path: '/api/public/run-reminders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedLeittexteArbeitWorkIdRoute =
+  AuthenticatedLeittexteArbeitWorkIdRouteImport.update({
+    id: '/arbeit/$workId',
+    path: '/arbeit/$workId',
+    getParentRoute: () => AuthenticatedLeittexteRoute,
+  } as any)
+const AuthenticatedLeittexteVorschauLeittextIdRoute =
+  AuthenticatedLeittexteVorschauLeittextIdRouteImport.update({
+    id: '/vorschau/$leittextId',
+    path: '/vorschau/$leittextId',
+    getParentRoute: () => AuthenticatedLeittexteRoute,
+  } as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
@@ -348,6 +375,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/erfahrungsberichte': typeof AuthenticatedErfahrungsberichteRouteWithChildren
   '/erinnerungen': typeof AuthenticatedErinnerungenRoute
+  '/leittexte': typeof AuthenticatedLeittexteRouteWithChildren
   '/noten': typeof AuthenticatedNotenRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profil': typeof AuthenticatedProfilRoute
@@ -377,8 +405,11 @@ export interface FileRoutesByFullPath {
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
   '/erfahrungsberichte/': typeof AuthenticatedErfahrungsberichteIndexRoute
+  '/leittexte/': typeof AuthenticatedLeittexteIndexRoute
   '/reports/': typeof AuthenticatedReportsIndexRoute
   '/team/': typeof AuthenticatedTeamIndexRoute
+  '/leittexte/arbeit/$workId': typeof AuthenticatedLeittexteArbeitWorkIdRoute
+  '/leittexte/vorschau/$leittextId': typeof AuthenticatedLeittexteVorschauLeittextIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -425,8 +456,11 @@ export interface FileRoutesByTo {
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
   '/erfahrungsberichte': typeof AuthenticatedErfahrungsberichteIndexRoute
+  '/leittexte': typeof AuthenticatedLeittexteIndexRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/team': typeof AuthenticatedTeamIndexRoute
+  '/leittexte/arbeit/$workId': typeof AuthenticatedLeittexteArbeitWorkIdRoute
+  '/leittexte/vorschau/$leittextId': typeof AuthenticatedLeittexteVorschauLeittextIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -449,6 +483,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/erfahrungsberichte': typeof AuthenticatedErfahrungsberichteRouteWithChildren
   '/_authenticated/erinnerungen': typeof AuthenticatedErinnerungenRoute
+  '/_authenticated/leittexte': typeof AuthenticatedLeittexteRouteWithChildren
   '/_authenticated/noten': typeof AuthenticatedNotenRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
@@ -478,8 +513,11 @@ export interface FileRoutesById {
   '/api/public/push-config': typeof ApiPublicPushConfigRoute
   '/api/public/run-reminders': typeof ApiPublicRunRemindersRoute
   '/_authenticated/erfahrungsberichte/': typeof AuthenticatedErfahrungsberichteIndexRoute
+  '/_authenticated/leittexte/': typeof AuthenticatedLeittexteIndexRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/_authenticated/team/': typeof AuthenticatedTeamIndexRoute
+  '/_authenticated/leittexte/arbeit/$workId': typeof AuthenticatedLeittexteArbeitWorkIdRoute
+  '/_authenticated/leittexte/vorschau/$leittextId': typeof AuthenticatedLeittexteVorschauLeittextIdRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -502,6 +540,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/erfahrungsberichte'
     | '/erinnerungen'
+    | '/leittexte'
     | '/noten'
     | '/notifications'
     | '/profil'
@@ -531,8 +570,11 @@ export interface FileRouteTypes {
     | '/api/public/push-config'
     | '/api/public/run-reminders'
     | '/erfahrungsberichte/'
+    | '/leittexte/'
     | '/reports/'
     | '/team/'
+    | '/leittexte/arbeit/$workId'
+    | '/leittexte/vorschau/$leittextId'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -579,8 +621,11 @@ export interface FileRouteTypes {
     | '/api/public/push-config'
     | '/api/public/run-reminders'
     | '/erfahrungsberichte'
+    | '/leittexte'
     | '/reports'
     | '/team'
+    | '/leittexte/arbeit/$workId'
+    | '/leittexte/vorschau/$leittextId'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -602,6 +647,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/erfahrungsberichte'
     | '/_authenticated/erinnerungen'
+    | '/_authenticated/leittexte'
     | '/_authenticated/noten'
     | '/_authenticated/notifications'
     | '/_authenticated/profil'
@@ -631,8 +677,11 @@ export interface FileRouteTypes {
     | '/api/public/push-config'
     | '/api/public/run-reminders'
     | '/_authenticated/erfahrungsberichte/'
+    | '/_authenticated/leittexte/'
     | '/_authenticated/reports/'
     | '/_authenticated/team/'
+    | '/_authenticated/leittexte/arbeit/$workId'
+    | '/_authenticated/leittexte/vorschau/$leittextId'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
@@ -772,6 +821,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErinnerungenRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/leittexte': {
+      id: '/_authenticated/leittexte'
+      path: '/leittexte'
+      fullPath: '/leittexte'
+      preLoaderRoute: typeof AuthenticatedLeittexteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/noten': {
       id: '/_authenticated/noten'
       path: '/noten'
@@ -905,6 +961,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErfahrungsberichteNewRouteImport
       parentRoute: typeof AuthenticatedErfahrungsberichteRoute
     }
+    '/_authenticated/leittexte/': {
+      id: '/_authenticated/leittexte/'
+      path: '/'
+      fullPath: '/leittexte/'
+      preLoaderRoute: typeof AuthenticatedLeittexteIndexRouteImport
+      parentRoute: typeof AuthenticatedLeittexteRoute
+    }
     '/_authenticated/reports/': {
       id: '/_authenticated/reports/'
       path: '/'
@@ -989,6 +1052,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRunRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/leittexte/arbeit/$workId': {
+      id: '/_authenticated/leittexte/arbeit/$workId'
+      path: '/arbeit/$workId'
+      fullPath: '/leittexte/arbeit/$workId'
+      preLoaderRoute: typeof AuthenticatedLeittexteArbeitWorkIdRouteImport
+      parentRoute: typeof AuthenticatedLeittexteRoute
+    }
+    '/_authenticated/leittexte/vorschau/$leittextId': {
+      id: '/_authenticated/leittexte/vorschau/$leittextId'
+      path: '/vorschau/$leittextId'
+      fullPath: '/leittexte/vorschau/$leittextId'
+      preLoaderRoute: typeof AuthenticatedLeittexteVorschauLeittextIdRouteImport
+      parentRoute: typeof AuthenticatedLeittexteRoute
+    }
     '/lovable/email/auth/preview': {
       id: '/lovable/email/auth/preview'
       path: '/lovable/email/auth/preview'
@@ -1034,6 +1111,26 @@ const AuthenticatedErfahrungsberichteRouteWithChildren =
     AuthenticatedErfahrungsberichteRouteChildren,
   )
 
+interface AuthenticatedLeittexteRouteChildren {
+  AuthenticatedLeittexteIndexRoute: typeof AuthenticatedLeittexteIndexRoute
+  AuthenticatedLeittexteArbeitWorkIdRoute: typeof AuthenticatedLeittexteArbeitWorkIdRoute
+  AuthenticatedLeittexteVorschauLeittextIdRoute: typeof AuthenticatedLeittexteVorschauLeittextIdRoute
+}
+
+const AuthenticatedLeittexteRouteChildren: AuthenticatedLeittexteRouteChildren =
+  {
+    AuthenticatedLeittexteIndexRoute: AuthenticatedLeittexteIndexRoute,
+    AuthenticatedLeittexteArbeitWorkIdRoute:
+      AuthenticatedLeittexteArbeitWorkIdRoute,
+    AuthenticatedLeittexteVorschauLeittextIdRoute:
+      AuthenticatedLeittexteVorschauLeittextIdRoute,
+  }
+
+const AuthenticatedLeittexteRouteWithChildren =
+  AuthenticatedLeittexteRoute._addFileChildren(
+    AuthenticatedLeittexteRouteChildren,
+  )
+
 interface AuthenticatedReportsRouteChildren {
   AuthenticatedReportsIdRoute: typeof AuthenticatedReportsIdRoute
   AuthenticatedReportsNewRoute: typeof AuthenticatedReportsNewRoute
@@ -1072,6 +1169,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedErfahrungsberichteRoute: typeof AuthenticatedErfahrungsberichteRouteWithChildren
   AuthenticatedErinnerungenRoute: typeof AuthenticatedErinnerungenRoute
+  AuthenticatedLeittexteRoute: typeof AuthenticatedLeittexteRouteWithChildren
   AuthenticatedNotenRoute: typeof AuthenticatedNotenRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
@@ -1101,6 +1199,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedErfahrungsberichteRoute:
     AuthenticatedErfahrungsberichteRouteWithChildren,
   AuthenticatedErinnerungenRoute: AuthenticatedErinnerungenRoute,
+  AuthenticatedLeittexteRoute: AuthenticatedLeittexteRouteWithChildren,
   AuthenticatedNotenRoute: AuthenticatedNotenRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,

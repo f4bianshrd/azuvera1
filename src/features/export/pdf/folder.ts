@@ -6,6 +6,7 @@ import { check, logo, pause, type BuildOptions } from "./build";
 import { A4, C, CONTENT_BOTTOM, Doc, MARGIN } from "./doc";
 import { STATUS_DE, integrityOk, renderReport, reportPdfTitle, reportPeriodLabel } from "./report";
 import { berlinDateTime, dateDe } from "./text";
+import { renderLeittext, type LeittextPdfInput } from "./leittext";
 
 export interface FolderInput {
   header: ExportHeader;
@@ -16,7 +17,9 @@ export interface FolderInput {
   from: string | null;
   to: string | null;
   compiledBy: string;
-  include: { grades: boolean; absences: boolean; reports: boolean };
+  include: { grades: boolean; absences: boolean; reports: boolean; leittexte?: boolean };
+  /** Leittexte (bereits mit Bildern geladen), erscheinen nach den Berichten. */
+  leittexte?: LeittextPdfInput[];
 }
 
 const META = { beleg: "Prüfungsmappe" };
@@ -53,7 +56,8 @@ export async function buildExamFolder(inp: FolderInput, o: BuildOptions): Promis
 
   // Inhaltsverzeichnis reservieren
   const perPage = 26;
-  const tocPages = inp.include.reports ? Math.max(1, Math.ceil((inp.reports.length + 6) / perPage)) : 1;
+  const ltCount = inp.include.leittexte ? inp.leittexte?.length ?? 0 : 0;
+  const tocPages = Math.max(1, Math.ceil(((inp.include.reports ? inp.reports.length : 0) + ltCount + 8) / perPage));
   const tocStart = doc.pages.length;
   for (let i = 0; i < tocPages; i++) doc.newPage(META);
   const sections: { label: string; page: number }[] = [];
@@ -168,10 +172,23 @@ export async function buildExamFolder(inp: FolderInput, o: BuildOptions): Promis
     }
   }
 
+  // Leittexte
+  const ltStarts: { title: string; status: string; page: number }[] = [];
+  if (inp.include.leittexte && inp.leittexte?.length) {
+    sections.push({ label: `Leittexte (${inp.leittexte.length})`, page: doc.pages.length + 1 });
+    for (const lt of inp.leittexte) {
+      check(o.signal);
+      ltStarts.push({ title: lt.leittext.title, status: STATUS_DE[lt.work?.status ?? ""] ?? "", page: doc.pages.length + 1 });
+      await renderLeittext(doc, lt);
+      await pause();
+    }
+  }
+
   // Inhaltsverzeichnis füllen
   const entries: { label: string; sub?: string; status?: string; page: number; strong: boolean }[] = [];
   for (const s of sections) {
     entries.push({ label: s.label, page: s.page, strong: true });
+    if (s.label.startsWith("Leittexte")) ltStarts.forEach((l) => entries.push({ label: l.title, status: l.status, page: l.page, strong: false }));
     if (s.label.startsWith("Berichte")) bundles.forEach((b, i) => entries.push({ label: reportPeriodLabel(b), sub: reportPdfTitle(b), status: STATUS_DE[b.report.status] ?? "", page: starts[i]!, strong: false }));
   }
   for (let p = 0; p < tocPages; p++) {

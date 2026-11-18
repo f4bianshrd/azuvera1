@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect as routerRedirect, useNavigate } from "@tanstack/react-router";
+import { currentSession, rememberChoice, setRememberChoice } from "@/features/auth/remember";
 import { BookOpen, Building2, ClipboardCheck, Eye, EyeOff, FileSignature, Info, KeyRound, Landmark, School, ShieldCheck, Sparkles, UserCheck, Users, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +14,7 @@ import { ResponsiveDialog } from "@/components/dialogs";
 import { Logo } from "@/components/shared";
 import { cn } from "@/lib/utils";
 import { SocialButtons } from "@/features/auth/social-buttons";
+import { pendingProviderSignIn } from "@/features/auth/api";
 import { ROLE_LABELS, SIGNUP_ROLES, type AppRole } from "@/features/app/session";
 import { clearPendingInvite, readPendingInvite, redeemInvitation, storePendingInvite } from "@/features/access/api";
 import { formatCode, isValidCode, normalizeCode } from "@/features/access/codes";
@@ -34,6 +36,14 @@ export const Route = createFileRoute("/auth")({
     code: typeof search["code"] === "string" && search["code"].length <= 20 ? search["code"] : undefined,
     rolle: typeof search["rolle"] === "string" && (SIGNUP_ROLES as string[]).includes(search["rolle"]) ? (search["rolle"] as AppRole) : undefined,
   }),
+  // Wer schon angemeldet ist, landet direkt in der App (außer beim Einlösen einer Einladung).
+  beforeLoad: async ({ search }) => {
+    if (search.code || search.mode === "signup" || readPendingInvite() || pendingProviderSignIn()) return;
+    const session = await currentSession();
+    if (!session) return;
+    const r = search.redirect;
+    throw routerRedirect({ to: r && r.startsWith("/") && !r.startsWith("//") ? r : "/dashboard" });
+  },
   head: () => ({
     meta: [
       { title: TITLE },
@@ -228,10 +238,12 @@ function LoginForm({ onSuccess }: { onSuccess: () => void }) {
   const [busy, setBusy] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const [remember, setRemember] = useState(rememberChoice);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
+    setRememberChoice(remember);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) {
@@ -281,10 +293,14 @@ function LoginForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
         <PasswordInput id="login-password" value={password} onChange={setPassword} autoComplete="current-password" />
       </div>
+      <div className="flex items-center gap-2">
+        <Checkbox id="login-remember" checked={remember} onCheckedChange={(v) => setRemember(v === true)} />
+        <Label htmlFor="login-remember" className="font-normal">Angemeldet bleiben</Label>
+      </div>
       <Button type="submit" className="h-11 w-full" disabled={busy}>
         Anmelden
       </Button>
-      <SocialButtons target={target} onSuccess={handleSuccess} />
+      <SocialButtons target={target} onSuccess={handleSuccess} onBeforeSignIn={() => setRememberChoice(remember)} />
 
       <ResponsiveDialog
         open={resetOpen}

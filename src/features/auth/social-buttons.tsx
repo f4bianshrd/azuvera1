@@ -11,7 +11,7 @@ function MicrosoftLogo() {
   return <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#F25022" d="M1 1h10v10H1z"/><path fill="#7FBA00" d="M13 1h10v10H13z"/><path fill="#00A4EF" d="M1 13h10v10H1z"/><path fill="#FFB900" d="M13 13h10v10H13z"/></svg>;
 }
 
-export function SocialButtons({ target, onSuccess }: { target: string; onSuccess: () => void }) {
+export function SocialButtons({ target, onSuccess, onBeforeSignIn }: { target: string; onSuccess: () => void; onBeforeSignIn?: () => void }) {
   const [busy, setBusy] = useState<SocialProvider | null>(null);
   useEffect(() => {
     if (!pendingProviderSignIn()) return;
@@ -21,6 +21,7 @@ export function SocialButtons({ target, onSuccess }: { target: string; onSuccess
   const signIn = async (provider: SocialProvider) => {
     setBusy(provider);
     rememberAuthTarget(target);
+    onBeforeSignIn?.();
     const result = await signInWithProvider(provider);
     if (result.error) {
       setBusy(null);

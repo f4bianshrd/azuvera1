@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   UserRound,
   Users,
-  type LucideIcon, RefreshCw, ScrollText, KeyRound, NotebookPen, Scale } from "lucide-react";
+  type LucideIcon, BookOpenCheck, RefreshCw, ScrollText, KeyRound, NotebookPen, Scale } from "lucide-react";
 import type { AppRole } from "./session";
 import { REVIEWER_ROLES, VIEWER_ROLES } from "./session";
 
@@ -42,6 +42,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", icon: Home, section: "arbeit", to: "/dashboard" },
   { label: "Berichte", icon: FileText, section: "arbeit", to: "/reports" },
   { label: "Erfahrungsberichte", icon: NotebookPen, section: "arbeit", to: "/erfahrungsberichte" },
+  { label: "Leittexte", icon: BookOpenCheck, section: "arbeit", to: "/leittexte" },
   { label: "Ausbilderportal", icon: ClipboardCheck, section: "arbeit", to: "/ausbilder", roles: TEAM_ROLES },
   { label: "Meine Azubis", icon: Users, section: "arbeit", to: "/team", roles: TEAM_ROLES },
   { label: "Ausbildungsplan", icon: CalendarDays, section: "arbeit", to: "/ausbildungsplan" },

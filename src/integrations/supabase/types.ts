@@ -1476,6 +1476,254 @@ export type Database = {
         }
         Relationships: []
       }
+      leittext_attachments: {
+        Row: {
+          azubi_id: string
+          caption: string | null
+          created_at: string
+          field_key: string
+          file_name: string
+          height: number | null
+          id: string
+          mime_type: string
+          sha256: string | null
+          size_bytes: number
+          sort_order: number
+          storage_path: string
+          thumb_path: string | null
+          width: number | null
+          work_id: string
+        }
+        Insert: {
+          azubi_id: string
+          caption?: string | null
+          created_at?: string
+          field_key: string
+          file_name: string
+          height?: number | null
+          id?: string
+          mime_type: string
+          sha256?: string | null
+          size_bytes: number
+          sort_order?: number
+          storage_path: string
+          thumb_path?: string | null
+          width?: number | null
+          work_id: string
+        }
+        Update: {
+          azubi_id?: string
+          caption?: string | null
+          created_at?: string
+          field_key?: string
+          file_name?: string
+          height?: number | null
+          id?: string
+          mime_type?: string
+          sha256?: string | null
+          size_bytes?: number
+          sort_order?: number
+          storage_path?: string
+          thumb_path?: string | null
+          width?: number | null
+          work_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leittext_attachments_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leittext_attachments_work_id_fkey"
+            columns: ["work_id"]
+            isOneToOne: false
+            referencedRelation: "leittext_works"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leittext_comments: {
+        Row: {
+          author_id: string
+          azubi_id: string
+          body: string
+          created_at: string
+          id: string
+          kind: string
+          task_key: string
+          work_id: string
+        }
+        Insert: {
+          author_id?: string
+          azubi_id: string
+          body: string
+          created_at?: string
+          id?: string
+          kind?: string
+          task_key?: string
+          work_id: string
+        }
+        Update: {
+          author_id?: string
+          azubi_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          task_key?: string
+          work_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leittext_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leittext_comments_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leittext_comments_work_id_fkey"
+            columns: ["work_id"]
+            isOneToOne: false
+            referencedRelation: "leittext_works"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leittext_works: {
+        Row: {
+          answers: Json
+          azubi_id: string
+          content_hash: string | null
+          created_at: string
+          header: Json
+          id: string
+          leittext_id: string
+          review_note: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: Database["public"]["Enums"]["report_status"]
+          submitted_at: string | null
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          answers?: Json
+          azubi_id: string
+          content_hash?: string | null
+          created_at?: string
+          header?: Json
+          id?: string
+          leittext_id: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          submitted_at?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          answers?: Json
+          azubi_id?: string
+          content_hash?: string | null
+          created_at?: string
+          header?: Json
+          id?: string
+          leittext_id?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          submitted_at?: string | null
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leittext_works_azubi_id_fkey"
+            columns: ["azubi_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leittext_works_leittext_id_fkey"
+            columns: ["leittext_id"]
+            isOneToOne: false
+            referencedRelation: "leittexts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leittext_works_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leittexts: {
+        Row: {
+          code: string
+          content: Json
+          created_at: string
+          id: string
+          issuer: string
+          order_no: string | null
+          profession_codes: string[]
+          published: boolean
+          sort_order: number
+          source_url: string
+          stand: string | null
+          title: string
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          content?: Json
+          created_at?: string
+          id?: string
+          issuer?: string
+          order_no?: string | null
+          profession_codes?: string[]
+          published?: boolean
+          sort_order?: number
+          source_url: string
+          stand?: string | null
+          title: string
+          topic?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          content?: Json
+          created_at?: string
+          id?: string
+          issuer?: string
+          order_no?: string | null
+          profession_codes?: string[]
+          published?: boolean
+          sort_order?: number
+          source_url?: string
+          stand?: string | null
+          title?: string
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       link_codes: {
         Row: {
           access: string
@@ -2680,6 +2928,7 @@ export type Database = {
         Args: { p_code: string; p_plan: string; p_title: string }
         Returns: string
       }
+      admin_import_leittexte: { Args: { p_items: Json }; Returns: number }
       admin_list_team: {
         Args: never
         Returns: {
@@ -2740,6 +2989,10 @@ export type Database = {
           p_method: string
           p_note?: string
         }
+        Returns: undefined
+      }
+      approve_leittext: {
+        Args: { p_expected_version: number; p_id: string; p_note?: string }
         Returns: undefined
       }
       approve_report: {
@@ -3064,6 +3317,20 @@ export type Database = {
       is_team: { Args: { _uid: string }; Returns: boolean }
       is_team_owner: { Args: { _uid: string }; Returns: boolean }
       kw_list: { Args: { weeks: string[] }; Returns: string }
+      leittext_hash: { Args: { p_id: string }; Returns: string }
+      leittext_review_queue: {
+        Args: never
+        Returns: {
+          azubi_id: string
+          azubi_name: string
+          id: string
+          leittext_id: string
+          submitted_at: string
+          title: string
+          version: number
+        }[]
+      }
+      leittext_title: { Args: { p_id: string }; Returns: string }
       list_company_choices: {
         Args: never
         Returns: {
@@ -3179,6 +3446,10 @@ export type Database = {
         Args: { p_expected_version: number; p_id: string; p_note: string }
         Returns: undefined
       }
+      reject_leittext: {
+        Args: { p_expected_version: number; p_id: string; p_note: string }
+        Returns: undefined
+      }
       reject_report: {
         Args: { _expected_version: number; _note: string; _report_id: string }
         Returns: undefined
@@ -3194,6 +3465,10 @@ export type Database = {
       }
       reopen_instruction: {
         Args: { p_id: string; p_note: string }
+        Returns: undefined
+      }
+      reopen_leittext: {
+        Args: { p_id: string; p_reason: string }
         Returns: undefined
       }
       reopen_report: {
@@ -3307,6 +3582,10 @@ export type Database = {
         Args: { p_expected_version: number; p_id: string }
         Returns: undefined
       }
+      submit_leittext: {
+        Args: { p_expected_version: number; p_id: string }
+        Returns: undefined
+      }
       submit_report: {
         Args: {
           _client_signed_at?: string
@@ -3317,6 +3596,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      sync_my_email: { Args: never; Returns: string }
       team_experience_overview: {
         Args: { p_azubi?: string }
         Returns: {

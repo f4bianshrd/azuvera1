@@ -11,6 +11,7 @@ import { getSyncStatus, setSyncStatus } from "./status";
 import { PlanSyncError, executePlanOp, pullPlanData } from "./plan-sync";
 import { executeInstructionOp, pullInstructionData } from "./instruction-sync";
 import { executeExperienceOp, pullExperienceData } from "./experience-sync";
+import { executeLeittextOp, pullLeittextData } from "./leittext-sync";
 
 export const PREF_WIFI_ONLY = "azuvera-sync-wifi-only";
 export const PREF_PHOTOS_WIFI = "azuvera-sync-photos-wifi";
@@ -19,7 +20,7 @@ const OVERLAP_MS = 5 * 60_000;
 const RECONCILE_MS = 10 * 60_000;
 const FILE_CACHE_LIMIT = 50 * 1024 * 1024;
 const LOG_LIMIT = 200;
-const LOCAL_QUERY_KEYS = ["reports", "absences", "absent-days", "grades", "review", "my-profile", "plan", "report-links", "instructions", "experience"];
+const LOCAL_QUERY_KEYS = ["reports", "absences", "absent-days", "grades", "review", "my-profile", "plan", "report-links", "instructions", "experience", "leittexte"];
 
 class SyncError extends Error {
   constructor(public kind: ErrorKind, message: string) { super(message); }
@@ -247,7 +248,7 @@ async function runEntry(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<
 
 function tableFor(record: string) {
   const [kind] = record.split(":");
-  return ({ report: "reports", attachment: "report_attachments", absence: "absences", grade: "school_grades", comment: "report_comments", instruction: "instruction_records", experience: "experience_reports", exp_attachment: "experience_attachments", exp_comment: "experience_comments" } as const)[kind as "report"];
+  return ({ report: "reports", attachment: "report_attachments", absence: "absences", grade: "school_grades", comment: "report_comments", instruction: "instruction_records", experience: "experience_reports", exp_attachment: "experience_attachments", exp_comment: "experience_comments", leittext: "leittext_works", lt_attachment: "leittext_attachments" } as const)[kind as "report"];
 }
 
 async function setRecordSync(db: AzuveraDB, record: string, state: "failed" | "conflict" | "pending", error?: string): Promise<void> {
@@ -279,6 +280,7 @@ async function execute(db: AzuveraDB, userId: string, e: OutboxEntry): Promise<v
   if (await executePlanOp(db, userId, e)) return;
   if (await executeInstructionOp(db, userId, e)) return;
   if (await executeExperienceOp(db, userId, e)) return;
+  if (await executeLeittextOp(db, userId, e)) return;
   switch (e.op) {
     case "report.upsert": {
       const row = await db.reports.get(id);
@@ -486,6 +488,7 @@ async function pull(db: AzuveraDB, userId: string): Promise<void> {
   await pullPlanData(db, userId);
   await pullInstructionData(db, userId);
   await pullExperienceData(db, userId);
+  await pullLeittextData(db, userId);
 }
 
 /** ID-Listen abgleichen: lokal entfernen, was auf dem Server nicht mehr existiert (sofern nichts wartet). */

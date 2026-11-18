@@ -4,8 +4,10 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shared";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useSignedIn } from "@/features/auth/use-signed-in";
 
 export function PublicLayout({ children }: { children: ReactNode }) {
+  const signedIn = useSignedIn();
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
       <header className="border-b bg-background/80 backdrop-blur">
@@ -14,12 +16,16 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             <Logo />
           </Link>
           <nav className="flex items-center gap-1 sm:gap-2">
+            {signedIn ? (
+              <Button asChild className="h-11"><Link to="/dashboard">Zur App</Link></Button>
+            ) : <>
             <Button asChild variant="ghost" className="h-11">
               <Link to="/auth" search={{}}>Anmelden</Link>
             </Button>
             <Button asChild className="h-11">
               <Link to="/auth" search={{ mode: "signup" }}>Registrieren</Link>
             </Button>
+            </>}
           </nav>
         </div>
       </header>

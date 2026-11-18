@@ -168,3 +168,43 @@ export async function deleteAccount(userId: string, confirmEmail: string): Promi
   if (!res.ok) throw new Error(typeof body["error"] === "string" ? body["error"] : "Das hat nicht geklappt.");
   return body as unknown as DeleteAccountResult;
 }
+
+// ---------- E-Mail und Anmeldemethoden ----------
+export type LoginMethod = "email" | "google" | "apple" | "microsoft";
+
+export interface LoginMethods { email: string; pendingEmail: string | null; methods: LoginMethod[]; hasPassword: boolean }
+
+export async function loadLoginMethods(): Promise<LoginMethods> {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) throw error ?? new Error("Nicht angemeldet.");
+  const providers = new Set<string>((user.identities ?? []).map((i) => i.provider));
+  for (const p of (user.app_metadata?.["providers"] as string[] | undefined) ?? []) providers.add(p);
+  const methods = (["email", "google", "apple", "microsoft"] as const).filter((m) => providers.has(m === "microsoft" ? "azure" : m) || providers.has(m));
+  return { email: user.email ?? "", pendingEmail: user.new_email ?? null, methods, hasPassword: providers.has("email") };
+}
+
+/** Neue Adresse anfordern; die Änderung gilt erst nach Klick auf den Bestätigungslink. */
+export async function requestEmailChange(email: string): Promise<void> {
+  const { error } = await supabase.auth.updateUser({ email: email.trim() }, { emailRedirectTo: `${window.location.origin}/profil` });
+  if (error) throw error;
+}
+
+/** Bestätigte Konto-Adresse ins Profil übernehmen. */
+export async function syncMyEmail(): Promise<string | null> {
+  const { data, error } = await supabase.rpc("sync_my_email");
+  if (error) throw error;
+  return data ?? null;
+}
+
+/** Passwort festlegen, damit man sich zusätzlich mit E-Mail und Passwort anmelden kann. */
+export async function setFirstPassword(password: string): Promise<void> {
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) throw error;
+}
+
+const LINK_KEY = "azuvera-link-user";
+export function rememberLinkingUser(userId: string): void { try { sessionStorage.setItem(LINK_KEY, userId); } catch { /* optional */ } }
+/** Nach der Rückkehr vom Anbieter: gleiches Konto (verknüpft) oder anderes Konto? */
+export function takeLinkingUser(): string | null {
+  try { const v = sessionStorage.getItem(LINK_KEY); sessionStorage.removeItem(LINK_KEY); return v; } catch { return null; }
+}

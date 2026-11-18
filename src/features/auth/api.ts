@@ -5,11 +5,11 @@ export type SocialProvider = "google" | "apple" | "microsoft";
 const PENDING_KEY = "azuvera-oauth-pending";
 const TARGET_KEY = "azuvera-auth-target";
 
-export async function signInWithProvider(provider: SocialProvider): Promise<{ error?: Error | null | undefined; redirected?: boolean | undefined }> {
+export async function signInWithProvider(provider: SocialProvider, returnTo?: string): Promise<{ error?: Error | null | undefined; redirected?: boolean | undefined }> {
   try {
     sessionStorage.setItem(PENDING_KEY, "1");
   } catch { /* optionale Zielspeicherung */ }
-  return lovable.auth.signInWithOAuth(provider, { redirect_uri: `${window.location.origin}/auth` });
+  return lovable.auth.signInWithOAuth(provider, { redirect_uri: `${window.location.origin}/auth${returnTo ? `?redirect=${encodeURIComponent(returnTo)}` : ""}` });
 }
 
 export function rememberAuthTarget(target: string): void {
