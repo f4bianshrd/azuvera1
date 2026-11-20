@@ -23,7 +23,7 @@ concurrency:
 jobs:
   vorbereitung:
     name: Vorbereitung
-    runs-on: macos-14
+    runs-on: macos-15
     outputs:
       version: ${{ steps.meta.outputs.version }}
       build: ${{ steps.meta.outputs.build }}
@@ -67,7 +67,7 @@ jobs:
     name: iPhone und iPad (.ipa)
     needs: vorbereitung
     if: needs.vorbereitung.outputs.ios == 'true'
-    runs-on: macos-14
+    runs-on: macos-15
     env:
       VERSION: ${{ needs.vorbereitung.outputs.version }}
       BUILD: ${{ needs.vorbereitung.outputs.build }}
@@ -164,7 +164,7 @@ jobs:
     name: Mac (${{ needs.vorbereitung.outputs.mac_label }}, .dmg)
     needs: vorbereitung
     if: needs.vorbereitung.outputs.mac == 'true'
-    runs-on: macos-14
+    runs-on: macos-15
     env:
       VERSION: ${{ needs.vorbereitung.outputs.version }}
       BUILD: ${{ needs.vorbereitung.outputs.build }}
