@@ -1,5 +1,16 @@
 # Azuvera – Roadmap
 
+# Rolle IT/Technik (22.11.2026)
+- [ ] Rolle it_technik, Support-IDs, Tickets mit 16-stelligem Code, Identitätsprüfung, Support-Sitzungen, Protokoll
+- [ ] Seiten /support (IT/Technik) und /hilfe (alle), Support-Konten in der Verwaltung, Datenschutz-Absatz
+- [ ] fabian.schroder@icloud.com wird IT/Technik (verliert Ausbildungsleitung + Verwaltung, so gewünscht; vorerst kein weiterer Admin)
+
+# Apple-App (22.11.2026)
+- [ ] Mac-Bau repariert: build:native findet dist/client/_shell.html nicht (GitHub-Job 136020913924)
+- [ ] KI-Formulierhilfe in der Apple-App ohne eigenen Web-Server
+- [ ] Konto-Löschen in der Apple-App ohne eigenen Web-Server
+- [ ] iOS-App (iPhone/iPad) als herunterladbare Datei bauen
+
 # Neue Wünsche (18.11.2026)
 - [x] Prüfungsmappe enthält alles: Berichte, Erfahrungsberichte, Leittexte, Ausbildungszeugnis, Antrag Prüfungszulassung
 - [x] Ausbildungszeugnis: Azubi beantragt, Betrieb füllt in der App aus

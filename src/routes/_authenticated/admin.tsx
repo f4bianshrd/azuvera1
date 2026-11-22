@@ -15,6 +15,7 @@ import { ROLE_LABELS, useMyProfile, type AppRole, type MyProfile } from "@/featu
 import { DeletionRequestsCard } from "@/features/account/deletion-requests-card";
 import { DeleteAccountDialog, type DeletableUser } from "@/features/account/delete-account-dialog";
 import { isClosedAccount } from "@/features/account/rules";
+import { SupportAccountsCard } from "@/features/support/components/support-accounts-card";
 import {
   adminAddTeamMember, adminListTeam, adminListUsers, adminRemoveTeamMember, adminSetUserRole, adminStats,
   type AdminUser, type TeamMember,
@@ -23,7 +24,7 @@ import { OFFLINE_ACTION_HINT, useOnline } from "@/lib/sync/status";
 
 const TITLE = "Verwaltung – Azuvera";
 const DESC = "Konten, Rollen und das Azuvera-Team verwalten.";
-const ROLE_ORDER: AppRole[] = ["azubi", "ausbilder", "betriebsleiter", "ausbildungsberater", "pruefer", "lehrer", "ausbildungsleitung"];
+const ROLE_ORDER: AppRole[] = ["azubi", "ausbilder", "betriebsleiter", "ausbildungsberater", "pruefer", "lehrer", "ausbildungsleitung", "it_technik"];
 const CHANGEABLE: AppRole[] = ["ausbilder", "betriebsleiter", "ausbildungsberater", "pruefer", "lehrer"];
 const dateDe = (iso: string) => new Date(iso).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" });
 
@@ -63,6 +64,7 @@ function AdminPage() {
             <>
               <UsersCard users={users.data} team={team.data} me={me} />
               <TeamCard team={team.data} me={me} />
+              <SupportAccountsCard me={me} />
               <div id="loeschantraege" className="scroll-mt-20"><DeletionRequestsCard users={users.data} /></div>
             </>
           )}
@@ -135,7 +137,7 @@ function UsersCard({ users, team, me }: { users: AdminUser[]; team: TeamMember[]
   const toggle = (k: SortKey) => { if (k === sortKey) setAsc((v) => !v); else { setSortKey(k); setAsc(true); } };
 
   const canDelete = (u: AdminUser) => u.id !== me.id && u.id !== ownerId && !u.is_team && !isClosedAccount(u.email);
-  const roleCell = (u: AdminUser) => (u.role === "azubi" || u.id === me.id || (u.role === "ausbildungsleitung" && me.role !== "ausbildungsleitung"))
+  const roleCell = (u: AdminUser) => (u.role === "azubi" || u.role === "it_technik" || u.id === me.id || (u.role === "ausbildungsleitung" && me.role !== "ausbildungsleitung"))
     ? <Badge variant="secondary">{ROLE_LABELS[u.role]}</Badge>
     : (
       <Select value={u.role} onValueChange={(v) => setPending({ user: u, role: v as AppRole })}>

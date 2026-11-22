@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BarChart3, Bell, Clock, Cookie, Database, FileText, History, KeyRound, Mail, Mic, Paperclip, Scale, Server, ShieldCheck, Sparkles, UserCheck, WifiOff, type LucideIcon } from "lucide-react";
+import { BarChart3, Bell, Clock, Cookie, Database, FileText, History, KeyRound, Mail, Mic, Paperclip, Scale, Server, ShieldCheck, Sparkles, UserCheck, WifiOff, LifeBuoy, type LucideIcon } from "lucide-react";
 import { PRIVACY_TEXT_DEFAULTS, type PrivacyTexts } from "@/lib/legal";
 import { linkCls } from "./public-layout";
 
@@ -118,6 +118,14 @@ export function privacySections(texts: PrivacyTexts = PRIVACY_TEXT_DEFAULTS): Pr
         <p>Auszubildende entscheiden selbst, wer ihr Berichtsheft einsehen darf. Dafür erzeugen sie einen Einladungs-Code für eine Ausbilderin oder einen Ausbilder, eine Betriebsleiterin oder einen Betriebsleiter, eine Ausbildungsberaterin oder einen Ausbildungsberater, eine Prüferin oder einen Prüfer oder eine Lehrerin oder einen Lehrer. Wer den Code einlöst, sieht die eingereichten und freigegebenen Berichte, Erfahrungsberichte und Leittexte, eingereichte Prüfungsanträge und ausgestellte Ausbildungszeugnisse mit Anhängen, Kommentaren und Unterschriften, die Abwesenheiten, die Schulnoten, den Ausbildungsplan und die Profilangaben der Azubi-Person; Entwürfe sieht ausschließlich die Azubi-Person; Zeugnisentwürfe sehen nur Personen mit Prüfrecht, bis das Zeugnis ausgestellt ist. Der Zugriff lässt sich jederzeit beenden und endet bei Prüferinnen und Prüfern automatisch (Art. 6 Abs. 1 lit. a DSGVO).</p>
         <p>Ausbilderinnen und Ausbilder, Betriebsleiterinnen und Betriebsleiter sowie Ausbildungsberaterinnen und Ausbildungsberater dürfen Berichte prüfen, kommentieren und freigeben; Prüferinnen und Prüfer sowie Lehrerinnen und Lehrer lesen nur. Die Ausbildungsleitung betreut die Ausbildung und kann dafür alle eingereichten Berichtshefte einsehen und prüfen.</p>
         <p>Das Azuvera-Team verwaltet Konten, Berufe, Pläne und Einstellungen. Team-Mitglieder ohne die Rolle Ausbildungsleitung haben keinen Zugriff auf Berichte, Erfahrungsberichte, Kommentare, Unterschriften oder Profilangaben der Auszubildenden. Azuvera prüft nicht, ob die Angaben einer eingeladenen Person zu Rolle und Organisation zutreffen; die Azubi-Person entscheidet, wem sie ihren Code gibt.</p>
+      </>),
+    },
+    {
+      id: "support", title: "Support-Zugriff (IT/Technik)", icon: LifeBuoy,
+      content: (<>
+        <p>Wenn Sie Hilfe brauchen, kann der Azuvera-Support (Rolle IT/Technik) auf Ihr Konto zugreifen – aber nur, nachdem Ihre Identität bestätigt wurde. Ohne Bestätigung sieht der Support lediglich eine pseudonyme Support-ID, Ihre Rolle, das Registrierungsdatum und den Kontostatus.</p>
+        <p>Die Bestätigung erfolgt entweder über ein Support-Ticket, das Sie selbst unter „Hilfe & Support“ erstellen (mit einem 16-stelligen Einmal-Code, den Sie dem Support nennen), oder bei Anruf bzw. E-Mail durch Abgleich von Vorname, Nachname, Geburtsdatum, E-Mail-Adresse und – falls hinterlegt – Telefonnummer. Die eingegebenen Prüfangaben werden nicht gespeichert; festgehalten wird nur, ob die Prüfung erfolgreich war. Mit einem Ticket darf der Support Ihre Daten lesen und nur das ändern, was Sie ausdrücklich freigegeben haben; nach einer Identitätsprüfung ist der Zugriff auf 30 Minuten begrenzt. Passwörter, Rollen, Kontolöschung sowie Lizenz- und Zahlungsdaten sind für den Support immer gesperrt; die Mitarbeitenden nutzen eine Zwei-Faktor-Anmeldung.</p>
+        <p>Jeder Zugriff (Ansehen, Ändern, Löschen, Beginn und Ende einer Sitzung) wird unveränderlich protokolliert, mit Zeitpunkt, handelnder Person und den Namen der geänderten Felder, aber ohne Inhalte. Sie sehen dieses Protokoll unter „Hilfe & Support“, werden über jede Sitzung und jeden fehlgeschlagenen Prüfversuch benachrichtigt und können einen Ticket-Zugriff jederzeit sofort beenden. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Erfüllung Ihrer Support-Anfrage) sowie Art. 6 Abs. 1 lit. f DSGVO (Schutz vor unberechtigtem Zugriff und Nachweis).</p>
       </>),
     },
     {

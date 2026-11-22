@@ -18,6 +18,7 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   pruefer: "Prüfer:in",
   lehrer: "Lehrer:in",
   ausbildungsleitung: "Ausbildungsleitung",
+  it_technik: "IT/Technik",
 };
 
 /** Rollen, die bei der Registrierung wählbar sind (Reihenfolge der Auswahlkarten). */

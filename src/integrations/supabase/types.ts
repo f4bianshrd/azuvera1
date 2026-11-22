@@ -2785,6 +2785,234 @@ export type Database = {
           },
         ]
       }
+      support_agents: {
+        Row: {
+          added_at: string
+          added_by: string | null
+          previous_role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          added_by?: string | null
+          previous_role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          added_by?: string | null
+          previous_role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_agents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_audit_log: {
+        Row: {
+          agent_id: string
+          aktion: string
+          datensatz_id: string | null
+          erstellt_am: string
+          geaenderte_felder: string[]
+          id: number
+          session_id: string | null
+          tabelle: string | null
+          ziel_user_id: string
+        }
+        Insert: {
+          agent_id: string
+          aktion: string
+          datensatz_id?: string | null
+          erstellt_am?: string
+          geaenderte_felder?: string[]
+          id?: never
+          session_id?: string | null
+          tabelle?: string | null
+          ziel_user_id: string
+        }
+        Update: {
+          agent_id?: string
+          aktion?: string
+          datensatz_id?: string | null
+          erstellt_am?: string
+          geaenderte_felder?: string[]
+          id?: never
+          session_id?: string | null
+          tabelle?: string | null
+          ziel_user_id?: string
+        }
+        Relationships: []
+      }
+      support_identity_attempts: {
+        Row: {
+          agent_id: string
+          art: string
+          erfolg: boolean
+          erstellt_am: string
+          id: string
+          ziel_user_id: string | null
+        }
+        Insert: {
+          agent_id: string
+          art?: string
+          erfolg?: boolean
+          erstellt_am?: string
+          id?: string
+          ziel_user_id?: string | null
+        }
+        Update: {
+          agent_id?: string
+          art?: string
+          erfolg?: boolean
+          erstellt_am?: string
+          id?: string
+          ziel_user_id?: string | null
+        }
+        Relationships: []
+      }
+      support_refs: {
+        Row: {
+          created_at: string
+          ref: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ref: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ref?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_refs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_sessions: {
+        Row: {
+          agent_id: string
+          beendet_am: string | null
+          gestartet_am: string
+          grund: string
+          id: string
+          laeuft_ab_am: string
+          methode: string
+          schreiben_erlaubt: boolean
+          scopes: string[]
+          ticket_id: string | null
+          ziel_user_id: string
+        }
+        Insert: {
+          agent_id: string
+          beendet_am?: string | null
+          gestartet_am?: string
+          grund?: string
+          id?: string
+          laeuft_ab_am: string
+          methode: string
+          schreiben_erlaubt?: boolean
+          scopes?: string[]
+          ticket_id?: string | null
+          ziel_user_id: string
+        }
+        Update: {
+          agent_id?: string
+          beendet_am?: string | null
+          gestartet_am?: string
+          grund?: string
+          id?: string
+          laeuft_ab_am?: string
+          methode?: string
+          schreiben_erlaubt?: boolean
+          scopes?: string[]
+          ticket_id?: string | null
+          ziel_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_sessions_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          beschreibung: string
+          betreff: string
+          code_hash: string
+          eingeloest_am: string | null
+          eingeloest_von: string | null
+          erstellt_am: string
+          fehlversuche: number
+          gueltig_bis: string
+          id: string
+          scopes: string[]
+          status: string
+          user_id: string
+        }
+        Insert: {
+          beschreibung?: string
+          betreff: string
+          code_hash: string
+          eingeloest_am?: string | null
+          eingeloest_von?: string | null
+          erstellt_am?: string
+          fehlversuche?: number
+          gueltig_bis: string
+          id?: string
+          scopes?: string[]
+          status?: string
+          user_id: string
+        }
+        Update: {
+          beschreibung?: string
+          betreff?: string
+          code_hash?: string
+          eingeloest_am?: string | null
+          eingeloest_von?: string | null
+          erstellt_am?: string
+          fehlversuche?: number
+          gueltig_bis?: string
+          id?: string
+          scopes?: string[]
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_eingeloest_von_fkey"
+            columns: ["eingeloest_von"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_members: {
         Row: {
           added_by: string | null
@@ -3031,6 +3259,7 @@ export type Database = {
         Args: { _azubi: string; _reviewer: string }
         Returns: string
       }
+      admin_add_support_agent: { Args: { p_email: string }; Returns: undefined }
       admin_add_team_member: { Args: { p_email: string }; Returns: undefined }
       admin_anonymize_user: {
         Args: { p_actor?: string; p_user: string }
@@ -3049,6 +3278,17 @@ export type Database = {
         Returns: string
       }
       admin_import_leittexte: { Args: { p_items: Json }; Returns: number }
+      admin_list_support_agents: {
+        Args: never
+        Returns: {
+          added_at: string
+          email: string
+          full_name: string
+          has_mfa: boolean
+          previous_role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }[]
+      }
       admin_list_team: {
         Args: never
         Returns: {
@@ -3077,6 +3317,10 @@ export type Database = {
           item_key: string
           used: boolean
         }[]
+      }
+      admin_remove_support_agent: {
+        Args: { p_user: string }
+        Returns: undefined
       }
       admin_remove_team_member: { Args: { p_user: string }; Returns: undefined }
       admin_save_instruction_catalog: {
@@ -3440,6 +3684,7 @@ export type Database = {
       }
       is_leitung: { Args: { _user_id: string }; Returns: boolean }
       is_reviewer_role: { Args: { _user_id: string }; Returns: boolean }
+      is_support_agent: { Args: { _uid: string }; Returns: boolean }
       is_team: { Args: { _uid: string }; Returns: boolean }
       is_team_owner: { Args: { _uid: string }; Returns: boolean }
       issue_training_certificate: {
@@ -3757,6 +4002,190 @@ export type Database = {
         }
         Returns: undefined
       }
+      support_active_session: { Args: never; Returns: Json }
+      support_admin_ok: { Args: never; Returns: boolean }
+      support_agent_ok: { Args: never; Returns: boolean }
+      support_all_scopes: { Args: never; Returns: string[] }
+      support_any_session: { Args: never; Returns: boolean }
+      support_assign_ref: { Args: { _uid: string }; Returns: string }
+      support_begin_action: {
+        Args: { p_action: string; p_new_email?: string; p_ziel: string }
+        Returns: Json
+      }
+      support_can_read: { Args: { ziel: string }; Returns: boolean }
+      support_can_write: {
+        Args: { scope: string; ziel: string }
+        Returns: boolean
+      }
+      support_code_locked: { Args: { _agent: string }; Returns: boolean }
+      support_create_ticket: {
+        Args: {
+          p_beschreibung: string
+          p_betreff: string
+          p_code_hash: string
+          p_hours: number
+          p_scopes: string[]
+        }
+        Returns: string
+      }
+      support_delete_attachment: {
+        Args: { p_id: string; p_kind: string; p_ziel: string }
+        Returns: Json
+      }
+      support_delete_report: {
+        Args: { p_report: string; p_ziel: string }
+        Returns: Json
+      }
+      support_directory: {
+        Args: never
+        Returns: {
+          ref: string
+          registriert_am: string
+          role: Database["public"]["Enums"]["app_role"]
+          sitzung_aktiv: boolean
+          status: string
+        }[]
+      }
+      support_end_other_sessions: {
+        Args: { _agent: string }
+        Returns: undefined
+      }
+      support_end_session: { Args: { p_session: string }; Returns: undefined }
+      support_log: {
+        Args: {
+          _aktion: string
+          _datensatz: string
+          _felder?: string[]
+          _session: string
+          _tabelle: string
+          _ziel: string
+        }
+        Returns: undefined
+      }
+      support_mfa_ok: { Args: never; Returns: boolean }
+      support_my_access_log: {
+        Args: never
+        Returns: {
+          agent_name: string
+          aktion: string
+          erstellt_am: string
+          geaenderte_felder: string[]
+          id: number
+          methode: string
+          tabelle: string
+        }[]
+      }
+      support_my_ref: { Args: never; Returns: string }
+      support_my_sessions: {
+        Args: never
+        Returns: {
+          beendet_am: string
+          gestartet_am: string
+          grund: string
+          id: string
+          laeuft_ab_am: string
+          methode: string
+          ref: string
+          scopes: string[]
+        }[]
+      }
+      support_my_status: { Args: never; Returns: Json }
+      support_my_tickets: {
+        Args: never
+        Returns: {
+          beschreibung: string
+          betreff: string
+          eingeloest_am: string
+          erstellt_am: string
+          gueltig_bis: string
+          id: string
+          scopes: string[]
+          sitzung_aktiv: boolean
+          status: string
+        }[]
+      }
+      support_norm_phone: { Args: { _t: string }; Returns: string }
+      support_norm_text: { Args: { _t: string }; Returns: string }
+      support_notify: {
+        Args: { _body: string; _title: string; _type: string; _uid: string }
+        Returns: undefined
+      }
+      support_path_owner: { Args: { _name: string }; Returns: string }
+      support_person_view: { Args: { p_ziel: string }; Returns: Json }
+      support_random_code: { Args: { _len: number }; Returns: string }
+      support_redeem_ticket: { Args: { p_code: string }; Returns: Json }
+      support_require: {
+        Args: { _scope: string; _ziel: string }
+        Returns: {
+          agent_id: string
+          beendet_am: string | null
+          gestartet_am: string
+          grund: string
+          id: string
+          laeuft_ab_am: string
+          methode: string
+          schreiben_erlaubt: boolean
+          scopes: string[]
+          ticket_id: string | null
+          ziel_user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "support_sessions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      support_revoke_access: {
+        Args: { p_grant: string; p_ziel: string }
+        Returns: undefined
+      }
+      support_revoke_ticket: { Args: { p_ticket: string }; Returns: undefined }
+      support_session_for: {
+        Args: { _ziel: string }
+        Returns: {
+          agent_id: string
+          beendet_am: string | null
+          gestartet_am: string
+          grund: string
+          id: string
+          laeuft_ab_am: string
+          methode: string
+          schreiben_erlaubt: boolean
+          scopes: string[]
+          ticket_id: string | null
+          ziel_user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "support_sessions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      support_update_profile: {
+        Args: { p_fields: Json; p_ziel: string }
+        Returns: undefined
+      }
+      support_update_report: {
+        Args: { p_fields: Json; p_report: string; p_ziel: string }
+        Returns: undefined
+      }
+      support_update_training: {
+        Args: { p_fields: Json; p_ziel: string }
+        Returns: undefined
+      }
+      support_verify_identity: {
+        Args: {
+          p_email: string
+          p_geburtsdatum: string
+          p_grund: string
+          p_nachname: string
+          p_telefon: string
+          p_vorname: string
+        }
+        Returns: Json
+      }
       sync_my_email: { Args: never; Returns: string }
       team_experience_overview: {
         Args: { p_azubi?: string }
@@ -3858,6 +4287,7 @@ export type Database = {
         | "lehrer"
         | "ausbildungsleitung"
         | "pruefer"
+        | "it_technik"
       consent_kind: "dictation" | "ai_text"
       grade_kind: "klausur" | "muendlich" | "test" | "sonstige"
       report_status: "draft" | "submitted" | "approved" | "rejected"
@@ -3999,6 +4429,7 @@ export const Constants = {
         "lehrer",
         "ausbildungsleitung",
         "pruefer",
+        "it_technik",
       ],
       consent_kind: ["dictation", "ai_text"],
       grade_kind: ["klausur", "muendlich", "test", "sonstige"],

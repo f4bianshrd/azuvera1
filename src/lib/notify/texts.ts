@@ -36,6 +36,9 @@ const T: Record<string, [string, string]> = {
   exam_application_returned: ["Prüfungsantrag zurückgegeben", "Dein Antrag auf Prüfungszulassung wurde zurückgegeben. Lies die Notiz in der App."],
   deputy_assigned: ["Vertretung eingetragen", "Für dich wurde eine Vertretung eingetragen."],
   deputy_ended: ["Vertretung beendet", "Eine Vertretung wurde beendet."],
+  support_session_started: ["Support-Zugriff auf dein Konto", "Der Azuvera-Support hat deine Identität geprüft und greift jetzt auf dein Konto zu. Details siehst du unter Hilfe & Support."],
+  support_session_ended: ["Support-Sitzung beendet", "Der Azuvera-Support greift nicht mehr auf dein Konto zu."],
+  support_identity_failed: ["Identitätsprüfung fehlgeschlagen", "Jemand hat beim Azuvera-Support versucht, sich als du auszugeben. Die Angaben stimmten nicht. Warst du das nicht, melde dich bei info@azuvera.de."],
 };
 
 export function deliveryText(type: string): { title: string; body: string } {

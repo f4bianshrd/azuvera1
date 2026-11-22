@@ -296,6 +296,7 @@ function ProfilPage() {
           <Field id="telefon" label="Telefon" type="tel" value={form.telefon ?? ""} onChange={set("telefon")} autoComplete="tel" />
           <Field id="personalnummer" label="Personalnummer" value={form.personalnummer ?? ""} onChange={set("personalnummer")} />
         </div>
+        <p className="mt-3 text-sm text-muted-foreground">Geburtsdatum und Telefon sind freiwillig. Sie helfen dem Support, dich zu erkennen, wenn du anrufst oder schreibst. <Link to="/hilfe" className="font-medium text-primary underline-offset-4 hover:underline">Hilfe & Support</Link></p>
       </Card>
 
       <Card title="Anschrift">

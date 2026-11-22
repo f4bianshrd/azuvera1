@@ -165,7 +165,7 @@ export function AppShell() {
       const [reports, experiences] = await Promise.all([listReviewQueue(), getExperienceReviewQueue().catch(() => [])]);
       return reports.length + experiences.length;
     },
-    enabled: !!profile && profile.role !== "azubi",
+    enabled: !!profile && profile.role !== "azubi" && profile.role !== "it_technik",
     refetchInterval: 60_000,
   });
   const title = titleForPath(pathname);

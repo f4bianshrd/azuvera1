@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   UserRound,
   Users,
-  type LucideIcon, Award, FileCheck2, BookOpenCheck, RefreshCw, ScrollText, KeyRound, NotebookPen, Scale } from "lucide-react";
+  type LucideIcon, Award, FileCheck2, BookOpenCheck, RefreshCw, ScrollText, KeyRound, NotebookPen, Scale, LifeBuoy } from "lucide-react";
 import type { AppRole } from "./session";
 import { REVIEWER_ROLES, VIEWER_ROLES } from "./session";
 
@@ -30,6 +30,8 @@ export interface NavItem {
   roles?: AppRole[];
   /** Nur für Mitglieder des Azuvera-Teams (Verwaltung). */
   team?: boolean;
+  /** Auch für IT/Technik sichtbar (sonst sieht IT/Technik nur Punkte mit roles: ["it_technik"]). */
+  support?: boolean;
 }
 
 const TEAM_ROLES: AppRole[] = [...REVIEWER_ROLES, ...VIEWER_ROLES];
@@ -52,10 +54,12 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Prüfungsantrag", icon: FileCheck2, section: "arbeit", to: "/pruefungsantrag" },
   { label: "Ausbildungszeugnis", icon: Award, section: "arbeit", to: "/zeugnis" },
   { label: "Erinnerungen", icon: Bell, section: "arbeit", to: "/erinnerungen", roles: REVIEWER_ROLES },
-  { label: "Benachrichtigungen", icon: Bell, section: "konto", to: "/notifications" },
+  { label: "Support", icon: LifeBuoy, section: "arbeit", to: "/support", roles: ["it_technik"] },
+  { label: "Benachrichtigungen", icon: Bell, section: "konto", to: "/notifications", support: true },
   { label: "Zugriff", icon: KeyRound, section: "konto", to: "/zugriff" },
   { label: "Änderungsprotokoll", icon: ScrollText, section: "konto", to: "/protokoll" },
-  { label: "Mein Profil", icon: UserRound, section: "konto", to: "/profil" },
+  { label: "Mein Profil", icon: UserRound, section: "konto", to: "/profil", support: true },
+  { label: "Hilfe & Support", icon: LifeBuoy, section: "konto", to: "/hilfe" },
   { label: "Synchronisation", icon: RefreshCw, section: "konto", to: "/sync" },
   { label: "Administration", icon: Settings2, section: "verwaltung", to: "/admin", team: true },
   { label: "Betriebe", icon: Building2, section: "verwaltung", to: "/stammdaten/betriebe", team: true },
@@ -73,6 +77,7 @@ export const SECTION_LABELS: Record<NavSection, string> = {
 };
 
 export function visibleNav(role: AppRole, isTeam = false): NavItem[] {
+  if (role === "it_technik") return NAV_ITEMS.filter((i) => i.to && (i.support || i.roles?.includes("it_technik")));
   return NAV_ITEMS.filter((i) => i.to && (i.team ? isTeam : !i.roles || i.roles.includes(role)));
 }
 
@@ -86,6 +91,15 @@ export interface TabItem {
 
 /** Feste Tab-Leiste (5 Plätze); Plätze ohne Seite bleiben ausgeblendet. */
 export function mobileTabs(role: AppRole): (TabItem | null)[] {
+  if (role === "it_technik") {
+    return [
+      { label: "Support", icon: LifeBuoy, to: "/support" },
+      { label: "Hinweise", icon: Bell, to: "/notifications" },
+      { label: "Profil", icon: UserRound, to: "/profil" },
+      null,
+      null,
+    ];
+  }
   if (role === "azubi") {
     return [
       { label: "Start", icon: Home, to: "/dashboard" },

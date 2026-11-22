@@ -26,12 +26,14 @@ import { Route as AuthenticatedBenachrichtigungenRouteImport } from './routes/_a
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedErfahrungsberichteRouteImport } from './routes/_authenticated/erfahrungsberichte'
 import { Route as AuthenticatedErinnerungenRouteImport } from './routes/_authenticated/erinnerungen'
+import { Route as AuthenticatedHilfeRouteImport } from './routes/_authenticated/hilfe'
 import { Route as AuthenticatedLeittexteRouteImport } from './routes/_authenticated/leittexte'
 import { Route as AuthenticatedNotenRouteImport } from './routes/_authenticated/noten'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated/profil'
 import { Route as AuthenticatedProtokollRouteImport } from './routes/_authenticated/protokoll'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
 import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/sync'
 import { Route as AuthenticatedTeamRouteImport } from './routes/_authenticated/team'
 import { Route as AuthenticatedUnterweisungenRouteImport } from './routes/_authenticated/unterweisungen'
@@ -41,6 +43,7 @@ import { Route as ApiDeleteAccountRouteImport } from './routes/api/delete-accoun
 import { Route as ApiEmailTestRouteImport } from './routes/api/email-test'
 import { Route as ApiNotificationStatusRouteImport } from './routes/api/notification-status'
 import { Route as ApiPushTestRouteImport } from './routes/api/push-test'
+import { Route as ApiSupportActionRouteImport } from './routes/api/support-action'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin_.einstellungen'
 import { Route as AuthenticatedAdminErfahrungsberichteRouteImport } from './routes/_authenticated/admin_.erfahrungsberichte'
 import { Route as AuthenticatedErfahrungsberichteIndexRouteImport } from './routes/_authenticated/erfahrungsberichte.index'
@@ -159,6 +162,11 @@ const AuthenticatedErinnerungenRoute =
     path: '/erinnerungen',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedHilfeRoute = AuthenticatedHilfeRouteImport.update({
+  id: '/hilfe',
+  path: '/hilfe',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLeittexteRoute = AuthenticatedLeittexteRouteImport.update({
   id: '/leittexte',
   path: '/leittexte',
@@ -188,6 +196,11 @@ const AuthenticatedProtokollRoute = AuthenticatedProtokollRouteImport.update({
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSupportRoute = AuthenticatedSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSyncRoute = AuthenticatedSyncRouteImport.update({
@@ -235,6 +248,11 @@ const ApiNotificationStatusRoute = ApiNotificationStatusRouteImport.update({
 const ApiPushTestRoute = ApiPushTestRouteImport.update({
   id: '/api/push-test',
   path: '/api/push-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSupportActionRoute = ApiSupportActionRouteImport.update({
+  id: '/api/support-action',
+  path: '/api/support-action',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminEinstellungenRoute =
@@ -410,12 +428,14 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/erfahrungsberichte': typeof AuthenticatedErfahrungsberichteRouteWithChildren
   '/erinnerungen': typeof AuthenticatedErinnerungenRoute
+  '/hilfe': typeof AuthenticatedHilfeRoute
   '/leittexte': typeof AuthenticatedLeittexteRouteWithChildren
   '/noten': typeof AuthenticatedNotenRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/protokoll': typeof AuthenticatedProtokollRoute
   '/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/support': typeof AuthenticatedSupportRoute
   '/sync': typeof AuthenticatedSyncRoute
   '/team': typeof AuthenticatedTeamRouteWithChildren
   '/unterweisungen': typeof AuthenticatedUnterweisungenRoute
@@ -425,6 +445,7 @@ export interface FileRoutesByFullPath {
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
+  '/api/support-action': typeof ApiSupportActionRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/admin/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
   '/erfahrungsberichte/$id': typeof AuthenticatedErfahrungsberichteIdRoute
@@ -469,10 +490,12 @@ export interface FileRoutesByTo {
   '/benachrichtigungen': typeof AuthenticatedBenachrichtigungenRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/erinnerungen': typeof AuthenticatedErinnerungenRoute
+  '/hilfe': typeof AuthenticatedHilfeRoute
   '/noten': typeof AuthenticatedNotenRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profil': typeof AuthenticatedProfilRoute
   '/protokoll': typeof AuthenticatedProtokollRoute
+  '/support': typeof AuthenticatedSupportRoute
   '/sync': typeof AuthenticatedSyncRoute
   '/unterweisungen': typeof AuthenticatedUnterweisungenRoute
   '/verknuepfungen': typeof AuthenticatedVerknuepfungenRoute
@@ -481,6 +504,7 @@ export interface FileRoutesByTo {
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
+  '/api/support-action': typeof ApiSupportActionRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/admin/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
   '/erfahrungsberichte/$id': typeof AuthenticatedErfahrungsberichteIdRoute
@@ -528,12 +552,14 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/erfahrungsberichte': typeof AuthenticatedErfahrungsberichteRouteWithChildren
   '/_authenticated/erinnerungen': typeof AuthenticatedErinnerungenRoute
+  '/_authenticated/hilfe': typeof AuthenticatedHilfeRoute
   '/_authenticated/leittexte': typeof AuthenticatedLeittexteRouteWithChildren
   '/_authenticated/noten': typeof AuthenticatedNotenRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/_authenticated/protokoll': typeof AuthenticatedProtokollRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
+  '/_authenticated/support': typeof AuthenticatedSupportRoute
   '/_authenticated/sync': typeof AuthenticatedSyncRoute
   '/_authenticated/team': typeof AuthenticatedTeamRouteWithChildren
   '/_authenticated/unterweisungen': typeof AuthenticatedUnterweisungenRoute
@@ -543,6 +569,7 @@ export interface FileRoutesById {
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
+  '/api/support-action': typeof ApiSupportActionRoute
   '/_authenticated/admin_/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/_authenticated/admin_/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
   '/_authenticated/erfahrungsberichte/$id': typeof AuthenticatedErfahrungsberichteIdRoute
@@ -590,12 +617,14 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/erfahrungsberichte'
     | '/erinnerungen'
+    | '/hilfe'
     | '/leittexte'
     | '/noten'
     | '/notifications'
     | '/profil'
     | '/protokoll'
     | '/reports'
+    | '/support'
     | '/sync'
     | '/team'
     | '/unterweisungen'
@@ -605,6 +634,7 @@ export interface FileRouteTypes {
     | '/api/email-test'
     | '/api/notification-status'
     | '/api/push-test'
+    | '/api/support-action'
     | '/admin/einstellungen'
     | '/admin/erfahrungsberichte'
     | '/erfahrungsberichte/$id'
@@ -649,10 +679,12 @@ export interface FileRouteTypes {
     | '/benachrichtigungen'
     | '/dashboard'
     | '/erinnerungen'
+    | '/hilfe'
     | '/noten'
     | '/notifications'
     | '/profil'
     | '/protokoll'
+    | '/support'
     | '/sync'
     | '/unterweisungen'
     | '/verknuepfungen'
@@ -661,6 +693,7 @@ export interface FileRouteTypes {
     | '/api/email-test'
     | '/api/notification-status'
     | '/api/push-test'
+    | '/api/support-action'
     | '/admin/einstellungen'
     | '/admin/erfahrungsberichte'
     | '/erfahrungsberichte/$id'
@@ -707,12 +740,14 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/erfahrungsberichte'
     | '/_authenticated/erinnerungen'
+    | '/_authenticated/hilfe'
     | '/_authenticated/leittexte'
     | '/_authenticated/noten'
     | '/_authenticated/notifications'
     | '/_authenticated/profil'
     | '/_authenticated/protokoll'
     | '/_authenticated/reports'
+    | '/_authenticated/support'
     | '/_authenticated/sync'
     | '/_authenticated/team'
     | '/_authenticated/unterweisungen'
@@ -722,6 +757,7 @@ export interface FileRouteTypes {
     | '/api/email-test'
     | '/api/notification-status'
     | '/api/push-test'
+    | '/api/support-action'
     | '/_authenticated/admin_/einstellungen'
     | '/_authenticated/admin_/erfahrungsberichte'
     | '/_authenticated/erfahrungsberichte/$id'
@@ -764,6 +800,7 @@ export interface RootRouteChildren {
   ApiEmailTestRoute: typeof ApiEmailTestRoute
   ApiNotificationStatusRoute: typeof ApiNotificationStatusRoute
   ApiPushTestRoute: typeof ApiPushTestRoute
+  ApiSupportActionRoute: typeof ApiSupportActionRoute
   ApiPublicDispatchNotificationsRoute: typeof ApiPublicDispatchNotificationsRoute
   ApiPublicPushConfigRoute: typeof ApiPublicPushConfigRoute
   ApiPublicRunRemindersRoute: typeof ApiPublicRunRemindersRoute
@@ -893,6 +930,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErinnerungenRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/hilfe': {
+      id: '/_authenticated/hilfe'
+      path: '/hilfe'
+      fullPath: '/hilfe'
+      preLoaderRoute: typeof AuthenticatedHilfeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/leittexte': {
       id: '/_authenticated/leittexte'
       path: '/leittexte'
@@ -933,6 +977,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/support': {
+      id: '/_authenticated/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof AuthenticatedSupportRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/sync': {
@@ -996,6 +1047,13 @@ declare module '@tanstack/react-router' {
       path: '/api/push-test'
       fullPath: '/api/push-test'
       preLoaderRoute: typeof ApiPushTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/support-action': {
+      id: '/api/support-action'
+      path: '/api/support-action'
+      fullPath: '/api/support-action'
+      preLoaderRoute: typeof ApiSupportActionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin_/einstellungen': {
@@ -1269,12 +1327,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedErfahrungsberichteRoute: typeof AuthenticatedErfahrungsberichteRouteWithChildren
   AuthenticatedErinnerungenRoute: typeof AuthenticatedErinnerungenRoute
+  AuthenticatedHilfeRoute: typeof AuthenticatedHilfeRoute
   AuthenticatedLeittexteRoute: typeof AuthenticatedLeittexteRouteWithChildren
   AuthenticatedNotenRoute: typeof AuthenticatedNotenRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfilRoute: typeof AuthenticatedProfilRoute
   AuthenticatedProtokollRoute: typeof AuthenticatedProtokollRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
+  AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
   AuthenticatedSyncRoute: typeof AuthenticatedSyncRoute
   AuthenticatedTeamRoute: typeof AuthenticatedTeamRouteWithChildren
   AuthenticatedUnterweisungenRoute: typeof AuthenticatedUnterweisungenRoute
@@ -1303,12 +1363,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedErfahrungsberichteRoute:
     AuthenticatedErfahrungsberichteRouteWithChildren,
   AuthenticatedErinnerungenRoute: AuthenticatedErinnerungenRoute,
+  AuthenticatedHilfeRoute: AuthenticatedHilfeRoute,
   AuthenticatedLeittexteRoute: AuthenticatedLeittexteRouteWithChildren,
   AuthenticatedNotenRoute: AuthenticatedNotenRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfilRoute: AuthenticatedProfilRoute,
   AuthenticatedProtokollRoute: AuthenticatedProtokollRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
+  AuthenticatedSupportRoute: AuthenticatedSupportRoute,
   AuthenticatedSyncRoute: AuthenticatedSyncRoute,
   AuthenticatedTeamRoute: AuthenticatedTeamRouteWithChildren,
   AuthenticatedUnterweisungenRoute: AuthenticatedUnterweisungenRoute,
@@ -1347,6 +1409,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiEmailTestRoute: ApiEmailTestRoute,
   ApiNotificationStatusRoute: ApiNotificationStatusRoute,
   ApiPushTestRoute: ApiPushTestRoute,
+  ApiSupportActionRoute: ApiSupportActionRoute,
   ApiPublicDispatchNotificationsRoute: ApiPublicDispatchNotificationsRoute,
   ApiPublicPushConfigRoute: ApiPublicPushConfigRoute,
   ApiPublicRunRemindersRoute: ApiPublicRunRemindersRoute,

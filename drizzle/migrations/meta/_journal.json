@@ -407,6 +407,20 @@
       "when": 1794966472398,
       "tag": "0057_notification_group_zeugnis_antrag",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1795379874960,
+      "tag": "0058_role_it_technik_enum",
+      "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1795380439552,
+      "tag": "0059_support_it_technik",
+      "breakpoints": true
     }
   ]
 }

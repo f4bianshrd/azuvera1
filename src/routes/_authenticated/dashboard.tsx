@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getNetworkStatus } from "@/lib/platform";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, isAfter } from "date-fns";
 import { toast } from "sonner";
@@ -115,6 +115,7 @@ function Dashboard() {
 
   const { data: instr } = useInstructionSummary(isAzubi ? profile?.id : null);
   if (!profile) return <CardSkeleton />;
+  if (profile.role === "it_technik") return <Navigate to="/support" replace />;
   if (!isAzubi) return <StaffDashboard profile={profile} />;
 
   const drafts = (reports ?? []).filter((r) => r.status === "draft");
