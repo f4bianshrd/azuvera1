@@ -1,0 +1,109 @@
+# iPhone-/iPad-Testversion OHNE Apple-Entwicklerkonto: unsignierte .ipa zum Selbst-Installieren
+# (z. B. mit Sideloadly oder AltStore und einer kostenlosen Apple-ID – die App läuft dann 7 Tage und
+# wird danach neu installiert). Nur zum Ausprobieren – nicht verkaufen. Verkaufsversion: native-build.yml.
+# Startet automatisch, wenn diese Datei oder .github/mac-test-build-trigger.txt auf main geändert wird,
+# oder manuell: GitHub → Actions → „iPhone/iPad-Testversion“ → „Run workflow“.
+name: iPhone/iPad-Testversion (ohne Apple-Konto)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ios-test-build.yml"
+      - ".github/mac-test-build-trigger.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-test-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ios:
+    name: iPhone/iPad-Testversion (.ipa)
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Version bestimmen
+        run: |
+          set -euo pipefail
+          version=$(sed -nE 's/.*APP_VERSION: "([^"]+)".*/\1/p' src/config/native-license.ts | head -1)
+          [ -n "$version" ] || { echo "::error::Keine Version gefunden"; exit 1; }
+          { echo "VERSION=$version"; echo "BUILD=${{ github.run_number }}"; } >> "$GITHUB_ENV"
+
+      - name: Abhängigkeiten installieren
+        run: bun install --frozen-lockfile
+      - name: Web-App für die native Version bauen (inkl. cap sync ios)
+        run: bun run build:native
+
+      - name: iPhone/iPad-App bauen (ohne Apple-Signierung)
+        run: |
+          set -euo pipefail
+          log="$RUNNER_TEMP/xcodebuild.log"
+          if ! xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+              -sdk iphoneos -destination 'generic/platform=iOS' \
+              -derivedDataPath "$RUNNER_TEMP/dd" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+              MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD" \
+              build > "$log" 2>&1; then
+            grep -E "error:|\*\* BUILD FAILED" "$log" | head -50 || true
+            tail -n 150 "$log"
+            echo "::error::iPhone/iPad-App konnte nicht gebaut werden"; exit 1
+          fi
+          tail -n 15 "$log"
+          app=$(ls -d "$RUNNER_TEMP"/dd/Build/Products/Release-iphoneos/*.app | head -1)
+          [ -d "$app" ] || { echo "::error::Keine .app gefunden"; exit 1; }
+          echo "APP=$app" >> "$GITHUB_ENV"
+
+      - name: .ipa erstellen
+        run: |
+          set -euo pipefail
+          stage="$RUNNER_TEMP/ipa"; mkdir -p "$stage/Payload" out
+          cp -R "$APP" "$stage/Payload/"
+          ipa="out/Azuvera-${VERSION}-iphone-ipad-test.ipa"
+          (cd "$stage" && zip -qry "$GITHUB_WORKSPACE/$ipa" Payload)
+          cat > "out/Bitte zuerst lesen.txt" <<'TXT'
+          Azuvera – Testversion für iPhone und iPad
+          ==========================================
+
+          Diese Datei ist nicht von Apple signiert (kein Apple-Entwicklerkonto) und lässt sich nicht
+          einfach antippen. So installierst du sie mit deiner eigenen Apple-ID:
+
+          1. Auf dem Mac oder PC „Sideloadly“ (sideloadly.io) installieren.
+          2. iPhone/iPad per Kabel verbinden, die .ipa in Sideloadly ziehen, Apple-ID eingeben, „Start“.
+          3. Auf dem Gerät: Einstellungen → Allgemein → VPN und Geräteverwaltung → deine Apple-ID → „Vertrauen“.
+          4. Ab iOS 16: Einstellungen → Datenschutz & Sicherheit → Entwicklermodus einschalten (Neustart).
+
+          Mit einer kostenlosen Apple-ID läuft die App 7 Tage, danach erneut über Sideloadly installieren.
+          Die App fragt nach einem Lizenzschlüssel (www.azuvera.de → Mein Konto).
+          TXT
+          echo "IPA=$ipa" >> "$GITHUB_ENV"
+
+      - name: Zusammenfassung
+        run: |
+          sum=$(shasum -a 256 "$IPA" | cut -d' ' -f1)
+          {
+            echo "### iPhone/iPad-Testversion (nicht von Apple signiert)"
+            echo "| Datei | Version | Build | SHA-256 |"
+            echo "|---|---|---|---|"
+            echo "| $(basename "$IPA") | $VERSION | $BUILD | \`$sum\` |"
+            echo ""
+            echo "Herunterladen: unten bei **Artifacts**. Installieren: siehe „Bitte zuerst lesen.txt“."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Azuvera-${{ env.VERSION }}-iphone-ipad-test
+          path: out/*
+          if-no-files-found: error
+          retention-days: 30

@@ -22,6 +22,19 @@ function connection(): NetworkInformationLike | undefined {
 }
 
 // ---------- Native App (Capacitor/iOS/macOS) ----------
+/** Adresse der Web-App, deren Server die Apple-Apps für KI-Hilfe, Kontolöschung usw. nutzen. */
+export const WEB_APP_ORIGIN = "https://get.azuvera.de";
+
+/**
+ * Pfad zu einem Server-Endpunkt der App. Im Browser relativ (gleiche Adresse), in den Apple-Apps
+ * absolut – dort gibt es keinen eigenen Server, die App läuft von capacitor://localhost.
+ */
+export function apiUrl(path: string): string {
+  if (typeof window === "undefined") return path;
+  const packaged = import.meta.env.VITE_NATIVE_BUILD === "true" || window.location?.protocol === "capacitor:" || window.location?.protocol === "ionic:";
+  return packaged ? `${WEB_APP_ORIGIN}${path}` : path;
+}
+
 const FORCE_NATIVE_KEY = "azuvera.forceNative";
 const nativeSubs = new Set<() => void>();
 

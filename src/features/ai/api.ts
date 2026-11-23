@@ -1,5 +1,6 @@
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { apiUrl, isNativeBuild } from "@/lib/platform";
 import { generateReportText, type ReportTextResult } from "./report-text.functions";
 
 export type AiField = "activities" | "school_content" | "instructions" | "summary";
@@ -12,7 +13,22 @@ export interface AiTextInput {
 
 export function useGenerateReportText() {
   const serverFn = useServerFn(generateReportText);
-  return async (input: AiTextInput): Promise<ReportTextResult> => serverFn({ data: input });
+  return async (input: AiTextInput): Promise<ReportTextResult> => {
+    // Apple-Apps haben keinen eigenen Server: dort direkt den Endpunkt der Web-App aufrufen.
+    if (!isNativeBuild() && !apiUrl("/").startsWith("http")) return serverFn({ data: input });
+    const { data } = await supabase.auth.getSession();
+    try {
+      const res = await fetch(apiUrl("/api/report-text"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {}) },
+        body: JSON.stringify(input),
+      });
+      const body = (await res.json().catch(() => null)) as ReportTextResult | null;
+      return body ?? { ok: false, message: "Die KI konnte den Text nicht erstellen. Bitte versuche es erneut." };
+    } catch {
+      return { ok: false, message: "Für die KI-Hilfe brauchst du eine Internetverbindung." };
+    }
+  };
 }
 
 export async function getAiEnabled(): Promise<boolean> {

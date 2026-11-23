@@ -1,5 +1,6 @@
 import { strToU8, zipSync, type Zippable } from "fflate";
 import { supabase } from "@/integrations/supabase/client";
+import { apiUrl } from "@/lib/platform";
 import { dataExportFileName, uniqueName, zipSafeName } from "./rules";
 
 /* ---------- Auskunft und Datenexport ---------- */
@@ -159,7 +160,7 @@ export interface DeleteAccountResult { ok: true; mode: "deleted" | "anonymized";
 
 export async function deleteAccount(userId: string, confirmEmail: string): Promise<DeleteAccountResult> {
   const { data } = await supabase.auth.getSession();
-  const res = await fetch("/api/delete-account", {
+  const res = await fetch(apiUrl("/api/delete-account"), {
     method: "POST",
     headers: { "Content-Type": "application/json", ...(data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {}) },
     body: JSON.stringify({ userId, confirmEmail }),

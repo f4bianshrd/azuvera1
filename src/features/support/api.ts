@@ -1,5 +1,6 @@
 /** Datenzugriff für Support-Tickets und IT/Technik (nur online, über SECURITY-DEFINER-Funktionen). */
 import { supabase } from "@/integrations/supabase/client";
+import { apiUrl } from "@/lib/platform";
 import type { AppRole } from "@/features/app/session";
 import { hashTicketCode, type SupportScope } from "./scopes";
 
@@ -177,7 +178,7 @@ export async function revokeAccess(ziel: string, grant: string) {
 /** Passwort-Reset-Mail auslösen oder E-Mail-Änderung mit Bestätigung starten (läuft über den Server). */
 export async function supportAction(ziel: string, action: "password_reset" | "email_change", newEmail?: string) {
   const { data } = await supabase.auth.getSession();
-  const res = await fetch("/api/support-action", {
+  const res = await fetch(apiUrl("/api/support-action"), {
     method: "POST",
     headers: { "Content-Type": "application/json", ...(data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {}) },
     body: JSON.stringify({ ziel, action, ...(newEmail ? { newEmail } : {}) }),

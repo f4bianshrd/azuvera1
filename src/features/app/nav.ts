@@ -97,7 +97,6 @@ export function mobileTabs(role: AppRole): (TabItem | null)[] {
       { label: "Hinweise", icon: Bell, to: "/notifications" },
       { label: "Profil", icon: UserRound, to: "/profil" },
       null,
-      null,
     ];
   }
   if (role === "azubi") {

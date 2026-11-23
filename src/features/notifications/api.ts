@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { apiUrl } from '@/lib/platform';
 import type { Database } from '@/integrations/supabase/types';
 
 export type Notification = Database['public']['Tables']['notifications']['Row'];
@@ -86,13 +87,13 @@ async function authed(path: string, init: RequestInit = {}) {
   const h = new Headers(init.headers);
   if (data.session) h.set('Authorization', `Bearer ${data.session.access_token}`);
   if (init.body) h.set('Content-Type', 'application/json');
-  const res = await fetch(path, { ...init, headers: h });
+  const res = await fetch(apiUrl(path), { ...init, headers: h });
   const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   if (!res.ok) throw new Error(typeof body['error'] === 'string' ? body['error'] : 'Das hat nicht geklappt.');
   return body;
 }
 export async function getPushConfig(): Promise<{ configured: boolean; publicKey: string | null }> {
-  const res = await fetch('/api/public/push-config', { cache: 'no-store' });
+  const res = await fetch(apiUrl('/api/public/push-config'), { cache: 'no-store' });
   if (!res.ok) throw new Error('push-config');
   return res.json();
 }

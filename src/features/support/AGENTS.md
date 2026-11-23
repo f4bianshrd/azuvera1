@@ -1,0 +1,1 @@
+- IT/Technik support (pages /support, /hilfe): agents see only pseudonymous support IDs until a hashed single-use ticket code or an identity check opens a time-limited session; all reads/writes go through support_* SECURITY DEFINER functions gated by aal2 MFA and scopes, and support_audit_log is append-only — keeps support access consent-based and provable.

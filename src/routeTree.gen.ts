@@ -43,6 +43,7 @@ import { Route as ApiDeleteAccountRouteImport } from './routes/api/delete-accoun
 import { Route as ApiEmailTestRouteImport } from './routes/api/email-test'
 import { Route as ApiNotificationStatusRouteImport } from './routes/api/notification-status'
 import { Route as ApiPushTestRouteImport } from './routes/api/push-test'
+import { Route as ApiReportTextRouteImport } from './routes/api/report-text'
 import { Route as ApiSupportActionRouteImport } from './routes/api/support-action'
 import { Route as AuthenticatedAdminEinstellungenRouteImport } from './routes/_authenticated/admin_.einstellungen'
 import { Route as AuthenticatedAdminErfahrungsberichteRouteImport } from './routes/_authenticated/admin_.erfahrungsberichte'
@@ -250,6 +251,11 @@ const ApiPushTestRoute = ApiPushTestRouteImport.update({
   path: '/api/push-test',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReportTextRoute = ApiReportTextRouteImport.update({
+  id: '/api/report-text',
+  path: '/api/report-text',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSupportActionRoute = ApiSupportActionRouteImport.update({
   id: '/api/support-action',
   path: '/api/support-action',
@@ -445,6 +451,7 @@ export interface FileRoutesByFullPath {
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
+  '/api/report-text': typeof ApiReportTextRoute
   '/api/support-action': typeof ApiSupportActionRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/admin/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
@@ -504,6 +511,7 @@ export interface FileRoutesByTo {
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
+  '/api/report-text': typeof ApiReportTextRoute
   '/api/support-action': typeof ApiSupportActionRoute
   '/admin/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/admin/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
@@ -569,6 +577,7 @@ export interface FileRoutesById {
   '/api/email-test': typeof ApiEmailTestRoute
   '/api/notification-status': typeof ApiNotificationStatusRoute
   '/api/push-test': typeof ApiPushTestRoute
+  '/api/report-text': typeof ApiReportTextRoute
   '/api/support-action': typeof ApiSupportActionRoute
   '/_authenticated/admin_/einstellungen': typeof AuthenticatedAdminEinstellungenRoute
   '/_authenticated/admin_/erfahrungsberichte': typeof AuthenticatedAdminErfahrungsberichteRoute
@@ -634,6 +643,7 @@ export interface FileRouteTypes {
     | '/api/email-test'
     | '/api/notification-status'
     | '/api/push-test'
+    | '/api/report-text'
     | '/api/support-action'
     | '/admin/einstellungen'
     | '/admin/erfahrungsberichte'
@@ -693,6 +703,7 @@ export interface FileRouteTypes {
     | '/api/email-test'
     | '/api/notification-status'
     | '/api/push-test'
+    | '/api/report-text'
     | '/api/support-action'
     | '/admin/einstellungen'
     | '/admin/erfahrungsberichte'
@@ -757,6 +768,7 @@ export interface FileRouteTypes {
     | '/api/email-test'
     | '/api/notification-status'
     | '/api/push-test'
+    | '/api/report-text'
     | '/api/support-action'
     | '/_authenticated/admin_/einstellungen'
     | '/_authenticated/admin_/erfahrungsberichte'
@@ -800,6 +812,7 @@ export interface RootRouteChildren {
   ApiEmailTestRoute: typeof ApiEmailTestRoute
   ApiNotificationStatusRoute: typeof ApiNotificationStatusRoute
   ApiPushTestRoute: typeof ApiPushTestRoute
+  ApiReportTextRoute: typeof ApiReportTextRoute
   ApiSupportActionRoute: typeof ApiSupportActionRoute
   ApiPublicDispatchNotificationsRoute: typeof ApiPublicDispatchNotificationsRoute
   ApiPublicPushConfigRoute: typeof ApiPublicPushConfigRoute
@@ -1047,6 +1060,13 @@ declare module '@tanstack/react-router' {
       path: '/api/push-test'
       fullPath: '/api/push-test'
       preLoaderRoute: typeof ApiPushTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/report-text': {
+      id: '/api/report-text'
+      path: '/api/report-text'
+      fullPath: '/api/report-text'
+      preLoaderRoute: typeof ApiReportTextRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/support-action': {
@@ -1409,6 +1429,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiEmailTestRoute: ApiEmailTestRoute,
   ApiNotificationStatusRoute: ApiNotificationStatusRoute,
   ApiPushTestRoute: ApiPushTestRoute,
+  ApiReportTextRoute: ApiReportTextRoute,
   ApiSupportActionRoute: ApiSupportActionRoute,
   ApiPublicDispatchNotificationsRoute: ApiPublicDispatchNotificationsRoute,
   ApiPublicPushConfigRoute: ApiPublicPushConfigRoute,

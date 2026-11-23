@@ -93,6 +93,16 @@ auf www.azuvera.de im Admin-Bereich hochladen.
 App Store, TestFlight, Ad-hoc (registrierte Geräte) oder EU-Webvertrieb. Die notarisierte `.dmg` für den Mac
 funktioniert als direkter Download.
 
+## iPhone/iPad-Testversion ohne Apple-Konto
+
+Datei: `.github/workflows/ios-test-build.yml`. Baut eine **unsignierte `.ipa`** für iPhone und iPad – ohne
+Apple-Secrets. Sie lässt sich nicht einfach antippen, sondern wird mit Sideloadly oder AltStore und einer
+eigenen Apple-ID installiert (kostenlose Apple-ID: 7 Tage gültig, dann neu installieren). Nur zum Testen.
+
+- Start wie bei der Mac-Testversion (gleiche Trigger-Datei) oder manuell: Actions → „iPhone/iPad-Testversion“.
+- Download: im Lauf unten bei **Artifacts** (`.ipa` plus „Bitte zuerst lesen.txt“).
+- Für TestFlight/App Store braucht es das Apple-Entwicklerkonto und `native-build.yml`.
+
 ## Typische Fehler
 
 | Meldung | Lösung |
@@ -103,13 +113,14 @@ funktioniert als direkter Download.
 | Notarisierung „Invalid“ | Log steht im Job. Häufig: Hardened Runtime fehlt (ist gesetzt) oder falsches Zertifikat (muss „Developer ID Application“ sein). |
 | `spctl` „rejected“ | Notarisierung/Heften fehlgeschlagen oder nicht mit Developer ID signiert. |
 | Architekturen stimmen nicht | Ziel prüfen; Universal braucht `ARCHS="arm64 x86_64"` (macht der Workflow). |
+| `Fehlt: _shell.html` | Außerhalb von Lovable legt der Build die Dateien unter `.output/public` ab; `scripts/native-prepare.mjs` übernimmt sie automatisch nach `dist/client`. |
 | `bun install --frozen-lockfile` schlägt fehl | `bun.lock` passt nicht zu package.json – lokal `bun install` ausführen und committen. |
 
 ## Grenzen
 
-- Funktionen, die einen Server der Web-App brauchen (KI-Formulierhilfe, Konto löschen über `/api/…`), rufen
-  im App-Paket relative Adressen auf und funktionieren dort erst, wenn sie auf `https://get.azuvera.de` zeigen
-  und der Server Aufrufe von `capacitor://localhost` erlaubt.
+- Funktionen, die einen Server brauchen (KI-Formulierhilfe, Konto löschen, Support-Aktionen, Test-Push/-Mail),
+  rufen im App-Paket über `apiUrl()` den Server von `https://get.azuvera.de` auf (CORS erlaubt). Sie brauchen
+  Internet; alles andere läuft offline.
 - Anmeldung mit Google/Apple/Microsoft leitet auf eine Web-Adresse zurück; in der nativen App ist das noch nicht
   eingerichtet. Anmeldung mit E-Mail und Passwort funktioniert.
 - Push-Benachrichtigungen laufen über den Service Worker und sind in der nativen App aus.

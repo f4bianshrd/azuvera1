@@ -1,1 +1,2 @@
 2026-11-18T05:43:40Z
+2026-11-23 00:26 UTC – Fix: Client-Build aus .output/public übernehmen; iPhone/iPad-Testversion
