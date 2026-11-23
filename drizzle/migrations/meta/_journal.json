@@ -428,6 +428,13 @@
       "when": 1795394188976,
       "tag": "0060_security_push_hosts_deputy_lookup",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1795394500393,
+      "tag": "0061_support_delete_attachment_static_sql",
+      "breakpoints": true
     }
   ]
 }
