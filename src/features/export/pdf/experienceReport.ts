@@ -9,6 +9,7 @@ import { A4, C, CONTENT_BOTTOM, Doc, MARGIN } from "./doc";
 import { check, logo, pause, type BuildOptions } from "./build";
 import { METHOD_DE, STATUS_DE, belegNr, integrityOk, renderReport, type ReportVariant } from "./report";
 import { berlinDateTime, dateDe, fitText, safeFileName, safeFileNameWithExt } from "./text";
+import { csvCell as csvCellShared } from "./csv";
 
 export const EXPERIENCE_KIND_DE: Record<string, string> = { erfahrungsbericht: "Erfahrungsbericht", projektbericht: "Projektbericht", leittext: "Leittext" };
 
@@ -220,11 +221,7 @@ async function buildProofOnly(items: ExportExperience[], c: ExperienceContext): 
   return doc.save();
 }
 
-const csvCell = (v: string | number | null | undefined): string => {
-  let s = String(v ?? "");
-  if (/^[=+\-@]/.test(s)) s = `'${s}`;
-  return /[";\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-};
+const csvCell = (v: string | number | null | undefined): string => csvCellShared(v, ";");
 
 export function experienceCsv(items: ExportExperience[], c: ExperienceContext, attachmentCounts: Map<string, number>): string {
   const head = ["experience_id", "datum", "art", "titel", "bereich", "lehrjahr", "status", "version", "woerter", "anhaenge", "eingereicht_am", "freigegeben_am"];

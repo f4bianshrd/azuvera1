@@ -421,6 +421,13 @@
       "when": 1795380439552,
       "tag": "0059_support_it_technik",
       "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "7",
+      "when": 1795394188976,
+      "tag": "0060_security_push_hosts_deputy_lookup",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,7 @@ import type { ExportHeader, ExportReport, ReportBundle } from "../types";
 import { A4, C, CONTENT_BOTTOM, Doc, MARGIN } from "./doc";
 import { METHOD_DE, STATUS_DE, belegNr, integrityOk, renderReport, reportPdfTitle, reportPeriodLabel } from "./report";
 import { berlinDateTime, dateDe, safeFileName, safeFileNameWithExt } from "./text";
+import { csvCell } from "./csv";
 import { buildInstructionPdf, instructionCsv, renderInstructions, type InstructionPdfInput } from "./instructions";
 
 export class ExportCancelled extends Error { constructor() { super("cancelled"); } }
@@ -177,7 +178,7 @@ async function sha256(bytes: Uint8Array): Promise<string> {
   const d = await crypto.subtle.digest("SHA-256", bytes as BufferSource);
   return [...new Uint8Array(d)].map((x) => x.toString(16).padStart(2, "0")).join("");
 }
-const csv = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
+const csv = (v: string | number) => csvCell(v);
 
 /** ZIP mit Einzel-PDFs, Anlagen, Signaturprotokoll, Prüfsummen und LIESMICH. */
 export async function buildZip(reports: ExportReport[], header: ExportHeader, period: string, base: string, o: BuildOptions, instr?: InstructionPdfInput | null): Promise<{ blob: Blob; filename: string }> {

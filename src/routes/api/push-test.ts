@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { userFromRequest, json } from "@/lib/notify/auth.server";
+import { isAllowedPushEndpoint } from "@/lib/notify/push-endpoint";
 
-const Body = z.object({ endpoint: z.string().url().max(2000).startsWith("https://") });
+const Body = z.object({ endpoint: z.string().url().max(2000).refine(isAllowedPushEndpoint) });
 
 export const Route = createFileRoute("/api/push-test")({
   server: {

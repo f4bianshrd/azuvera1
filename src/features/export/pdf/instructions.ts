@@ -3,6 +3,7 @@ import type { ExportHeader } from "../types";
 import { logo } from "./build";
 import { A4, C, CONTENT_BOTTOM, Doc, MARGIN, type PageMeta } from "./doc";
 import { dateDe, safeFileName } from "./text";
+import { csvCell } from "./csv";
 
 export interface InstructionPdfRecord {
   id: string; given_on: string | null; title: string; instructor_name: string | null; duration_minutes: number | null; status: string;
@@ -129,9 +130,8 @@ export async function buildInstructionPdf(inp: InstructionPdfInput): Promise<Uin
   return doc.save();
 }
 
-const csvCell = (v: string | number | null) => `"${String(v ?? "").replace(/"/g, '""')}"`;
 export function instructionCsv(records: InstructionPdfRecord[]): string {
   const rows = ["nachweis_id,datum,thema,unterweisende_person,dauer_minuten,status,bestaetigt_von,bestaetigt_am,sha256"];
-  for (const r of records) rows.push([r.id, r.given_on, r.title, r.instructor_name, r.duration_minutes, r.status, r.confirmed_by_name, r.reviewed_at, r.content_hash].map(csvCell).join(","));
+  for (const r of records) rows.push([r.id, r.given_on, r.title, r.instructor_name, r.duration_minutes, r.status, r.confirmed_by_name, r.reviewed_at, r.content_hash].map((v) => csvCell(v)).join(","));
   return `\uFEFF${rows.join("\r\n")}\r\n`;
 }
